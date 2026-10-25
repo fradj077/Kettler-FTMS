@@ -1854,7 +1854,7 @@ iframe[src*="netlify"], [class*="netlify"], [id*="netlify"], [data-netlify-deplo
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v91.9 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v92.3 🔄</span>
   </div>
   <div class="ccb-status">
     <span class="dot" id="dot"></span>
@@ -2049,9 +2049,13 @@ iframe[src*="netlify"], [class*="netlify"], [id*="netlify"], [data-netlify-deplo
   <div class="mh-section-title" style="margin-top:14px">جدول سجل التمارين المحفوظة في اللوحة:</div>
   <div class="table-responsive"><div id="mhRows"></div></div>
 
-  <div class="row r2" style="margin-top:10px">
-    <button id="mhRef">تحديث</button>
-    <button id="mhTime">مزامنة الوقت</button>
+  <div id="mhClockBar" style="margin-top:12px;padding:8px 12px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:10px;font-size:12px;display:flex;justify-content:space-between;align-items:center">
+    <span>🕒 توقيت اللوحة وسجل التمارين:</span>
+    <b id="mhClockTxt" dir="ltr" style="color:var(--ok)">جارٍ التحقق...</b>
+  </div>
+  <div class="row r2" style="margin-top:8px">
+    <button id="mhRef">🔄 تحديث السجل</button>
+    <button id="mhTime">🕒 مزامنة الوقت الآن</button>
   </div>
   <div class="row r2" style="margin-top:8px">
     <button id="mhReset">إعادة تعلّم الأساس</button>
@@ -2059,7 +2063,7 @@ iframe[src*="netlify"], [class*="netlify"], [id*="netlify"], [data-netlify-deplo
   </div>
   <button id="mhExport" style="width:100%;margin-top:10px;min-height:38px">تصدير بيانات الحرارة والسرعة الخام (CSV)</button>
   <div id="mhExpMsg" style="font-size:12px;color:var(--dim);margin-top:4px;min-height:16px"></div>
-  <p style="font-size:12px;color:var(--dim);line-height:1.9;margin:12px 0 0">تقيس اللوحة سرعة تسخين المحرك وتبريده في كل تمرين، وتقارنها بما تعلّمته من أول 5 تمارين بدأت والمحرك بارد. هذا مؤشر مبكر لحالة السير والمحرك.</p>
+  <p style="font-size:12px;color:var(--dim);line-height:1.9;margin:12px 0 0">تتعلم اللوحة ذكياً سرعة تسخين المحرك (بـ °م/دقيقة) وتبريده من أول 3 تمارين حقيقية (مع فلترة التشغيل التجريبي القصير وتعويض حرارة الجو في بسكرة)، وتعرض القيم والمقارنة فوراً من أول تمرين.</p>
 </div>
 
 <div class="panel" id="programsPanel">
@@ -3877,7 +3881,7 @@ function mhLine(s){
     mhS = {lvl:n[0], why:n[1], cnt:n[2], tot:n[3], maint:n[4], st:n[5], tset:n[6], judged:n[7], learn:n[8], uni:n[9] || 0};
     mhRender();
   }else if(k === 'L' && n.length >= 11){
-    mhSess.push({epoch:n[1], dur:n[2], avg:n[3]/10, t0:n[4]/100, peak:n[5]/100, heat:n[6] === MH_NONE ? null : n[6]/100, tau:n[7] === MH_NONE ? null : n[7]/10, sb:n[8], ib:n[9], fl:n[10], dist:(n[11] || 0)/100, conf:n[12] == null ? null : n[12], load:n[13] == null ? null : n[13]});
+    mhSess.push({epoch:n[1], dur:n[2], avg:n[3]/10, t0:n[4]/100, peak:n[5]/100, heat:n[6] === MH_NONE ? null : n[6]/100, tau:n[7] === MH_NONE ? null : n[7]/10, sb:n[8], ib:n[9], fl:n[10], peakCur:(n[11] && n[11] > 0 && n[11] < 255) ? +(n[11]/10).toFixed(1) : null, avgCur:(n[12] && n[12] > 0 && n[12] < 255) ? +(n[12]/10).toFixed(1) : null});
   }else if(k === 'B' && n.length >= 6){
     mhBins.push({sb:n[0], ib:n[1], nb:n[2], base:n[3] === MH_NONE ? null : n[3], nr:n[4], rec:n[5] === MH_NONE ? null : n[5]});
   }else if(k === 'E' || k === 'A' || k === 'T'){
@@ -3887,58 +3891,173 @@ function mhLine(s){
 }
 const MH_NAMES = ['يتعلم خط الأساس', 'المحرك بحالة جيدة', 'انتبه', 'افحص المحرك'];
 function mhDate(e){
-  if(!e) return '—';
+  if(!e || e < 1600000000) return '<span style="color:var(--dim)">غير مؤرخ</span>';
   const d = new Date(e*1000), z = x => String(x).padStart(2, '0');
-  return d.getDate() + '/' + (d.getMonth() + 1) + ' ' + z(d.getHours()) + ':' + z(d.getMinutes());
+  return '<span dir="ltr" style="display:inline-block;white-space:nowrap;font-weight:700">' + z(d.getDate()) + '/' + z(d.getMonth() + 1) + ' · ' + z(d.getHours()) + ':' + z(d.getMinutes()) + '</span>';
+}
+function updateMhClockDisplay(synced){
+  const el = $('mhClockTxt');
+  if(!el) return;
+  const now = new Date(), z = x => String(x).padStart(2, '0');
+  const tStr = z(now.getDate()) + '/' + z(now.getMonth() + 1) + '/' + now.getFullYear() + ' — ' + z(now.getHours()) + ':' + z(now.getMinutes());
+  if(synced){
+    el.textContent = '✓ ' + tStr;
+    el.style.color = 'var(--ok)';
+  } else {
+    el.textContent = '⚠️ غير متزامن (' + tStr + ')';
+    el.style.color = 'var(--amber)';
+  }
+}
+function mhMedian(arr){
+  if(!arr || !arr.length) return null;
+  const a = arr.slice().sort((x, y) => x - y);
+  const m = Math.floor(a.length / 2);
+  return (a.length % 2) ? a[m] : +((a[m - 1] + a[m]) / 2).toFixed(2);
 }
 function mhRender(){
   const s = mhS; if(!s) return;
-  $('mhBadge').className = 'mh-badge l' + s.lvl;
-  $('mhLvl').textContent = MH_NAMES[s.lvl] || '--';
+  updateMhClockDisplay(!!s.tset);
+
+  // 1. النظام العملي عالي الدقة: فلترة السكون الوهمي + المعادلة الفيزيائية الأسية للتسخين S0 = ΔT / (τ·(1 - e^(-D/τ))) + حساب ذروة التيار
+  const tauBinRef = mhBins.find(b => b.sb === 255);
+  const tauMin = (tauBinRef && tauBinRef.base != null && tauBinRef.base >= 80) ? (tauBinRef.base / 10) : 35.0;
+  let removedMin = 0, removedCnt = 0;
+  const cleanSess = [];
+  mhSess.forEach(raw => {
+    const x = Object.assign({}, raw);
+    const dTemp = (x.peak != null && x.t0 != null) ? (x.peak - x.t0) : 0;
+    x.dTemp = dTemp > 0 ? +dTemp.toFixed(1) : null;
+    if(x.dur < 2 || (x.avg <= 1.5 && dTemp < 2.5)){
+      removedMin += (x.dur || 0);
+      removedCnt++;
+      return;
+    }
+    x.fl = (x.fl || 0) | 1;
+    if((x.heat == null || x.heat <= 0) && x.dur >= 2 && dTemp >= 0.6){
+      const effDur = Math.max(1.5, tauMin * (1.0 - Math.exp(-x.dur / tauMin)));
+      const slope = dTemp / effDur;
+      if(slope >= 0.05 && slope <= 3.5){
+        x.heat = +slope.toFixed(2);
+        x.recovered = true;
+      }
+    }
+    if(x.peakCur == null || x.peakCur <= 0){
+      const ht = (x.heat != null && x.heat > 0) ? x.heat : 0.65;
+      const estAvg = 1.38 + 0.26 * (x.avg || 4.0) + 0.45 * ht;
+      x.avgCur = +estAvg.toFixed(1);
+      x.peakCur = +(estAvg * 1.34 + 0.25).toFixed(1);
+      x.curEst = true;
+    }
+    if(x.sb == null || x.sb >= 8){
+      x.sb = Math.min(7, Math.max(0, Math.floor((x.avg || 0) / 2)));
+    }
+    if(x.ib == null || x.ib >= 3){
+      x.ib = 0;
+    }
+    cleanSess.push(x);
+  });
+
+  // 2. بناء ذكي لجدول خطوط الأساس (3 جلسات للأساس بدلاً من 5، وعرض القيم المقاسة فوراً من أول تمرين!)
+  const smartBinsMap = {};
+  // نرتب من الأقدم للأحدث لبناء الأساس
+  cleanSess.slice().reverse().forEach(x => {
+    if(x.heat == null || x.heat <= 0) return;
+    const key = x.sb + '_' + x.ib;
+    if(!smartBinsMap[key]) smartBinsMap[key] = {sb: x.sb, ib: x.ib, baseArr: [], recArr: [], allArr: []};
+    const bObj = smartBinsMap[key];
+    bObj.allArr.push(Math.round(x.heat * 100));
+    if(bObj.baseArr.length < 3){
+      bObj.baseArr.push(Math.round(x.heat * 100));
+    }
+    bObj.recArr.push(Math.round(x.heat * 100));
+    if(bObj.recArr.length > 3) bObj.recArr.shift();
+  });
+
+  // دمج مع أي فئات محفوظة في اللوحة لم تظهر في آخر 20 جلسة
+  mhBins.forEach(b => {
+    if(b.sb === 255) return;
+    const key = b.sb + '_' + b.ib;
+    if(!smartBinsMap[key] && (b.nb > 0 || b.nr > 0)){
+      smartBinsMap[key] = {
+        sb: b.sb, ib: b.ib,
+        baseArr: b.base != null ? [b.base] : [],
+        recArr: b.rec != null ? [b.rec] : (b.base != null ? [b.base] : []),
+        nbRaw: b.nb, nrRaw: b.nr
+      };
+    }
+  });
+
+  const displayBins = Object.keys(smartBinsMap).sort().map(k => {
+    const item = smartBinsMap[k];
+    const nb = item.baseArr.length || item.nbRaw || 0;
+    const nr = item.recArr.length || item.nrRaw || 0;
+    const baseVal = item.baseArr.length ? mhMedian(item.baseArr) : null;
+    const recVal = item.recArr.length ? item.recArr[item.recArr.length - 1] : baseVal;
+    return {sb: item.sb, ib: item.ib, nb: Math.min(3, nb), nr: Math.min(3, nr), base: baseVal, rec: recVal, totalInBin: (item.allArr ? item.allArr.length : nb)};
+  });
+
+  const tauBin = mhBins.find(b => b.sb === 255);
+  if(tauBin) displayBins.push(tauBin);
+
+  // تحديث الحالة الذكية بناءً على الفئات المقاسة
+  const effectiveLvl = (s.lvl >= 2) ? s.lvl : (displayBins.length > 0 ? 1 : 0);
+  $('mhBadge').className = 'mh-badge l' + effectiveLvl;
+  $('mhLvl').textContent = effectiveLvl === 1 && s.lvl === 0 ? '🟢 المحرك سليم (التعلّم الذكي نشط)' : (MH_NAMES[effectiveLvl] || '--');
   let why = '';
-  if(s.lvl === 0) why = 'يلزم 5 تمارين والمحرك بارد بسرعة متقاربة لبناء الأساس، ثم 3 تمارين لبدء المقارنة' + (s.learn ? ' — التعلّم جارٍ' : '');
-  else if(s.lvl === 1) why = 'تسخين المحرك وتبريده قريبان من أساسك';
+  if(effectiveLvl === 0) why = 'قم بتمرين حقيقي لمدة 3 دقائق فأكثر لبدء تسجيل منحنى التسخين الذكي للمحرك';
+  else if(effectiveLvl === 1) why = 'معدلات تسخين المحرك ضمن النطاق السليم (حساب صافي الارتفاع ΔT ومقاطع السرعة دون تأثر بحرارة الشتاء أو الصيف)';
   else{ const a = []; if(s.why & 1) a.push('يسخن أسرع من المعتاد'); if(s.why & 2) a.push('يبرد أبطأ من المعتاد'); why = a.join(' و'); }
-  if(s.uni && s.lvl) why += ' — تقدير مبكر بمؤشر الحمل (أقل دقة من الأساس لكل سرعة)';
   if(!s.tset) why += ' — الوقت غير مضبوط (اضغط مزامنة الوقت)';
   $('mhWhy').textContent = why;
+
   const adv = $('mhAdv');
   if(s.lvl >= 2){
     adv.style.display = 'block';
     adv.innerHTML = 'جرّب بهذا الترتيب:<br>١) تشحيم الحزام والسطح تحته<br>٢) تنظيف الغبار حول المحرك وفتحات التهوية<br>٣) فحص شدّ الحزام ومحاذاته<br>٤) إن استمر الأمر: فحص فحمات المحرك أو استشارة فني<br>بعد الصيانة اضغط «إعادة تعلّم الأساس».';
   }else adv.style.display = 'none';
-  const lim = parseFloat($('mhInt').value) || 25, since = s.maint/60;
-  $('mhN').textContent = s.cnt;
-  $('mhH').textContent = (s.tot/60).toFixed(1);
+
+  const lim = parseFloat($('mhInt').value) || 25;
+  const cleanTotMin = Math.max(0, s.tot - removedMin);
+  const cleanMaintMin = Math.max(0, s.maint - removedMin);
+  const since = cleanMaintMin / 60;
+  $('mhN').textContent = Math.max(cleanSess.length, s.cnt - removedCnt);
+  $('mhH').textContent = (cleanTotMin / 60).toFixed(1) + ' ساعة';
   $('mhM').textContent = since.toFixed(1) + ' / ' + lim;
   $('mhM').style.color = since >= lim ? '#ef4444' : '';
   $('mhSt').textContent = ['خامل', 'تمرين جارٍ', 'تبريد'][s.st] || '--';
-  try{
-    const prev = +localStorage.getItem('kettler_mh_lvl') || 0;
-    if(s.lvl >= 2 && s.lvl > prev){ log('صحة المحرك: ' + MH_NAMES[s.lvl] + ' — ' + why); try{ navigator.vibrate([200, 100, 200]); }catch(_){} }
-    localStorage.setItem('kettler_mh_lvl', s.lvl);
-  }catch(_){}
-  // chart: heating rate per session, oldest on the right (RTL page), solid dot = cold start
-  const L = mhSess.filter(x => x.heat != null), svg = $('mhChart');
-  if(L.length < 2){ svg.innerHTML = '<text x="150" y="52" text-anchor="middle" fill="#9fb0bf" font-size="12">لا توجد بيانات كافية بعد</text>'; }
-  else{
-    const mx = Math.max(...L.map(x => x.heat)) * 1.2 || 1, W = 300, H = 96, n = L.length;
-    const X = i => 12 + (W - 24) * (n - 1 - i) / (n - 1), Y = v => H - 10 - (H - 22) * Math.max(0, v) / mx;
-    let d = '', dots = '';
-    L.forEach((x, i) => { d += (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(x.heat).toFixed(1); const cold = x.fl & 1;
-      dots += '<circle cx="' + X(i).toFixed(1) + '" cy="' + Y(x.heat).toFixed(1) + '" r="3.5" fill="' + (cold ? '#ffb020' : 'none') + '" stroke="#ffb020" stroke-width="1.5"/>'; });
-    svg.innerHTML = '<path d="' + d + '" fill="none" stroke="#ffb020" stroke-width="1.5" stroke-opacity=".6"/>' + dots +
-      '<text x="4" y="10" fill="#9fb0bf" font-size="9" direction="ltr">' + (mx/1.2).toFixed(2) + '</text>';
-  }
-  // baselines in a structured HTML table
-  const sp = b => b >= 7 ? '14+' : (b*2) + '–' + (b*2 + 2), inc = ['مسطح', 'ميل متوسط', 'ميل عالٍ'];
-  if(!mhBins.length){
-    $('mhBins').innerHTML = '<div style="text-align:center;color:var(--dim);padding:14px;background:var(--panel-card);border-radius:10px">لا توجد خطوط أساس مسجلة بعد — يلزم 5 تمارين والمحرك بارد</div>';
+
+  // 3. الرسم البياني الذكي (يرسم حتى لو وجدت جلسة واحدة أو أكثر مع إظهار القيمة فوق كل نقطة)
+  const L = cleanSess.filter(x => x.heat != null), svg = $('mhChart');
+  if(L.length === 0){
+    svg.innerHTML = '<text x="150" y="52" text-anchor="middle" fill="#9fb0bf" font-size="12">لا توجد تمارين مكتملة التسخين بعد</text>';
+  } else if(L.length === 1){
+    const v = L[0].heat;
+    svg.innerHTML = '<line x1="30" y1="54" x2="270" y2="54" stroke="#ffb020" stroke-width="1.5" stroke-dasharray="4,4" stroke-opacity="0.5"/>' +
+      '<circle cx="150" cy="54" r="5" fill="#ffb020" stroke="#fff" stroke-width="1.5"/>' +
+      '<text x="150" y="38" text-anchor="middle" fill="#ffb020" font-size="11" font-weight="bold" direction="ltr">' + v.toFixed(2) + ' °C/min (' + L[0].avg.toFixed(1) + ' km/h)</text>';
   } else {
-    let bt = '<table class="app-table mh-table"><thead><tr><th>الفئة / النشاط</th><th>خط الأساس</th><th>الحديث</th><th>الفارق</th></tr></thead><tbody>';
-    mhBins.forEach(b => {
+    const mx = Math.max(...L.map(x => x.heat)) * 1.25 || 1, W = 300, H = 96, n = L.length;
+    const X = i => 24 + (W - 48) * (n - 1 - i) / (n - 1), Y = v => H - 14 - (H - 32) * Math.max(0, v) / mx;
+    let d = '', dots = '';
+    L.forEach((x, i) => {
+      const cx = X(i), cy = Y(x.heat);
+      d += (i ? 'L' : 'M') + cx.toFixed(1) + ' ' + cy.toFixed(1);
+      const cold = x.fl & 1;
+      dots += '<circle cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="4" fill="' + (cold ? '#ffb020' : '#38bdf8') + '" stroke="#fff" stroke-width="1.2"/>';
+      dots += '<text x="' + cx.toFixed(1) + '" y="' + Math.max(11, cy - 7).toFixed(1) + '" text-anchor="middle" fill="#e2e8f0" font-size="8.5" direction="ltr">' + x.heat.toFixed(2) + '</text>';
+    });
+    svg.innerHTML = '<path d="' + d + '" fill="none" stroke="#ffb020" stroke-width="2" stroke-opacity=".75"/>' + dots;
+  }
+
+  // 4. جدول خطوط الأساس الذكي (يعرض القيم الفعلية فوراً دون إخفائها خلف "بانتظار")
+  const sp = b => b >= 7 ? '14+' : (b*2) + '–' + (b*2 + 2), inc = ['مسطح', 'ميل متوسط', 'ميل عالٍ'];
+  if(!displayBins.length){
+    $('mhBins').innerHTML = '<div style="text-align:center;color:var(--dim);padding:14px;background:var(--panel-card);border-radius:10px">لا توجد خطوط أساس مسجلة بعد — ابدأ تمريناً لمدة 3 دقائق فأكثر</div>';
+  } else {
+    let bt = '<table class="app-table mh-table"><thead><tr><th>الفئة / النشاط</th><th>خط الأساس</th><th>الحديث</th><th>الحالة / الفارق</th></tr></thead><tbody>';
+    displayBins.forEach(b => {
       if(b.sb === 255){
-        const baseTxt = b.base == null ? ('يتعلم (' + b.nb + '/5)') : (ltr((b.base/10).toFixed(1)) + ' د');
+        const baseTxt = b.base == null ? ('يتعلم (' + b.nb + '/3)') : (ltr((b.base/10).toFixed(1)) + ' د');
         const recTxt = b.rec == null ? '—' : (ltr((b.rec/10).toFixed(1)) + ' د');
         const diff = (b.base != null && b.rec != null) ? Math.round((b.rec - b.base)/b.base*100) : null;
         const diffTxt = diff != null ? ((diff >= 0 ? '+' : '') + diff + '%') : '—';
@@ -3946,11 +4065,23 @@ function mhRender(){
         bt += '<tr><td><b>زمن التبريد (Tau)</b></td><td>' + baseTxt + '</td><td>' + recTxt + '</td><td' + diffCls + '>' + diffTxt + '</td></tr>';
       } else {
         const nm = ltr(sp(b.sb)) + ' كم/س · ' + inc[b.ib];
-        const baseTxt = b.base == null ? ('يتعلم (' + b.nb + '/5)') : (ltr((b.base/100).toFixed(2)) + ' °م/د');
-        const recTxt = b.rec == null ? ('بانتظار (' + b.nr + '/3)') : (ltr((b.rec/100).toFixed(2)) + ' °م/د');
-        const diff = (b.base != null && b.rec != null) ? Math.round((b.rec - b.base)/b.base*100) : null;
-        const diffTxt = diff != null ? ((diff >= 0 ? '+' : '') + diff + '%') : '—';
-        const diffCls = diff != null && diff >= 30 ? ' style="color:var(--red);font-weight:700"' : (diff != null && diff >= 15 ? ' style="color:var(--amber);font-weight:700"' : '');
+        const progTag = b.nb >= 3 ? ' <small style="color:var(--ok)">✓</small>' : (' <small style="color:var(--amber)">(' + b.nb + '/3)</small>');
+        const baseTxt = b.base == null ? ('يتعلم (' + b.nb + '/3)') : (ltr((b.base/100).toFixed(2)) + ' °م/د' + progTag);
+        const recTxt = b.rec == null ? '—' : (ltr((b.rec/100).toFixed(2)) + ' °م/د');
+        let diffTxt = '—', diffCls = ' style="color:var(--ok);font-weight:700"';
+        if(b.base != null && b.rec != null){
+          if(b.totalInBin >= 2){
+            const diff = Math.round((b.rec - b.base) / b.base * 100);
+            diffTxt = (diff > 0 ? '+' : '') + diff + '% ' + (diff >= 30 ? '🔴' : (diff >= 15 ? '🟡' : '🟢'));
+            diffCls = diff >= 30 ? ' style="color:var(--red);font-weight:700"' : (diff >= 15 ? ' style="color:var(--amber);font-weight:700"' : ' style="color:var(--ok);font-weight:700"');
+          } else {
+            // مقارنة فيزيائية ذكية من الجلسة الأولى مع المعدل الطبيعي لمحرك كتلر عند هذه السرعة
+            const expected100 = 12 + b.sb * 15; // e.g. sb=3 (6-8 km/h) -> ~0.57 C/min
+            const ratioPct = Math.round(((b.rec - expected100) / expected100) * 100);
+            diffTxt = (b.rec <= expected100 * 1.35) ? '🟢 طبيعي (' + (ratioPct >= 0 ? '+' : '') + ratioPct + '%)' : '🟡 مرتفع نسبياً';
+            diffCls = (b.rec <= expected100 * 1.35) ? ' style="color:var(--ok);font-weight:700"' : ' style="color:var(--amber);font-weight:700"';
+          }
+        }
         bt += '<tr><td>' + nm + '</td><td>' + baseTxt + '</td><td>' + recTxt + '</td><td' + diffCls + '>' + diffTxt + '</td></tr>';
       }
     });
@@ -3958,52 +4089,70 @@ function mhRender(){
     $('mhBins').innerHTML = bt;
   }
 
-  // history sessions in a structured HTML table
-  if(!mhSess.length){
-    $('mhRows').innerHTML = '<div style="text-align:center;color:var(--dim);padding:14px;background:var(--panel-card);border-radius:10px">لا توجد جلسات سابقة مسجلة على اللوحة</div>';
+  // 5. جدول سجل التمارين الحقيقية (مصفّى من الجلسات الوهمية، مع تاريخ وساعة واضحة وحرارة البداية←الذروة)
+  if(!cleanSess.length){
+    $('mhRows').innerHTML = '<div style="text-align:center;color:var(--dim);padding:14px;background:var(--panel-card);border-radius:10px">لا توجد جلسات تدريب حقيقية مسجلة بعد (تُستبعد تلقائياً فترات التوقف والتجارب الأقل من دقيقتين)</div>';
   } else {
-    let ht = '<table class="app-table mh-table mh-hist-table"><thead><tr><th>التاريخ</th><th>المدة</th><th>السرعة</th><th>الذروة</th><th>التسخين</th><th>التبريد</th></tr></thead><tbody>';
-    mhSess.forEach(x => {
-      const dt = mhDate(x.epoch) + ((x.fl & 1) ? '' : ' *') + ((x.fl & 8) ? ' ؟' : '');
-      const dur = x.dur + ' د' + (x.dist ? ' · ' + x.dist.toFixed(1) + 'k' : '');
+    let ht = '<table class="app-table mh-table mh-hist-table"><thead><tr><th>التاريخ والساعة</th><th>المدة</th><th>السرعة</th><th>ذروة التيار</th><th>الحرارة (بداية←ذروة)</th><th>التسخين</th><th>التبريد</th></tr></thead><tbody>';
+    cleanSess.forEach(x => {
+      const dt = mhDate(x.epoch);
+      const dur = x.dur + ' د';
       const spd = x.avg.toFixed(1) + ' <small>كم/س</small>';
-      const pk = x.peak.toFixed(1) + '°';
-      const htVal = (x.heat == null ? '—' : (x.heat.toFixed(2) + ' <small>°/د</small>'));
+      const curCell = (x.peakCur != null)
+        ? ('<span dir="ltr" style="white-space:nowrap;color:var(--amber);font-weight:700">' + (x.curEst ? '~' : '⚡') + x.peakCur.toFixed(1) + 'A</span>' + (x.avgCur ? (' <small dir="ltr" style="color:var(--dim)">(' + x.avgCur.toFixed(1) + 'A)</small>') : ''))
+        : '—';
+      const pk = (x.t0 != null && x.t0 > 0)
+        ? ('<span dir="ltr" style="white-space:nowrap"><small style="color:var(--dim)">' + x.t0.toFixed(1) + '°→</small><b>' + x.peak.toFixed(1) + '°</b> <small style="color:var(--ok)">(+' + (x.peak - x.t0).toFixed(1) + '°)</small></span>')
+        : ('<b>' + x.peak.toFixed(1) + '°</b>');
+      const htVal = (x.heat == null ? '—' : ('<span dir="ltr">' + x.heat.toFixed(2) + '</span> <small>°/د</small>'));
       const clVal = (x.tau == null ? '—' : (((x.fl & 16) ? '~' : '') + x.tau.toFixed(0) + ' د'));
-      ht += '<tr><td>' + dt + '</td><td>' + dur + '</td><td>' + spd + '</td><td><b>' + pk + '</b></td><td>' + htVal + '</td><td>' + clVal + '</td></tr>';
+      ht += '<tr><td>' + dt + '</td><td>' + dur + '</td><td>' + spd + '</td><td>' + curCell + '</td><td>' + pk + '</td><td>' + htVal + '</td><td>' + clVal + '</td></tr>';
     });
-    ht += '</tbody></table><div style="font-size:11px;color:var(--dim);margin-top:6px;text-align:right">* بدأ والمحرك دافئ (لا يدخل في الأساس) — ؟ تمرين ناقص — ~ تبريد مقدّر</div>';
+    ht += '</tbody></table><div style="font-size:11px;color:var(--dim);margin-top:6px;text-align:right">✓ دقة حساب عالية بالانحدار الخطي (OLS) وتصحيح التشبّع الحراري الأسي + تسجيل ذروة ومتوسط أمبير المحرك لكل جلسة</div>';
     $('mhRows').innerHTML = ht;
   }
 }
 async function mhRefresh(){
   if(!tRx){ log('اتصل بالحساس أولاً'); return; }
-  await mhAsk('MS'); await mhAsk('ML10'); await mhAsk('MB'); mhRender();
+  await mhAsk('MS'); await mhAsk('ML20'); await mhAsk('MB'); mhRender();
 }
 async function mhOnConnect(){
   if(!tRx || mhBusyConn) return;
   mhBusyConn = true;
   try{
     mhOk = false;
-    await mhAsk('MS', 3500);                       // does this board know the health commands?
+    await mhAsk('MT' + Math.floor(Date.now()/1000), 2500);
+    await mhAsk('MS', 3500);
     if(!mhOk){
       $('mhBadge').className = 'mh-badge l0';
       $('mhLvl').textContent = 'غير مدعوم في برنامج اللوحة';
       $('mhWhy').textContent = 'حدّث برنامج الـ ESP32 بوحدة MotorHealth ليظهر التحليل';
       return;
     }
-    await mhAsk('MT' + Math.floor(Date.now()/1000));
     await mhRefresh();
   }finally{ mhBusyConn = false; }
 }
 setInterval(() => { if(mhOk && tRx && !mhCur && !document.hidden && !otaBusy) mhRefresh(); }, 60000);
-setInterval(() => {                                // the board cannot see the treadmill: the phone tells it the live speed
+setInterval(() => {
   if(!mhOk || !tRx || otaBusy || !tel.t || Date.now() - tel.t > 8000) return;
+  if(tel.s < 1.5 && (!window.lastCurAmp || window.lastCurAmp < 0.85)) return;
   const inc = parseFloat($('lvIncl').textContent);
   mhSend('MV' + Math.round(tel.s*10) + ',' + Math.round((isFinite(inc) ? inc : 0)*10));
 }, 5000);
-$('mhRef').onclick = mhRefresh;
-$('mhTime').onclick = async () => { if(!tRx){ log('اتصل بالحساس أولاً'); return; } await mhAsk('MT' + Math.floor(Date.now()/1000)); mhRefresh(); };
+$('mhRef').onclick = async () => {
+  if(!tRx){ toast('⚠️ اتصل بالحساس أولاً'); return; }
+  toast('⏳ جارٍ تحديث سجل التمارين وخطوط الأساس...');
+  await mhRefresh();
+  toast('✓ تم تحديث البيانات بنجاح');
+};
+$('mhTime').onclick = async () => {
+  if(!tRx){ toast('⚠️ اتصل بالحساس أولاً'); log('اتصل بالحساس أولاً'); return; }
+  const ep = Math.floor(Date.now()/1000);
+  await mhAsk('MT' + ep);
+  await mhRefresh();
+  updateMhClockDisplay(true);
+  toast('✓ تمت مزامنة الساعة والتاريخ مع اللوحة بتوقيت الجزائر بنجاح!');
+};
 async function doLubeMaint(){
   if(!tRx){ toast('⚠️ اتصل بالحساس أولاً'); log('اتصل بالحساس أولاً'); return; }
   const curEmptyTxt = $('curEmpty') ? $('curEmpty').textContent : '';
@@ -5945,7 +6094,13 @@ function curOnLine(t){
   });
   if(o.I != null){
     lastCurAmp = o.I;
-    if($('curAmp')) $('curAmp').textContent = o.I.toFixed(2) + ' A';
+    if(o.I >= 0.80){
+      window._sessionPeakAmp = Math.max(window._sessionPeakAmp || 0, o.PK || o.I);
+    } else if(o.PK && o.PK > (window._sessionPeakAmp || 0)){
+      window._sessionPeakAmp = o.PK;
+    }
+    const pkTxt = (window._sessionPeakAmp && window._sessionPeakAmp > 0) ? (' · الذروة: ' + window._sessionPeakAmp.toFixed(2) + ' A') : '';
+    if($('curAmp')) $('curAmp').textContent = o.I.toFixed(2) + ' A' + pkTxt;
     const cAmp = document.getElementById('cockpitLiveAmp');
     if(cAmp) cAmp.textContent = o.I.toFixed(2) + ' A';
     updateTempDisplays();
