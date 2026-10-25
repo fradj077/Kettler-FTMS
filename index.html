@@ -1854,7 +1854,7 @@ iframe[src*="netlify"], [class*="netlify"], [id*="netlify"], [data-netlify-deplo
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v91.8 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v91.9 🔄</span>
   </div>
   <div class="ccb-status">
     <span class="dot" id="dot"></span>
@@ -5971,7 +5971,28 @@ function curOnLine(t){
     bEl.textContent = st.txt;
     bEl.style.color = st.c;
   }
-  if(o.S != null && $('curSteps')) $('curSteps').textContent = Math.round(o.S);
+  if(o.S != null && $('curSteps')){
+    const curS = Math.round(o.S);
+    $('curSteps').textContent = curS;
+    const nowMs = Date.now();
+    if(window._prevStepVal != null && curS > window._prevStepVal){
+      const dS = curS - window._prevStepVal;
+      const dt = nowMs - (window._lastStepChangeMs || nowMs);
+      if(dt >= 220 && dt <= 4000 && dS <= 6){
+        const instSpm = Math.round((dS * 60000) / dt);
+        if(instSpm >= 70 && instSpm <= 220){
+          window._calcSpm = window._calcSpm ? Math.round(window._calcSpm * 0.65 + instSpm * 0.35) : instSpm;
+        }
+      }
+      window._lastStepChangeMs = nowMs;
+    } else if(window._lastStepChangeMs && (nowMs - window._lastStepChangeMs) > 4000){
+      window._calcSpm = 0;
+    }
+    window._prevStepVal = curS;
+    const liveSpm = (o.C != null && !isNaN(o.C)) ? Math.round(o.C) : (window._calcSpm || 0);
+    if($('curCadence')) $('curCadence').textContent = liveSpm + ' SPM';
+    if($('gaitCadence')) $('gaitCadence').textContent = liveSpm + ' SPM';
+  }
   if(o.E != null && $('curEmpty')){
     $('curEmpty').textContent = o.E.toFixed(2) + ' A';
     if(o.E >= 0.45 && o.E <= 2.8){
@@ -6032,7 +6053,7 @@ function curOnLine(t){
       $('curSymCard').style.color = sym >= 90 ? 'var(--ok)' : (sym >= 80 ? 'var(--amber)' : 'var(--red)');
     }
     if($('gaitRegBar')) $('gaitRegBar').style.width = sym + '%';
-    if($('gaitCadence') && o.S != null) $('gaitCadence').textContent = Math.round(o.S) + ' SPM';
+    if($('gaitCadence') && o.C != null) $('gaitCadence').textContent = Math.round(o.C) + ' SPM';
     if($('gaitTip')){
       $('gaitTip').textContent = sym >= 92 ? 'توازن متطابق ومثالي 🟢' : (sym >= 84 ? 'تفاوت طفيف 🟡' : 'عدم توازن ملحوظ 🔴');
       $('gaitTip').style.color = sym >= 92 ? 'var(--ok)' : (sym >= 84 ? 'var(--amber)' : 'var(--red)');
