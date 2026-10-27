@@ -1957,7 +1957,7 @@ body{padding-bottom:calc(125px + env(safe-area-inset-bottom,0px))!important}
 <body>
 <div id="gate" onclick="if(event.target===this)hideGate()"><div class="gbox" style="position:relative">
   <button type="button" onclick="hideGate()" style="position:absolute;top:12px;left:12px;width:34px;height:34px;min-height:34px;padding:0;background:rgba(255,255,255,0.12);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;">✕</button>
-  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v93 (درع الأمان والاتصال السريع المطور)</div>
+  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v93 (درع الأمان وكشف السقوط المطور)</div>
   <h1 style="margin:0 0 8px">الاتصال بحساس الحرارة</h1>
   <p style="margin:0 0 12px">لحماية المحرك، يرجى الاتصال بحساس الحرارة أو الضغط على تخطي للمتابعة فوراً.</p>
   <div id="gMsg"></div>
@@ -2396,7 +2396,10 @@ body{padding-bottom:calc(125px + env(safe-area-inset-bottom,0px))!important}
     <div id="mhAdv"></div>
     <!-- أزرار الربط السريع في حال عدم الاتصال -->
     <div class="row r2" style="margin-top:6px;gap:6px">
-      <button id="btnTemp" style="min-height:36px;font-size:12px">الاتصال بالحساس</button>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button id="btnTemp" onclick="connectTemp(false)" style="min-height:36px;font-size:12px;font-weight:bold">الاتصال بالحساس</button>
+        <button type="button" onclick="connectTemp(true)" style="min-height:36px;font-size:11px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:8px;padding:2px 8px;color:#fff;cursor:pointer" title="استخدم البحث الشامل إذا لم يظهر Kettler-Temp في القائمة">🔍 بحث شامل</button>
+      </div>
       <button id="btnBridge" style="min-height:36px;font-size:12px">ربط المشاية بالوسيط</button>
     </div>
     <div style="margin-top:6px">
@@ -2447,6 +2450,140 @@ body{padding-bottom:calc(125px + env(safe-area-inset-bottom,0px))!important}
         لا توجد أخطاء مسجلة في فلاش اللوحة ✓ (الذاكرة نظيفة)
       </div>
     </div>
+
+  <!-- بطاقة درع الأمان وكشف السقوط الذكي (Smart Fall & Safety Guard) -->
+  <div class="card" id="safetyCard" style="background:linear-gradient(135deg, rgba(15,23,42,0.92), rgba(30,41,59,0.98));border:1.5px solid rgba(56,189,248,0.3);border-radius:14px;padding:14px 16px;margin:12px 0 16px 0;box-shadow:0 6px 20px rgba(0,0,0,0.4)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px;color:var(--text)">
+        <span>🛡️ درع الأمان وكشف السقوط والنزول التلقائي (DSP Guard)</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span id="sfBadge" style="font-size:11px;padding:3px 9px;border-radius:6px;background:rgba(16,185,129,0.15);color:var(--ok);font-weight:bold;border:1px solid rgba(16,185,129,0.3)">
+          🟢 المراقبة جاهزة
+        </span>
+      </div>
+    </div>
+
+    <!-- مفتاح وضع الاختبار الآمن (Dry-Run Test Mode) -->
+    <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-weight:bold;font-size:12.5px;color:var(--amber);display:flex;align-items:center;gap:5px">
+          <span>🧪 وضع الاختبار الآمن (بدون إيقاف المحرك)</span>
+        </div>
+        <div style="font-size:10.5px;color:var(--dim);margin-top:2px">
+          تنبيه صوتي ومرئي فقط لتجربة الحساسية وقياس الأوقات بأمان تام قبل تفعيل الإيقاف الحقيقي
+        </div>
+      </div>
+      <label style="position:relative;display:inline-flex;align-items:center;cursor:pointer">
+        <input type="checkbox" id="sfTestToggle" onchange="onSfTestToggleChanged()" style="transform:scale(1.4);accent-color:var(--amber);cursor:pointer">
+      </label>
+    </div>
+
+    <!-- الآليات الثلاث المجمعة مع بارامتراتها القابلة للتعديل -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <!-- 1. آلية كاشف النزول والسقوط السريع (Dismount) -->
+      <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:10px 12px;border:1px solid rgba(255,255,255,0.06)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-weight:bold;font-size:12.5px;color:var(--text);display:flex;align-items:center;gap:6px">
+            <span>⚡ 1. كاشف النزول أو الخروج من السير (Dismount)</span>
+          </div>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <span style="font-size:11px;color:var(--dim)">تفعيل:</span>
+            <input type="checkbox" id="sfFsEn" checked onchange="updateSafetyConfigFromUI()" style="transform:scale(1.2);accent-color:var(--accent);cursor:pointer">
+          </label>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11.5px">
+          <div>
+            <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
+              <span>مهلة انعدام الخطوة:</span>
+              <b id="sfFsMsLbl" style="color:var(--accent)">500 ms</b>
+            </div>
+            <input type="range" id="sfFsMs" min="250" max="1200" step="25" value="500" oninput="$('sfFsMsLbl').textContent=this.value+' ms'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
+              <span>أدنى سرعة للتفعيل:</span>
+              <b id="sfFsVminLbl" style="color:var(--accent)">3.0 كم/س</b>
+            </div>
+            <input type="range" id="sfFsVmin" min="1.5" max="6.0" step="0.5" value="3.0" oninput="$('sfFsVminLbl').textContent=(+this.value).toFixed(1)+' كم/س'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. آلية كاشف الانزلاق والصدمة الشاذة (Sustained Drag) -->
+      <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:10px 12px;border:1px solid rgba(255,255,255,0.06)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-weight:bold;font-size:12.5px;color:var(--text);display:flex;align-items:center;gap:6px">
+            <span>🛑 2. كاشف الانزلاق والاحتكاك الشاذ (Sustained Drag)</span>
+          </div>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <span style="font-size:11px;color:var(--dim)">تفعيل:</span>
+            <input type="checkbox" id="sfDrEn" checked onchange="updateSafetyConfigFromUI()" style="transform:scale(1.2);accent-color:var(--accent);cursor:pointer">
+          </label>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11.5px">
+          <div>
+            <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
+              <span>مدة الصدمة الميكانيكية:</span>
+              <b id="sfDrMsLbl" style="color:var(--accent)">200 ms</b>
+            </div>
+            <input type="range" id="sfDrMs" min="100" max="500" step="25" value="200" oninput="$('sfDrMsLbl').textContent=this.value+' ms'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
+              <span>فارق أمبير الصدمة:</span>
+              <b id="sfDrAmpLbl" style="color:var(--accent)">+1.2 A</b>
+            </div>
+            <input type="range" id="sfDrAmp" min="0.6" max="3.0" step="0.1" value="1.2" oninput="$('sfDrAmpLbl').textContent='+'+(+this.value).toFixed(1)+' A'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. آلية الإنقاذ وتخفيض السرعة عند الارتباك (Auto-Rescue) -->
+      <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:10px 12px;border:1px solid rgba(255,255,255,0.06)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-weight:bold;font-size:12.5px;color:var(--text);display:flex;align-items:center;gap:6px">
+            <span>🏃 3. نظام الإنقاذ وخفض السرعة عند الارتباك (Auto-Rescue)</span>
+          </div>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <span style="font-size:11px;color:var(--dim)">تفعيل:</span>
+            <input type="checkbox" id="sfRcEn" checked onchange="updateSafetyConfigFromUI()" style="transform:scale(1.2);accent-color:var(--accent);cursor:pointer">
+          </label>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11.5px">
+          <div>
+            <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
+              <span>مقدار خفض السرعة:</span>
+              <b id="sfRcDropLbl" style="color:var(--accent)">-2.5 كم/س</b>
+            </div>
+            <input type="range" id="sfRcDrop" min="1.0" max="5.0" step="0.5" value="2.5" oninput="$('sfRcDropLbl').textContent='-'+(+this.value).toFixed(1)+' كم/س'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
+              <span>نسبة تشتت الخطوات:</span>
+              <b id="sfRcVarLbl" style="color:var(--accent)">30%</b>
+            </div>
+            <input type="range" id="sfRcVar" min="15" max="50" step="5" value="30" oninput="$('sfRcVarLbl').textContent=this.value+'%'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- أزرار الإجراء وسجل الأحداث الحي للأمان -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.08)">
+      <div id="sfLiveStatus" style="font-size:11px;color:var(--dim)">
+        ✓ الإعدادات متزامنة ومحفوظة في فلاش اللوحة (NVS)
+      </div>
+      <div style="display:flex;gap:8px">
+        <button type="button" onclick="bridgeCmd('SFQ')" style="min-height:28px;padding:3px 10px;font-size:11px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:#fff;cursor:pointer">🔄 قراءة اللوحة</button>
+        <button type="button" onclick="saveSafetyConfigToBoard()" style="min-height:28px;padding:3px 12px;font-size:11px;font-weight:bold;background:linear-gradient(135deg,#0284c7,#0369a1);border:1px solid #38bdf8;border-radius:6px;color:#fff;cursor:pointer">💾 حفظ في اللوحة</button>
+      </div>
+    </div>
+  </div>
+
+
   </div>
 
   <!-- بطاقة المعايرة الميدانية الذكية للوزن والخطوات -->
@@ -3855,6 +3992,142 @@ async function bridgeCmd(c){
   if(!ok) log('تعذر إرسال الأمر للوسيط');
   return ok;
 }
+
+// ---------- درع الأمان الذكي وكشف السقوط والنزول التلقائي (v37.0) ----------
+let sfCfg = {fsEn:1, fsMs:500, fsVmin:3.0, drEn:1, drMs:200, drAmp:1.2, rcEn:1, rcDrop:2.5, rcVar:30, safeTest:0};
+
+function onSafetyLine(line){
+  if(line.indexOf('C=') === 0){
+    const p = line.slice(2).split(',');
+    if(p.length >= 10){
+      sfCfg.fsEn = parseInt(p[0], 10) || 0;
+      sfCfg.fsMs = parseInt(p[1], 10) || 500;
+      sfCfg.fsVmin = parseFloat(p[2]) || 3.0;
+      sfCfg.drEn = parseInt(p[3], 10) || 0;
+      sfCfg.drMs = parseInt(p[4], 10) || 200;
+      sfCfg.drAmp = parseFloat(p[5]) || 1.2;
+      sfCfg.rcEn = parseInt(p[6], 10) || 0;
+      sfCfg.rcDrop = parseFloat(p[7]) || 2.5;
+      sfCfg.rcVar = parseInt(p[8], 10) || 30;
+      sfCfg.safeTest = parseInt(p[9], 10) || 0;
+      updateSafetyUIFromConfig();
+    }
+    return;
+  }
+  if(line.indexOf('OK') === 0){
+    toast('✓ تم حفظ وتفعيل إعدادات درع الأمان في فلاش اللوحة (NVS)!');
+    if($('sfLiveStatus')){
+      $('sfLiveStatus').textContent = '✓ الإعدادات متزامنة ومحفوظة في فلاش اللوحة (NVS)';
+      $('sfLiveStatus').style.color = 'var(--ok)';
+    }
+    return;
+  }
+  if(line.indexOf('EVT=') === 0){
+    const p = line.slice(4).split(',');
+    const type = p[0] || 'DISMOUNT';
+    const val = p[1] || '0';
+    const mode = p[2] || 'ACT';
+    const isTest = (mode === 'TEST');
+
+    playSafetyBeep();
+
+    let msg = '';
+    if(type === 'DISMOUNT'){
+      msg = (isTest ? '⚠️ [تجربة أمان] تم رصد النزول من السير خلال ' : '🛑 تم إيقاف المشاية: رصد نزول/سقوط خلال ') + val + ' ms!';
+    } else if(type === 'DRAG'){
+      msg = (isTest ? '⚠️ [تجربة أمان] تم رصد احتكاك وانزلاق شاذ خلال ' : '🛑 فرملة طوارئ: رصد انزلاق شاذ على السير خلال ') + val + ' ms!';
+    } else if(type === 'RESCUE'){
+      msg = '🏃 ' + (isTest ? '[تجربة أمان] إشارة إنقاذ: خفض السرعة المقترح إلى ' : 'تم خفض السرعة تلقائياً للإنقاذ إلى ') + val + ' كم/س!';
+    }
+
+    toast(msg);
+
+    if($('sfBadge')){
+      $('sfBadge').textContent = isTest ? '🧪 حدث تجريبي مرصود' : '⚠️ تدخل الأمان نشط';
+      $('sfBadge').style.background = isTest ? 'rgba(245,158,11,0.2)' : 'rgba(239,68,68,0.2)';
+      $('sfBadge').style.color = isTest ? 'var(--amber)' : 'var(--red)';
+      $('sfBadge').style.borderColor = isTest ? 'var(--amber)' : 'var(--red)';
+      setTimeout(() => {
+        if($('sfBadge')){
+          $('sfBadge').textContent = '🟢 المراقبة جاهزة';
+          $('sfBadge').style.background = 'rgba(16,185,129,0.15)';
+          $('sfBadge').style.color = 'var(--ok)';
+          $('sfBadge').style.borderColor = 'rgba(16,185,129,0.3)';
+        }
+      }, 6000);
+    }
+    return;
+  }
+}
+
+function updateSafetyUIFromConfig(){
+  if($('sfTestToggle')) $('sfTestToggle').checked = (sfCfg.safeTest === 1);
+  if($('sfFsEn')) $('sfFsEn').checked = (sfCfg.fsEn === 1);
+  if($('sfFsMs')){ $('sfFsMs').value = sfCfg.fsMs; if($('sfFsMsLbl')) $('sfFsMsLbl').textContent = sfCfg.fsMs + ' ms'; }
+  if($('sfFsVmin')){ $('sfFsVmin').value = sfCfg.fsVmin; if($('sfFsVminLbl')) $('sfFsVminLbl').textContent = sfCfg.fsVmin.toFixed(1) + ' كم/س'; }
+  if($('sfDrEn')) $('sfDrEn').checked = (sfCfg.drEn === 1);
+  if($('sfDrMs')){ $('sfDrMs').value = sfCfg.drMs; if($('sfDrMsLbl')) $('sfDrMsLbl').textContent = sfCfg.drMs + ' ms'; }
+  if($('sfDrAmp')){ $('sfDrAmp').value = sfCfg.drAmp; if($('sfDrAmpLbl')) $('sfDrAmpLbl').textContent = '+' + sfCfg.drAmp.toFixed(1) + ' A'; }
+  if($('sfRcEn')) $('sfRcEn').checked = (sfCfg.rcEn === 1);
+  if($('sfRcDrop')){ $('sfRcDrop').value = sfCfg.rcDrop; if($('sfRcDropLbl')) $('sfRcDropLbl').textContent = '-' + sfCfg.rcDrop.toFixed(1) + ' كم/س'; }
+  if($('sfRcVar')){ $('sfRcVar').value = sfCfg.rcVar; if($('sfRcVarLbl')) $('sfRcVarLbl').textContent = sfCfg.rcVar + '%'; }
+}
+
+function updateSafetyConfigFromUI(){
+  if($('sfTestToggle')) sfCfg.safeTest = $('sfTestToggle').checked ? 1 : 0;
+  if($('sfFsEn')) sfCfg.fsEn = $('sfFsEn').checked ? 1 : 0;
+  if($('sfFsMs')) sfCfg.fsMs = parseInt($('sfFsMs').value, 10) || 500;
+  if($('sfFsVmin')) sfCfg.fsVmin = parseFloat($('sfFsVmin').value) || 3.0;
+  if($('sfDrEn')) sfCfg.drEn = $('sfDrEn').checked ? 1 : 0;
+  if($('sfDrMs')) sfCfg.drMs = parseInt($('sfDrMs').value, 10) || 200;
+  if($('sfDrAmp')) sfCfg.drAmp = parseFloat($('sfDrAmp').value) || 1.2;
+  if($('sfRcEn')) sfCfg.rcEn = $('sfRcEn').checked ? 1 : 0;
+  if($('sfRcDrop')) sfCfg.rcDrop = parseFloat($('sfRcDrop').value) || 2.5;
+  if($('sfRcVar')) sfCfg.rcVar = parseInt($('sfRcVar').value, 10) || 30;
+
+  if($('sfLiveStatus')){
+    $('sfLiveStatus').textContent = '⚠️ تم تعديل القيم محلياً — اضغط "حفظ في اللوحة" للمزامنة';
+    $('sfLiveStatus').style.color = 'var(--amber)';
+  }
+}
+
+function onSfTestToggleChanged(){
+  updateSafetyConfigFromUI();
+  if($('sfTestToggle') && $('sfTestToggle').checked){
+    toast('🧪 تم تفعيل وضع الاختبار الآمن — التنبيهات ستعمل دون إيقاف المحرك!');
+  } else {
+    toast('🛡️ تم تفعيل وضع الأمان النشط — ستتوقف المشاية حقيقياً عند رصد السقوط أو النزول.');
+  }
+}
+
+async function saveSafetyConfigToBoard(){
+  updateSafetyConfigFromUI();
+  const cmd = 'SFS:' + sfCfg.fsEn + ',' + sfCfg.fsMs + ',' + sfCfg.fsVmin.toFixed(1) + ',' +
+              sfCfg.drEn + ',' + sfCfg.drMs + ',' + sfCfg.drAmp.toFixed(1) + ',' +
+              sfCfg.rcEn + ',' + sfCfg.rcDrop.toFixed(1) + ',' + sfCfg.rcVar + ',' + sfCfg.safeTest;
+  const ok = await bridgeCmd(cmd);
+  if(!ok){
+    toast('تعذر الإرسال للوحة — تأكد من الاتصال بالبلوتوث');
+  }
+}
+
+function playSafetyBeep(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.35);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.36);
+  }catch(_){}
+}
+
 function onTempData(chunk){
   tBuf += chunk;
   const lines = tBuf.split('\n');
@@ -3865,6 +4138,7 @@ function onTempData(chunk){
     if(ln.indexOf('ST:') === 0){ setBridge(ln.slice(3)); continue; }
     if(ln.indexOf('LK:') === 0){ setBridgeLock(ln.slice(3) === '1'); continue; }
     if(ln.indexOf('WF:') === 0){ try{ onWifiNtpLine(ln.slice(3)); }catch(_){} continue; }
+    if(ln.indexOf('SF:') === 0){ try{ onSafetyLine(ln.slice(3)); }catch(_){} continue; }
     if(ln.indexOf('MH:') === 0){ try{ mhLine(ln.slice(3)); }catch(_){} continue; }
     if(ln.indexOf('CUR:') === 0){ try{ curOnLine(ln.slice(4)); }catch(_){} continue; }
     if(ln.indexOf('DIAG:') === 0){ try{ onDiagLine(ln.slice(5)); }catch(_){} continue; }
@@ -4164,6 +4438,7 @@ function onWifiNtpLine(str){
     if(bEl){ bEl.textContent = '✓ تم ضبط الساعة عبر الواي فاي (' + (ssid || 'NTP') + ') وإطفاء الراديو لتوفير الطاقة'; bEl.style.color = 'var(--ok)'; }
     if(mhS){ mhS.tset = 1; if(ep > 1600000000) mhS.boardEpoch = ep; }
     updateMhClockDisplay(true);
+    setTimeout(() => { try{ bridgeCmd('SFQ'); }catch(_){} }, 1200);
     toast('✓ تم ضبط ساعة اللوحة تلقائياً عبر الواي فاي (NTP) بتوقيت الجزائر!');
     if(window.tRx) mhRefresh();
   } else if(str.indexOf('ERR=') === 0){
