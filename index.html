@@ -1892,7 +1892,7 @@ button:focus-visible,.preset-chip:focus-visible,.tab-btn:focus-visible{outline:2
 @media (prefers-reduced-motion:reduce){*{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}}
 
 /* === صفحة واحدة بأسلوب Kinomap: بلا شريط تنقل، سرعة ضخمة، أزرار تحكم ثابتة بالأسفل === */
-#tabs{display:none!important}
+
 body{padding-bottom:calc(125px + env(safe-area-inset-bottom,0px))!important}
 .gauges-grid{grid-template-columns:repeat(3,1fr)!important;gap:10px!important}
 .gauge-speed{grid-column:1/-1;min-height:160px!important;background:radial-gradient(120% 140% at 50% 0%,rgba(0,229,255,0.16),rgba(9,13,18,0.9))!important;border:1px solid rgba(0,229,255,0.3)!important}
@@ -1911,7 +1911,7 @@ body{padding-bottom:calc(125px + env(safe-area-inset-bottom,0px))!important}
 #navSheet .ns-box{width:100%;background:#0f1722;border-top:1px solid rgba(255,255,255,0.15);border-radius:20px 20px 0 0;padding:14px 14px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px}
 #navSheet .ns-box button{min-height:56px;font-size:16px;font-weight:800;border-radius:14px;justify-content:flex-start;padding:0 16px}
 #navBack{display:none;position:fixed;left:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:99998;min-height:50px;padding:0 20px;border-radius:999px;font-size:15px;font-weight:900;background:#0ea5e9;color:#001018;border:0;box-shadow:0 6px 20px rgba(14,165,233,0.45)}
-#navBack.show{display:inline-flex}
+#navBack{display:none!important} #navBack.show{display:none!important}
 
 /* === حلقة السرعة الدائرية + شريط الميل (بأسلوب Kinomap) === */
 .gauge-speed .sg-lbl,.gauge-speed .sg-val,.gauge-speed .sg-hint{position:relative;z-index:1}
@@ -1952,12 +1952,66 @@ body{padding-bottom:calc(125px + env(safe-area-inset-bottom,0px))!important}
 .mCollapsed > :not(:first-child){display:none!important}
 #rm > .bclk{position:absolute;top:calc(18px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%)}
 
+
+/* ضمان ظهور أزرار التبويب الثلاثة بالكامل وتفادي قص كلمة خطوط الأساس */
+.subtab-bar{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:4px!important;padding:4px!important;width:100%!important;box-sizing:border-box!important}
+.subtab-btn{font-size:11.5px!important;min-height:38px!important;padding:6px 2px!important;white-space:nowrap!important;text-align:center!important;letter-spacing:-0.2px!important;overflow:visible!important}
+
+
+/* شريط التنقل السفلي المطور الدائم التواجد لجميع الصفحات */
+#tabs {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+  z-index: 99999 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  background: rgba(12, 18, 25, 0.96) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.6) !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 0 env(safe-area-inset-bottom, 0px) 0 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+#tabs button, #tabs .tab-btn {
+  background: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  min-height: 52px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--dim) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+#tabs button.on, #tabs .tab-btn.on {
+  color: var(--amber) !important;
+  background: linear-gradient(to top, rgba(245, 158, 11, 0.15), transparent) !important;
+  box-shadow: inset 0 3px 0 var(--amber) !important;
+}
+#tabs .tab-ic { font-size: 18px !important; line-height: 1 !important; }
+#tabs .tab-txt { font-size: 11.5px !important; }
+body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important; }
+
 </style>
 </head>
 <body>
 <div id="gate" onclick="if(event.target===this)hideGate()"><div class="gbox" style="position:relative">
   <button type="button" onclick="hideGate()" style="position:absolute;top:12px;left:12px;width:34px;height:34px;min-height:34px;padding:0;background:rgba(255,255,255,0.12);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;">✕</button>
-  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v93 (درع الأمان وكشف السقوط المطور)</div>
+  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v93.0 (درع الأمان والاستئناف التلقائي)</div>
   <h1 style="margin:0 0 8px">الاتصال بحساس الحرارة</h1>
   <p style="margin:0 0 12px">لحماية المحرك، يرجى الاتصال بحساس الحرارة أو الضغط على تخطي للمتابعة فوراً.</p>
   <div id="gMsg"></div>
@@ -1972,7 +2026,7 @@ body{padding-bottom:calc(125px + env(safe-area-inset-bottom,0px))!important}
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v92.7 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v93.0 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -2154,9 +2208,9 @@ body{padding-bottom:calc(125px + env(safe-area-inset-bottom,0px))!important}
   <div class="row r2" style="margin-bottom:0"><button id="rtStart" disabled>بدء الطريق</button><button id="rtStop">إيقاف الطريق</button></div>
 </div>
 <div id="tempSubTabs" class="subtab-bar" style="display:none">
-  <button type="button" class="subtab-btn on" id="subBtnMh" onclick="switchTempSub(0)">⚡ مؤشرات المحرك الحية</button>
-  <button type="button" class="subtab-btn" id="subBtnOta" onclick="switchTempSub(1)">⚙️ ضبط وتحديث اللوحة (OTA)</button>
-  <button type="button" class="subtab-btn" id="subBtnBase" onclick="switchTempSub(2)">📈 خطوط الأساس والتحليلات</button>
+  <button type="button" class="subtab-btn on" id="subBtnMh" onclick="switchTempSub(0)">⚡ المؤشرات الحية</button>
+  <button type="button" class="subtab-btn" id="subBtnOta" onclick="switchTempSub(1)">⚙️ ضبط اللوحة</button>
+  <button type="button" class="subtab-btn" id="subBtnBase" onclick="switchTempSub(2)">📈 خطوط الأساس</button>
 </div>
 <div class="panel tpanel" id="tPanel">
   <h2>خطوط الأساس الموحدة (التيار والحرارة)</h2>
@@ -2998,8 +3052,8 @@ body{padding-bottom:calc(125px + env(safe-area-inset-bottom,0px))!important}
 <button type="button" id="navBack" onclick="showTab(0)">🏠 الرئيسية</button>
 <nav id="tabs">
   <button type="button" class="tab-btn on" id="tabBtn0" onclick="showTab(0)">
-    <span class="tab-ic">🎛️</span>
-    <span class="tab-txt">التحكم</span>
+    <span class="tab-ic">🏠</span>
+    <span class="tab-txt">الرئيسية</span>
   </button>
   <button type="button" class="tab-btn" id="tabBtn1" onclick="showTab(1)">
     <span class="tab-ic">🏃</span>
@@ -3996,6 +4050,62 @@ async function bridgeCmd(c){
 // ---------- درع الأمان الذكي وكشف السقوط والنزول التلقائي (v37.0) ----------
 let sfCfg = {fsEn:1, fsMs:500, fsVmin:3.0, drEn:1, drMs:200, drAmp:1.2, rcEn:1, rcDrop:2.5, rcVar:30, safeTest:0};
 
+
+// ---------- الإيقاف المؤقت الذكي والاستئناف التلقائي لبرامج التمرين (Smart Auto-Pause & Resume) ----------
+function showResumeModal(show){
+  let el = document.getElementById('resumeModal');
+  if(!el && show){
+    el = document.createElement('div');
+    el.id = 'resumeModal';
+    el.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:99999;width:92%;max-width:390px;background:linear-gradient(135deg,rgba(15,23,42,0.96),rgba(30,41,59,0.98));border:2px solid var(--accent);border-radius:18px;padding:18px;box-shadow:0 12px 36px rgba(0,0,0,0.7);text-align:center;backdrop-filter:blur(10px)';
+    el.innerHTML = `
+      <div style="font-size:30px;margin-bottom:6px">⏸️</div>
+      <div style="font-weight:800;font-size:16px;color:#fff;margin-bottom:4px">البرنامج متوقف مؤقتاً لخروجك من السير</div>
+      <div style="font-size:12.5px;color:var(--dim);margin-bottom:14px;line-height:1.6">
+        تم تجميد الوقت والمسافة والمرحلة الحالية بدقة. اصعد فوق السير واضغط للاستمرار من نفس النقطة دون العودة للبداية.
+      </div>
+      <div style="display:flex;gap:8px">
+        <button type="button" onclick="resumeProgramDirect()" style="flex:1;min-height:50px;font-size:15px;font-weight:800;background:linear-gradient(135deg,#0284c7,#0369a1);border:1px solid #38bdf8;border-radius:12px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
+          <span>▶ استئناف البرنامج</span>
+        </button>
+        <button type="button" onclick="showResumeModal(false); if(typeof $('stopProg') === 'object') $('stopProg').click();" style="min-height:50px;padding:0 14px;font-size:13px;font-weight:600;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);border-radius:12px;color:var(--red);cursor:pointer">
+          إنهاء
+        </button>
+      </div>
+    `;
+    document.body.appendChild(el);
+  }
+  if(el) el.style.display = show ? 'block' : 'none';
+}
+
+async function autoPauseWorkoutOnDismount(){
+  if(!running || paused) return;
+  paused = true;
+  if($('pauseProg')) $('pauseProg').textContent = '▶ استئناف البرنامج';
+  if(typeof msg === 'function') msg('⏸️ تم الإيقاف المؤقت لخروجك من السير — البرنامج محفوظ وسيكمل عند عودتك');
+  toast('⏸️ تم إيقاف البرنامج مؤقتاً لخروجك من السير — سيكمل من نفس النقطة!');
+  try{ await send([0x08, 0x02]); }catch(_){} // إرسال أمر Pause للحزام
+  showResumeModal(true);
+}
+
+async function resumeProgramDirect(){
+  if(!running || !paused) return;
+  showResumeModal(false);
+  if(typeof msg === 'function') msg('🚀 استئناف البرنامج: الحزام سينطلق بالسرعة والميل المحددين...');
+  toast('🚀 جارٍ استئناف البرنامج من نفس النقطة...');
+  try{
+    await send([0x07]); // تشغيل الحزام
+    await sleep(1500);
+    await send(speedCmd(cur.s)); // استعادة السرعة المحددة للمرحلة الحالية
+    await sleep(200);
+    await send(inclCmd(cur.i));  // استعادة الميل المحدد للمرحلة الحالية
+  }catch(_){}
+  paused = false;
+  if($('pauseProg')) $('pauseProg').textContent = 'إيقاف مؤقت';
+}
+window.resumeProgramDirect = resumeProgramDirect;
+window.autoPauseWorkoutOnDismount = autoPauseWorkoutOnDismount;
+
 function onSafetyLine(line){
   if(line.indexOf('C=') === 0){
     const p = line.slice(2).split(',');
@@ -4033,7 +4143,12 @@ function onSafetyLine(line){
 
     let msg = '';
     if(type === 'DISMOUNT'){
-      msg = (isTest ? '⚠️ [تجربة أمان] تم رصد النزول من السير خلال ' : '🛑 تم إيقاف المشاية: رصد نزول/سقوط خلال ') + val + ' ms!';
+      if(running && !paused){
+        msg = '⏸️ تم إيقاف البرنامج مؤقتاً لخروجك من السير خلال ' + val + ' ms (سيكمل عند عودتك)';
+        autoPauseWorkoutOnDismount();
+      } else {
+        msg = (isTest ? '⚠️ [تجربة أمان] تم رصد النزول من السير خلال ' : '🛑 تم إيقاف المشاية: رصد نزول/سقوط خلال ') + val + ' ms!';
+      }
     } else if(type === 'DRAG'){
       msg = (isTest ? '⚠️ [تجربة أمان] تم رصد احتكاك وانزلاق شاذ خلال ' : '🛑 فرملة طوارئ: رصد انزلاق شاذ على السير خلال ') + val + ' ms!';
     } else if(type === 'RESCUE'){
@@ -4529,14 +4644,37 @@ function drawMhChart(sess){
     svg.innerHTML = '<text x="170" y="95" text-anchor="middle" fill="#9fb0bf" font-size="12">' + (window.tRx ? 'لا توجد جلسات مسجلة بعد — ابدأ تمريناً قصيراً' : 'اتصل بالحساس لعرض المنحنى أو اضغط تحديث السجل') + '</text>';
     return;
   }
-  L = L.slice().sort((a, b) => (a.epoch || 0) - (b.epoch || 0)).slice(-14);
+
+  // فلترة المنحنى لتمارين يوم واحد فقط (أحدث يوم تم فيه التمرين)
+  const validEpochs = L.filter(x => x.epoch > 1600000000).map(x => x.epoch);
+  if(validEpochs.length > 0){
+    const maxEpoch = Math.max(...validEpochs);
+    const dMax = new Date(maxEpoch * 1000);
+    const daySessions = L.filter(x => {
+      if(!x.epoch || x.epoch <= 1600000000) return false;
+      const d = new Date(x.epoch * 1000);
+      return d.getDate() === dMax.getDate() && d.getMonth() === dMax.getMonth() && d.getFullYear() === dMax.getFullYear();
+    });
+    if(daySessions.length > 0){
+      L = daySessions;
+      const z = v => String(v).padStart(2, '0');
+      const dayStr = z(dMax.getDate()) + '/' + z(dMax.getMonth() + 1);
+      if($('mhChartTitle')) $('mhChartTitle').textContent = 'التيار (A) والحرارة (°م) لتمارين اليوم (' + dayStr + ') — الأحدث يميناً';
+    }
+  }
+
+  // ترتيب التمارين زمنياً: الأقدم يساراً ← الأحدث يميناً (آخر توقيت على اليمين)
+  L = L.slice().sort((a, b) => (a.epoch || 0) - (b.epoch || 0));
   const n = L.length, ml = 34, mr = 34, mt = 26, mb = 28, pw = W - ml - mr, ph = H - mt - mb;
-  const X = k => n === 1 ? ml + pw / 2 : ml + pw * (n - 1 - k) / (n - 1);
+  // X(k): k=0 الأقدم على اليسار (ml)، و k=n-1 الأحدث على اليمين (ml + pw)
+  const X = k => n === 1 ? ml + pw / 2 : ml + pw * k / (n - 1);
   const f1 = v => v.toFixed(1);
+
   // مقياس التيار
   const cv = []; L.forEach(x => { if(showCur && hasC(x)){ cv.push(x.peakCur); if(mode === 'cur' && x.avgCur > 0) cv.push(x.avgCur); } });
   const cMax = cv.length ? Math.max(...cv) * 1.15 : 1;
   const Yc = v => mt + ph - ph * v / cMax;
+
   // مقياس الحرارة
   const tv = []; L.forEach(x => { if(showTemp && hasT(x)){ tv.push(x.peak); if(x.t0 > 5) tv.push(x.t0); } });
   let tMin = tv.length ? Math.floor(Math.min(...tv) - 2) : 0, tMax = tv.length ? Math.ceil(Math.max(...tv) + 2) : 1;
@@ -4544,30 +4682,31 @@ function drawMhChart(sess){
   const Yt = v => mt + ph - ph * (v - tMin) / (tMax - tMin);
   const AMB = '#ffb020', BLU = '#38bdf8';
   let o = '';
+
   const yC = k => (showCur && hasC(L[k])) ? Yc(L[k].peakCur) : null;
   const yT = k => (showTemp && hasT(L[k])) ? Yt(L[k].peak) : null;
-  // اتجاه التسمية: تُوضع بعيداً عن نقطة السلسلة الأخرى لتفادي التداخل
-  const anc = k => (n > 1 && k === n - 1) ? ['start', X(k) - 3] : ((n > 1 && k === 0) ? ['end', X(k) + 3] : ['middle', X(k)]);
   const dirC = k => (yC(k) != null && yT(k) != null && yC(k) > yT(k)) ? 1 : -1;
   const dirT = k => (yC(k) != null && yT(k) != null) ? -dirC(k) : 1;
-  // الشبكة والمحاور
+
+  // الشبكة والمحاور الأفقية
   for(let g = 0; g <= 3; g++){
     const y = mt + ph - ph * g / 3;
     o += '<line x1="' + ml + '" y1="' + y.toFixed(1) + '" x2="' + (W - mr) + '" y2="' + y.toFixed(1) + '" stroke="#fff" stroke-opacity="' + (g ? '.07' : '.18') + '"/>';
     if(showCur) o += '<text x="' + (ml - 4) + '" y="' + (y + 3).toFixed(1) + '" text-anchor="end" fill="' + AMB + '" font-size="8.5">' + f1(cMax * g / 3) + '</text>';
     if(showTemp) o += '<text x="' + (W - mr + 4) + '" y="' + (y + 3).toFixed(1) + '" text-anchor="start" fill="' + BLU + '" font-size="8.5">' + Math.round(tMin + (tMax - tMin) * g / 3) + '°</text>';
   }
-  // محور الزمن
-  const sp = n > 1 ? pw / (n - 1) : pw, step = Math.max(1, Math.ceil(40 / sp));
+
+  // محور الزمن: كل نقطة تيار/تمرين يظهر وقتها بوضوح في الأسفل
   L.forEach((x, k) => {
-    if((n - 1 - k) % step !== 0 || !(x.epoch > 1600000000)) return;
+    if(!x.epoch || !(x.epoch > 1600000000)) return;
     const d = new Date(x.epoch * 1000), z = v => String(v).padStart(2, '0');
-    o += '<text x="' + X(k).toFixed(1) + '" y="' + (H - 15) + '" text-anchor="middle" fill="#9fb0bf" font-size="8">' + z(d.getDate()) + '/' + z(d.getMonth() + 1) + '</text>' +
-         '<text x="' + X(k).toFixed(1) + '" y="' + (H - 6) + '" text-anchor="middle" fill="#6b7f92" font-size="7.5">' + z(d.getHours()) + ':' + z(d.getMinutes()) + '</text>';
+    const timeStr = z(d.getHours()) + ':' + z(d.getMinutes());
+    o += '<text x="' + X(k).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle" fill="#9fb0bf" font-size="8.5" font-weight="700">' + timeStr + '</text>';
   });
+
   const pathOf = (pts) => pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('');
-  const maxIdx = (arr) => arr.reduce((b, v, i) => (v != null && (b < 0 || v > arr[b])) ? i : b, -1);
-  // الحرارة: شريط (بداية ← ذروة) + خط الذروة
+
+  // مسار ونقاط الحرارة
   if(showTemp){
     const pk = L.map(x => hasT(x) ? x.peak : null), pts = [];
     L.forEach((x, k) => {
@@ -4576,14 +4715,14 @@ function drawMhChart(sess){
       pts.push([X(k), Yt(pk[k])]);
     });
     if(pts.length > 1) o += '<path d="' + pathOf(pts) + '" fill="none" stroke="' + BLU + '" stroke-width="2" stroke-opacity=".9"/>';
-    const lab = new Set([n - 1, maxIdx(pk)]);
     L.forEach((x, k) => {
       if(pk[k] == null) return;
       o += '<circle cx="' + X(k).toFixed(1) + '" cy="' + Yt(pk[k]).toFixed(1) + '" r="3.2" fill="' + BLU + '" stroke="#fff" stroke-width="1"><title>الذروة ' + f1(pk[k]) + '°' + (x.t0 > 5 ? ' (بداية ' + f1(x.t0) + '°)' : '') + '</title></circle>';
-      if(lab.has(k)) o += '<text x="' + anc(k)[1].toFixed(1) + '" y="' + (Yt(pk[k]) + (dirT(k) > 0 ? 13 : -7)).toFixed(1) + '" text-anchor="' + anc(k)[0] + '" fill="#bae6fd" font-size="9" font-weight="bold">' + f1(pk[k]) + '°</text>';
+      o += '<text x="' + X(k).toFixed(1) + '" y="' + (Yt(pk[k]) + (dirT(k) > 0 ? 13 : -7)).toFixed(1) + '" text-anchor="middle" fill="#bae6fd" font-size="9" font-weight="bold">' + f1(pk[k]) + '°</text>';
     });
   }
-  // التيار: الذروة (خط متصل) + المتوسط (متقطع في وضع التيار فقط)
+
+  // مسار ونقاط التيار: كل نقطة تيار يظهر رقم الأمبير الخاص بها مباشرة فوق النقطة
   let anyEst = false;
   if(showCur){
     const pkc = L.map(x => hasC(x) ? x.peakCur : null), pts = [], pa = [];
@@ -4594,19 +4733,20 @@ function drawMhChart(sess){
     });
     if(pa.length > 1) o += '<path d="' + pathOf(pa) + '" fill="none" stroke="' + AMB + '" stroke-width="1.4" stroke-dasharray="3,3" stroke-opacity=".7"/>';
     if(pts.length > 1) o += '<path d="' + pathOf(pts) + '" fill="none" stroke="' + AMB + '" stroke-width="2.2" stroke-opacity=".95"/>';
-    const lab = new Set([n - 1, maxIdx(pkc)]);
     L.forEach((x, k) => {
       if(pkc[k] == null) return;
       const est = !!x.curEst; if(est) anyEst = true;
       o += '<circle cx="' + X(k).toFixed(1) + '" cy="' + Yc(pkc[k]).toFixed(1) + '" r="3.6" fill="' + (est ? '#0b1118' : AMB) + '" stroke="' + (est ? AMB : '#fff') + '" stroke-width="' + (est ? 1.6 : 1) + '"><title>ذروة ' + f1(pkc[k]) + 'A' + (x.avgCur > 0 ? ' · متوسط ' + f1(x.avgCur) + 'A' : '') + (est ? ' (تقديري)' : '') + '</title></circle>';
-      if(lab.has(k)) o += '<text x="' + anc(k)[1].toFixed(1) + '" y="' + Math.min(mt + ph - 2, Math.max(mt - 2, Yc(pkc[k]) + (dirC(k) > 0 ? 13 : -7))).toFixed(1) + '" text-anchor="' + anc(k)[0] + '" fill="#fde68a" font-size="9" font-weight="bold">' + f1(pkc[k]) + 'A</text>';
+      // كل نقطة تيار تظهر قيمتها بوضوح
+      o += '<text x="' + X(k).toFixed(1) + '" y="' + Math.min(mt + ph - 2, Math.max(mt - 2, Yc(pkc[k]) + (dirC(k) > 0 ? 13 : -7))).toFixed(1) + '" text-anchor="middle" fill="#fde68a" font-size="9" font-weight="bold">' + f1(pkc[k]) + 'A</text>';
     });
   }
+
   // دليل الألوان
   let lx = ml; const leg = [];
   if(showCur) leg.push(['<circle cx="0" cy="-3" r="3" fill="' + AMB + '"/>', mode === 'cur' ? 'الذروة (A)' : 'التيار الأقصى (A)', 78]);
   if(showCur && mode === 'cur') leg.push(['<line x1="-5" y1="-3" x2="5" y2="-3" stroke="' + AMB + '" stroke-dasharray="2,2"/>', 'المتوسط', 50]);
-  if(showTemp) leg.push(['<circle cx="0" cy="-3" r="3" fill="' + BLU + '"/>', 'حرارة المحرك القصوى (°م)', 120]);
+  if(showTemp) leg.push(['<circle cx="0" cy="-3" r="3" fill="' + BLU + '"/>', 'حرارة المحرك (°م)', 120]);
   if(anyEst) leg.push(['<circle cx="0" cy="-3" r="2.6" fill="#0b1118" stroke="' + AMB + '" stroke-width="1.4"/>', 'تقديري', 44]);
   leg.forEach(it => { o += '<g transform="translate(' + (lx + 5) + ',12)">' + it[0] + '<text x="8" y="0" fill="#c5d1dc" font-size="8.5">' + it[1] + '</text></g>'; lx += it[2]; });
   svg.innerHTML = o;
@@ -4708,6 +4848,12 @@ function mhRender(){
     };
   });
 
+  // ترتيب جدول خطوط الأساس بحيث يكون أحدث توقيت في الأعلى وينزل تنازلياً
+  displayBins.sort((a, b) => {
+    if(a.sb === 255) return 1;
+    if(b.sb === 255) return -1;
+    return (b.lastEpoch || 0) - (a.lastEpoch || 0);
+  });
   const tauBin = mhBins.find(b => b.sb === 255);
   if(tauBin) displayBins.push(tauBin);
 
@@ -4808,7 +4954,7 @@ function mhRender(){
     $('mhRows').innerHTML = '<div style="text-align:center;color:var(--dim);padding:14px;background:var(--panel-card);border-radius:10px">لا توجد جلسات تدريب حقيقية مسجلة بعد (تُستبعد تلقائياً فترات التوقف والتجارب الأقل من دقيقتين)</div>';
   } else {
     let ht = '<table class="app-table mh-table mh-hist-table"><thead><tr><th>التاريخ والساعة</th><th>المدة</th><th>السرعة</th><th>ذروة التيار</th><th>الحرارة (بداية←ذروة)</th><th>التسخين</th><th>التبريد</th></tr></thead><tbody>';
-    cleanSess.forEach(x => {
+    cleanSess.slice().sort((a, b) => (b.epoch || 0) - (a.epoch || 0)).forEach(x => {
       const dt = mhDate(x.epoch);
       const dur = x.dur + ' د';
       const spd = x.avg.toFixed(1) + ' <small>كم/س</small>';
@@ -5911,7 +6057,7 @@ async function runCore(){
   const done = !abort && !goal;
   if(cp) await send([0x08, 0x01]);
   const secs = (Date.now() - tStart - pausedMs)/1000;
-  running = false; abort = false; paused = false; $('pauseProg').textContent = 'إيقاف مؤقت';
+  showResumeModal(false); running = false; abort = false; paused = false; $('pauseProg').textContent = 'إيقاف مؤقت';
   try{ if(wake) await wake.release(); }catch(_){}
   wake = null;
   $('runProg').disabled = !ready;
@@ -7965,8 +8111,11 @@ window.copyRawData = copyRawData;
   window.showTab = function(k){
     var r = orig.apply(this, arguments);
     try{
-      var b = document.getElementById('navBack');
-      if(b) b.classList.toggle('show', k !== 0);
+      // تمكين وتحديث أزرار التنقل السفلية الثلاثة دائماً
+      for(var i = 0; i < 3; i++){
+        var tb = document.getElementById('tabBtn' + i);
+        if(tb) tb.classList.toggle('on', i === k);
+      }
     }catch(_){}
     return r;
   };
