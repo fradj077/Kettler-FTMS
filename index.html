@@ -7917,11 +7917,11 @@ window.quickSetIncline = quickSetIncline;
 // - الاستمرار الطويل (حتى نغمة الرنين المزدوجة) -> وضع قياس النبض فقط (قفل السرعة تماماً)
 // ============================================================================
 
-const GRIP_TAIL_MS = 6500;       // متوسط ذيل الكونسول بعد رفع اليد الفعلي (~6.5 ثانية)
-const GRIP_UI_ORANGE_MS = 3200;  // يظهر اللون البرتقالي والنغمة 2 بعد 3.2 ثانية فقط من الرنة 1 لتعرف فوراً أنك دخلت زمن الخفض!
-const GRIP_UI_LOCK_MS = 8000;    // يظهر اللون الأخضر (قفل السرعة) عند 8.0 ثوانٍ من الإمساك الفعلي
-const GRIP_RAW_UP_MAX_MS = 9800; // أي رفع لليد خلال نافذة الأزرق (0 إلى 3.2 ثانية) يتصفر فيه الحساس قبل 9.8 ثانية (3.2ث + 6.5ث ذيل) => ينفذ زيادة (+1.0) بهامش مريح جداً!
-const GRIP_RAW_DOWN_MAX_MS = 14500; // أي رفع لليد بعد ظهور البرتقالي (3.2 إلى 8.0 ثانية) يتصفر فيه الحساس بين 9.8 و 14.5 ثانية => ينفذ خفض (-1.0)!
+const GRIP_TAIL_MS = 6000;          // ذيل التثبيت في الكونسول
+const GRIP_BLUE_FAST_MS = 4350;     // عند 4.35 ثانية (الحزمة 8): إذا لم يتغير رقم النبض (!hrChanged) فالمتدرب رفع يده في الأزرق => تنفيذ فوري للزيادة (+1.0) بعد ~2ث فقط من رفع اليد!
+const GRIP_ORANGE_MIN_MS = 3400;    // بداية نافذة تحديث الكونسول الثانية لظهور البرتقالي
+const GRIP_ORANGE_FROZEN_MS = 2400; // بعد دخول البرتقالي: بمجرد ثبات الرقم لـ 2.4 ثانية بعد رفع اليد ينفذ الخفض (-1.0) فوراً دون انتظار 6.5 ثانية!
+const GRIP_LOCK_MS = 8400;          // عند 8.4 ثانية (النافذة الثالثة): قفل السرعة لقياس النبض المستمر
 const GRIP = {
   enabled: true,
   state: 'IDLE',          // 'IDLE' | 'CONTACT' | 'LOCKED_HR' | 'WAIT_RELEASE' | 'COOLDOWN'
@@ -7934,6 +7934,7 @@ const GRIP = {
   beepUpPlayed: false,
   beepDownPlayed: false,
   lockPlayed: false,
+  pendingConfirmSpd: null,
   cooldownEnd: 0,
   ticker: null,
   fadeTimer: null
@@ -8021,34 +8022,12 @@ function gripCurrentSpeed(){
   return 3.0;
 }
 
-function checkGripWindowTransitions(now){
-  const elapsed = now - GRIP.touchStart;
-
-  // 1. النغمة الأولى (880Hz - أزرق +1.0 كم/س): ترن فوراً (0.0ث) لحظة ظهور أول قراءة نبض من الكونسول
-  // لديك هامش مريح كامل (من 0.0 إلى 3.2 ثانية بعد الرنة الأولى) لرفع يدك وتنفيذ الزيادة (+1.0)!
-  if(!GRIP.beepUpPlayed){
-    GRIP.beepUpPlayed = true;
-    playGripHighTone(); try{ gtMark('APP نغمة1(أزرق)'); }catch(_){}
-    try{ if(navigator.vibrate) navigator.vibrate(45); }catch(_){}
-  }
-
-  // 2. النغمة الثانية (440Hz - برتقالي -1.0 كم/س): تظهر وترن بعد 3.2 ثانية من الرنة الأولى مباشرة!
-  // بذلك تعرف فوراً أثناء إمساكك بالمقبض أنك دخلت فعلياً في زمن الخفض (-1.0) فترفع يدك.
-  // وحتى لو تحول الشريط للبرتقالي أثناء ذيل الكونسول بعد رفع يدك في الأزرق، فإن القرار النهائي عند hr=0 يحسب زمن إمساكك الفعلي (بطرح ذيل الكونسول 6.5ث) فينفذ الزيادة (+1.0) بدقة!
-  if(GRIP.beepUpPlayed && !GRIP.beepDownPlayed && elapsed >= GRIP_UI_ORANGE_MS){
-    GRIP.beepDownPlayed = true;
-    GRIP.tone2At = now;
-    playGripLowTone(); try{ gtMark('APP نغمة2(برتقالي)'); }catch(_){}
-    try{ if(navigator.vibrate) navigator.vibrate([45, 60, 45]); }catch(_){}
-  }
-
-  // 3. النغمة الثالثة (نغمة مزدوجة - أخضر): تظهر عند 8.0 ثوانٍ من الإمساك الفعلي لقفل السرعة
-  if(GRIP.beepDownPlayed && !GRIP.lockPlayed && elapsed >= GRIP_UI_LOCK_MS){
-    GRIP.lockPlayed = true;
-    GRIP.state = 'LOCKED_HR';
-    playGripLockTone(); try{ gtMark('APP نغمة3(قفل-أخضر)'); }catch(_){}
-    try{ if(navigator.vibrate) navigator.vibrate([60, 80, 60]); }catch(_){}
-  }
+function activateGripOrange(now){
+  if(GRIP.beepDownPlayed) return;
+  GRIP.beepDownPlayed = true;
+  GRIP.tone2At = now;
+  playGripLowTone(); try{ gtMark('APP نغمة2(برتقالي)'); }catch(_){}
+  try{ if(navigator.vibrate) navigator.vibrate([45, 60, 45]); }catch(_){}
 }
 
 function onGripHeartRatePacket(hr, flagPresent){
@@ -8079,25 +8058,35 @@ function onGripHeartRatePacket(hr, flagPresent){
       GRIP.lastHrVal = hr;
       GRIP.hrChanged = false;
       GRIP.tone2At = 0;
-      GRIP.beepUpPlayed = false;
+      GRIP.beepUpPlayed = true;
       GRIP.beepDownPlayed = false;
       GRIP.lockPlayed = false;
+      GRIP.pendingConfirmSpd = null;
       showGripBanner(true);
-      checkGripWindowTransitions(now);
+      playGripHighTone(); try{ gtMark('APP نغمة1(أزرق)'); }catch(_){}
+      try{ if(navigator.vibrate) navigator.vibrate(45); }catch(_){}
       updateGripBannerUI(0, GRIP.state);
     } else {
       const elapsed = now - GRIP.touchStart;
       if(hr !== GRIP.lastHrVal){
         GRIP.lastHrVal = hr;
         GRIP.sameHrSince = now;
-        GRIP.hrChanged = true;
+        if(elapsed >= GRIP_ORANGE_MIN_MS){
+          GRIP.hrChanged = true;
+          // بمجرد تحديث الكونسول للنبض في النافذة الثانية (دليل بقاء اليد على المقبض) يشتعل البرتقالي فوراً!
+          activateGripOrange(now);
+        }
       }
-      checkGripWindowTransitions(now);
       updateGripBannerUI(elapsed, GRIP.state);
     }
   } else {
-    // وصلت حزمة hr = 0 (انتهى ذيل التثبيت في الكونسول وأصبح الكونسول جاهزاً 100% لاستقبال أمر السرعة)
+    // وصلت حزمة hr = 0: إذا كان الأمر قد نُفّذ مبكراً نرسل نبضة تأكيد إضافية لضمان استجابة الكونسول 100%
     if(now - GRIP.lastContact > 2000 && $('lvHr')) $('lvHr').textContent = '--';
+    if(GRIP.pendingConfirmSpd !== null){
+      const confirmSpd = GRIP.pendingConfirmSpd;
+      GRIP.pendingConfirmSpd = null;
+      try{ if(cp) send(speedCmd(confirmSpd)); }catch(_){}
+    }
     if(GRIP.state === 'CONTACT' || GRIP.state === 'LOCKED_HR'){
       onGripRelease(now);
     } else if(GRIP.state === 'WAIT_RELEASE'){
@@ -8110,7 +8099,6 @@ function onGripPulseTick(){
   if(!GRIP.enabled || GRIP.state === 'IDLE' || GRIP.state === 'COOLDOWN' || GRIP.state === 'WAIT_RELEASE') return;
   const now = Date.now();
 
-  // إذا توقفت حزم 0x2ACD تماماً لأكثر من 1600ms اعتبر أن الإشارة انقطعت ونفّذ القرار
   if(now - GRIP.lastContact > 1600){
     if($('lvHr')) $('lvHr').textContent = '--';
     onGripRelease(now);
@@ -8118,53 +8106,77 @@ function onGripPulseTick(){
   }
 
   const elapsed = now - GRIP.touchStart;
-  checkGripWindowTransitions(now);
+  const frozenFor = now - GRIP.sameHrSince;
+
+  // الحل الهجين السريع (بدون انتظار 6.5 ثانية!):
+  // 1. كشف سريع لرفع اليد في الأزرق (الزيادة +1.0):
+  // عند مرور 4.35 ثانية (وصول الحزمة الثامنة من الكونسول): إذا لم يتغير رقم النبض (!GRIP.hrChanged)
+  // فهذا يعني أن المتدرب رفع يده خلال نافذة الأزرق (0 إلى 3.2 ثانية) => ننفذ الزيادة (+1.0) فوراً الآن (أي بعد ~1.8-2.2 ثانية فقط من رفع اليد!)
+  if(GRIP.state === 'CONTACT' && !GRIP.beepDownPlayed && !GRIP.hrChanged && elapsed >= GRIP_BLUE_FAST_MS){
+    onGripRelease(now);
+    return;
+  }
+
+  // 2. كشف سريع لرفع اليد في البرتقالي (الخفض -1.0):
+  // بعد ظهور البرتقالي (GRIP.beepDownPlayed): بمجرد أن يرفع المتدرب يده ويثبت الرقم الجديد لمدة 2.4 ثانية (frozenFor >= 2400ms)
+  // ننفذ الخفض (-1.0) فوراً الآن (بعد ~2.2 ثانية فقط من رفع اليد دون انتظار تصفير الحساس!)
+  if(GRIP.state === 'CONTACT' && GRIP.beepDownPlayed && frozenFor >= GRIP_ORANGE_FROZEN_MS){
+    onGripRelease(now);
+    return;
+  }
+
+  // 3. إذا استمر المتدرب ممسكاً بالمقبض وتجدد النبض حتى 8.4 ثانية => قفل السرعة لقياس النبض المستمر
+  if(GRIP.state === 'CONTACT' && GRIP.beepDownPlayed && !GRIP.lockPlayed && elapsed >= GRIP_LOCK_MS){
+    GRIP.lockPlayed = true;
+    GRIP.state = 'LOCKED_HR';
+    playGripLockTone(); try{ gtMark('APP نغمة3(قفل-أخضر)'); }catch(_){}
+    try{ if(navigator.vibrate) navigator.vibrate([60, 80, 60]); }catch(_){}
+  }
+
   updateGripBannerUI(elapsed, GRIP.state);
 }
 
 async function onGripRelease(now){
   if(GRIP.state === 'IDLE' || GRIP.state === 'COOLDOWN' || GRIP.state === 'WAIT_RELEASE') return;
   const rawDur = now - GRIP.touchStart;
-  const estHoldMs = Math.max(300, rawDur - GRIP_TAIL_MS);
+  const frozenFor = now - GRIP.sameHrSince;
   const priorState = GRIP.state;
 
-  try{ console.log('[GRIP] release raw=' + rawDur + 'ms estHold=' + estHoldMs + 'ms state=' + priorState); }catch(_){}
+  try{ console.log('[GRIP] fast-release raw=' + rawDur + 'ms frozen=' + frozenFor + 'ms changed=' + GRIP.hrChanged + ' down=' + GRIP.beepDownPlayed + ' state=' + priorState); }catch(_){}
 
   GRIP.state = 'WAIT_RELEASE';
-  GRIP.cooldownEnd = now + 2000;
+  GRIP.cooldownEnd = now + 2200;
 
   if(dev === tDev && brState === 'ON' && !ready){
     ready = true;
     lock(false);
   }
 
-  // فصل توقيت ظهور الألوان الحية (3.2ث للبرتقالي و 8.0ث للأخضر) عن قرار التنفيذ عند hr=0 بطرح ذيل الكونسول (6.5ث):
-  // - إذا رُفعت اليد خلال 0.0 إلى 3.3 ثانية من الرنة الأولى (أي rawDur < 9800ms عند hr=0) => زيادة (+1.0 كم/س) بهامش 3.3 ثانية كاملة!
-  // - إذا رُفعت اليد بعد دخول البرتقالي من 3.3 إلى 8.0 ثانية (أي 9800ms <= rawDur < 14500ms عند hr=0) => خفض (-1.0 كم/س)!
-  // - إذا استمر الإمساك لأكثر من 8.0 ثوانٍ (أي rawDur >= 14500ms) => قفل السرعة لقياس النبض!
   let gesture = 'none';
-  if(rawDur >= GRIP_RAW_DOWN_MAX_MS){
+  if(priorState === 'LOCKED_HR' || GRIP.lockPlayed){
     gesture = 'lock';
-  } else if(rawDur >= GRIP_RAW_UP_MAX_MS){
+  } else if(GRIP.beepDownPlayed){
     gesture = 'down';
   } else if(GRIP.beepUpPlayed){
     gesture = 'up';
   }
 
-  GRIP.dbg = 'إمساك فعلي≈' + (estHoldMs/1000).toFixed(1) + 'ث (كلي ' + (rawDur/1000).toFixed(1) + 'ث)';
+  GRIP.dbg = 'تنفيذ ذكي خلال ' + (rawDur/1000).toFixed(1) + 'ث | تغيّر=' + (GRIP.hrChanged ? 'نعم' : 'لا');
   try{ gtMark('APP قرار=' + gesture + ' ' + GRIP.dbg); }catch(_){}
   if(GT.rec){ hideGripBannerDirect(); GRIP.state = 'WAIT_RELEASE'; return; }
 
   if(gesture === 'lock'){
+    GRIP.pendingConfirmSpd = null;
     updateGripBannerResult('❤️ تم قياس النبض (السرعة مقفلة)', 'lock');
     toast('❤️ اكتمل قياس نبض القلب — بقيت السرعة دون تغيير');
   } else if(gesture === 'up'){
     const currentSpd = gripCurrentSpeed();
     const maxSpd = (typeof MAX_SPEED !== 'undefined' && MAX_SPEED >= 6) ? MAX_SPEED : 16.0;
     const targetSpd = Math.min(maxSpd, Math.round((currentSpd + 1.0) * 10) / 10);
+    GRIP.pendingConfirmSpd = targetSpd;
     try{
       await quickSetSpeed(targetSpd);
-      setTimeout(() => { try{ if(cp) send(speedCmd(targetSpd)); }catch(_){} }, 380);
+      setTimeout(() => { try{ if(cp) send(speedCmd(targetSpd)); }catch(_){} }, 400);
       playGripSuccessTone(true);
       try{ if(navigator.vibrate) navigator.vibrate(80); }catch(_){}
       updateGripBannerResult('⚡ +1.0 كم/س ← ' + targetSpd.toFixed(1) + ' كم/س', 'up');
@@ -8173,9 +8185,10 @@ async function onGripRelease(now){
   } else if(gesture === 'down'){
     const currentSpd = gripCurrentSpeed();
     const targetSpd = Math.max(1.0, Math.round((currentSpd - 1.0) * 10) / 10);
+    GRIP.pendingConfirmSpd = targetSpd;
     try{
       await quickSetSpeed(targetSpd);
-      setTimeout(() => { try{ if(cp) send(speedCmd(targetSpd)); }catch(_){} }, 380);
+      setTimeout(() => { try{ if(cp) send(speedCmd(targetSpd)); }catch(_){} }, 400);
       playGripSuccessTone(false);
       try{ if(navigator.vibrate) navigator.vibrate(80); }catch(_){}
       updateGripBannerResult('🔻 -1.0 كم/س ← ' + targetSpd.toFixed(1) + ' كم/س', 'down');
@@ -8222,39 +8235,39 @@ function updateGripBannerUI(elapsed, state){
   if(!el || !ic || !tt || !ht || !bg || !bar) return;
 
   const sec = (elapsed / 1000).toFixed(1);
+  const frozenSec = ((Date.now() - GRIP.sameHrSince) / 1000).toFixed(1);
 
-  if(state === 'LOCKED_HR' || elapsed >= GRIP_UI_LOCK_MS){
+  if(state === 'LOCKED_HR' || GRIP.lockPlayed){
     el.className = 'grip-pulse-banner lock';
     ic.textContent = '❤️';
     tt.textContent = 'وضع قياس النبض الحي (السرعة مقفلة)';
-    ht.textContent = 'إن رفعت يدك سابقاً فسيُنفذ أمرك تلقائياً عند تصفير الحساس  |  ❤ ' + GRIP.lastHrVal;
+    ht.textContent = 'واصل الإمساك بالمقابض لمراقبة نبض قلبك براحة  |  ❤ ' + GRIP.lastHrVal;
     bg.textContent = '🔒 السرعة مقفلة';
     bg.style.background = 'rgba(34,197,94,0.2)';
     bg.style.color = '#22c55e';
     bar.style.width = '100%';
     bar.style.backgroundColor = '#22c55e';
-  } else if(elapsed >= GRIP_UI_ORANGE_MS){
-    const remLock = Math.max(0, ((GRIP_UI_LOCK_MS - elapsed) / 1000)).toFixed(1);
+  } else if(GRIP.beepDownPlayed){
     el.className = 'grip-pulse-banner down';
     ic.textContent = '🔻';
-    tt.textContent = 'زمن الخفض (-1.0 كم/س) — ارفع يدك الآن للخفض';
-    ht.textContent = '(إن كنت رفعت يدك في الأزرق فستُنفذ الزيادة +1.0 فور تصفير الحساس) • قفل بعد ' + remLock + 'ث  |  ❤ ' + GRIP.lastHrVal;
+    tt.textContent = 'خفض السرعة (-1.0 كم/س) — ارفع يدك الآن';
+    ht.textContent = 'ينفذ بعد ~2ث من رفع يدك (ثبات ' + frozenSec + '/2.4ث) — أو واصل للقفل  |  ❤ ' + GRIP.lastHrVal;
     bg.textContent = sec + ' ث (خفض)';
     bg.style.background = 'rgba(249,115,22,0.2)';
     bg.style.color = '#f97316';
-    const pct = Math.min(100, ((elapsed - GRIP_UI_ORANGE_MS) / (GRIP_UI_LOCK_MS - GRIP_UI_ORANGE_MS)) * 100);
+    const pct = Math.min(100, ((Date.now() - GRIP.sameHrSince) / GRIP_ORANGE_FROZEN_MS) * 100);
     bar.style.width = pct + '%';
     bar.style.backgroundColor = '#f97316';
   } else {
-    const remOrange = Math.max(0, ((GRIP_UI_ORANGE_MS - elapsed) / 1000)).toFixed(1);
+    const remFast = Math.max(0, ((GRIP_BLUE_FAST_MS - elapsed) / 1000)).toFixed(1);
     el.className = 'grip-pulse-banner up';
     ic.textContent = '⚡';
-    tt.textContent = 'زمن الزيادة (+1.0 كم/س) — ارفع يدك الآن';
-    ht.textContent = 'هامش الزيادة متاح (' + remOrange + 'ث) — أو ابقَ ممسكاً لدخول البرتقالي (الخفض)  |  ❤ ' + GRIP.lastHrVal;
+    tt.textContent = 'زيادة السرعة (+1.0 كم/س) — ارفع يدك الآن';
+    ht.textContent = 'تنفيذ تلقائي بعد ' + remFast + 'ث — أو ابقَ ممسكاً للبرتقالي (الخفض)  |  ❤ ' + GRIP.lastHrVal;
     bg.textContent = sec + ' ث (زيادة)';
     bg.style.background = 'rgba(0,229,255,0.2)';
     bg.style.color = '#00e5ff';
-    const pct = Math.min(100, (elapsed / GRIP_UI_ORANGE_MS) * 100);
+    const pct = Math.min(100, (elapsed / GRIP_BLUE_FAST_MS) * 100);
     bar.style.width = pct + '%';
     bar.style.backgroundColor = '#00e5ff';
   }
@@ -8270,7 +8283,7 @@ function updateGripBannerResult(text, cls){
 
   el.className = 'grip-pulse-banner ' + cls;
   tt.textContent = text;
-  ht.textContent = 'تم التنفيذ بنجاح  |  ' + (GRIP.dbg || '');
+  ht.textContent = 'تم التنفيذ السريع بنجاح  |  ' + (GRIP.dbg || '');
   bg.textContent = '✓ تم التنفيذ';
   bar.style.width = '100%';
 }
