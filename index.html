@@ -8080,8 +8080,8 @@ function onGripPulseTick(){
     try{ if(navigator.vibrate) navigator.vibrate(35); }catch(_){}
   }
 
-  // 2. عند 4.3 ثانية: نغمة الخفض (-1.0 كم/س) جاهزة! (نافذة الرفع تمتد من 4.3 إلى 7.8 ثانية)
-  if(elapsed >= 4300 && !GRIP.beepDownPlayed){
+  // 2. عند 2.4 ثانية (وما دام الرقم يتغيّر أي اليد على المقبض): نغمة الخفض المختلفة + اللون البرتقالي — ارفع يدك الآن للخفض (-1.0 كم/س)
+  if(elapsed >= 2400 && GRIP.beepUpPlayed && !GRIP.beepDownPlayed && frozenFor < 1200){
     GRIP.beepDownPlayed = true;
     playGripLowTone();
     try{ if(navigator.vibrate) navigator.vibrate([35, 50, 35]); }catch(_){}
@@ -8117,11 +8117,16 @@ async function onGripRelease(now){
     lock(false);
   }
 
-  if(priorState === 'LOCKED_HR' || dur >= 7900){
+  const heardUp = GRIP.beepUpPlayed, heardDown = GRIP.beepDownPlayed;
+  let gesture = 'none';
+  if(priorState === 'LOCKED_HR' || GRIP.lockPlayed || dur >= 7900) gesture = 'lock';
+  else if(heardDown) gesture = 'down';
+  else if(heardUp && dur >= 350) gesture = 'up';
+  if(gesture === 'lock'){
     // وضع قياس النبض: عدم تغيير السرعة نهائياً
     updateGripBannerResult('❤️ تم قياس النبض (السرعة مقفلة)', 'lock');
     toast('❤️ اكتمل قياس نبض القلب — بقيت السرعة دون تغيير');
-  } else if(dur >= 350 && dur < 4250){
+  } else if(gesture === 'up'){
     // زيادة السرعة بمقدار +1.0 كم/س
     const currentSpd = gripCurrentSpeed();
     const maxSpd = (typeof MAX_SPEED !== 'undefined' && MAX_SPEED >= 6) ? MAX_SPEED : 16.0;
@@ -8133,7 +8138,7 @@ async function onGripRelease(now){
       updateGripBannerResult('⚡ +1.0 كم/س ← ' + targetSpd.toFixed(1) + ' كم/س', 'up');
       toast('⚡ تم رفع السرعة بقبضة النبض: ' + targetSpd.toFixed(1) + ' كم/س (+1.0)');
     }catch(e){ toast('⚠️ فشل رفع السرعة بالقبضة: ' + (e && e.message ? e.message : e)); }
-  } else if(dur >= 4250 && dur < 7900){
+  } else if(gesture === 'down'){
     // خفض السرعة بمقدار -1.0 كم/س
     const currentSpd = gripCurrentSpeed();
     const targetSpd = Math.max(1.0, Math.round((currentSpd - 1.0) * 10) / 10);
@@ -8196,7 +8201,7 @@ function updateGripBannerUI(elapsed, state){
     bg.style.color = '#22c55e';
     bar.style.width = '100%';
     bar.style.backgroundColor = '#22c55e';
-  } else if(elapsed >= 4300){
+  } else if(GRIP.beepDownPlayed){
     el.className = 'grip-pulse-banner down';
     ic.textContent = '🔻';
     tt.textContent = 'خفض السرعة (-1.0 كم/س)';
