@@ -2660,8 +2660,9 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
         لا توجد أخطاء مسجلة في فلاش اللوحة ✓ (الذاكرة نظيفة)
       </div>
     </div>
+  </div>
 
-  <!-- بطاقة درع الأمان وكشف السقوط الذكي (Smart Fall & Safety Guard) -->
+  <!-- بطاقة درع الأمان الذكي المستقلة تماماً عن مربع الأخطاء (Smart Fall & Safety Guard) -->
   <div class="card" id="safetyCard" style="background:linear-gradient(135deg, rgba(15,23,42,0.92), rgba(30,41,59,0.98));border:1.5px solid rgba(56,189,248,0.3);border-radius:14px;padding:14px 16px;margin:12px 0 16px 0;box-shadow:0 6px 20px rgba(0,0,0,0.4)">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <div style="font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px;color:var(--text)">
@@ -2707,9 +2708,9 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
           <div>
             <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
               <span>مهلة انعدام الخطوة:</span>
-              <b id="sfFsMsLbl" style="color:var(--accent)">500 ms</b>
+              <b id="sfFsMsLbl" style="color:var(--accent)">750 ms</b>
             </div>
-            <input type="range" id="sfFsMs" min="250" max="1200" step="25" value="500" oninput="$('sfFsMsLbl').textContent=this.value+' ms'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+            <input type="range" id="sfFsMs" min="350" max="1500" step="25" value="750" oninput="$('sfFsMsLbl').textContent=this.value+' ms'" onchange="updateSafetyConfigFromUI()" style="width:100%">
           </div>
           <div>
             <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
@@ -2736,16 +2737,16 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
           <div>
             <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
               <span>مدة الصدمة الميكانيكية:</span>
-              <b id="sfDrMsLbl" style="color:var(--accent)">200 ms</b>
+              <b id="sfDrMsLbl" style="color:var(--accent)">400 ms</b>
             </div>
-            <input type="range" id="sfDrMs" min="100" max="500" step="25" value="200" oninput="$('sfDrMsLbl').textContent=this.value+' ms'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+            <input type="range" id="sfDrMs" min="150" max="800" step="25" value="400" oninput="$('sfDrMsLbl').textContent=this.value+' ms'" onchange="updateSafetyConfigFromUI()" style="width:100%">
           </div>
           <div>
             <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
               <span>فارق أمبير الصدمة:</span>
-              <b id="sfDrAmpLbl" style="color:var(--accent)">+1.2 A</b>
+              <b id="sfDrAmpLbl" style="color:var(--accent)">+2.0 A</b>
             </div>
-            <input type="range" id="sfDrAmp" min="0.6" max="3.0" step="0.1" value="1.2" oninput="$('sfDrAmpLbl').textContent='+'+(+this.value).toFixed(1)+' A'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+            <input type="range" id="sfDrAmp" min="1.0" max="3.5" step="0.1" value="2.0" oninput="$('sfDrAmpLbl').textContent='+'+(+this.value).toFixed(1)+' A'" onchange="updateSafetyConfigFromUI()" style="width:100%">
           </div>
         </div>
       </div>
@@ -2772,17 +2773,23 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
           <div>
             <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
               <span>نسبة تشتت الخطوات:</span>
-              <b id="sfRcVarLbl" style="color:var(--accent)">30%</b>
+              <b id="sfRcVarLbl" style="color:var(--accent)">40%</b>
             </div>
-            <input type="range" id="sfRcVar" min="15" max="50" step="5" value="30" oninput="$('sfRcVarLbl').textContent=this.value+'%'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+            <input type="range" id="sfRcVar" min="20" max="60" step="5" value="40" oninput="$('sfRcVarLbl').textContent=this.value+'%'" onchange="updateSafetyConfigFromUI()" style="width:100%">
           </div>
         </div>
       </div>
 
     </div>
 
+    <!-- شريط حالة وسجل درع الأمان المستقل (منفصل تماماً عن مربع أخطاء المحرك) -->
+    <div id="sfEventLogBox" style="margin-top:12px;padding:9px 12px;border-radius:9px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);font-size:11.5px;color:var(--ok);display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <span id="sfEventText">🛡️ درع الأمان الذكي نشط فوراً — يميز آلياً بين نبضة القدم العابرة (الصعود/المشي) والانحشار المستمر (قاع الموجة)</span>
+      <span id="sfEventTime" style="font-size:10px;color:var(--dim);white-space:nowrap">مستقر ✓</span>
+    </div>
+
     <!-- أزرار الإجراء وسجل الأحداث الحي للأمان -->
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.08)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.08)">
       <div id="sfLiveStatus" style="font-size:11px;color:var(--dim)">
         ✓ الإعدادات متزامنة ومحفوظة في فلاش اللوحة (NVS)
       </div>
@@ -2791,9 +2798,6 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
         <button type="button" onclick="saveSafetyConfigToBoard()" style="min-height:28px;padding:3px 12px;font-size:11px;font-weight:bold;background:linear-gradient(135deg,#0284c7,#0369a1);border:1px solid #38bdf8;border-radius:6px;color:#fff;cursor:pointer">💾 حفظ في اللوحة</button>
       </div>
     </div>
-  </div>
-
-
   </div>
 
   <!-- بطاقة المعايرة الميدانية الذكية للوزن والخطوات -->
@@ -4217,8 +4221,21 @@ async function bridgeCmd(c){
   return ok;
 }
 
-// ---------- درع الأمان الذكي وكشف السقوط والنزول التلقائي (v37.0) ----------
-let sfCfg = {fsEn:1, fsMs:500, fsVmin:3.0, drEn:1, drMs:200, drAmp:1.2, rcEn:1, rcDrop:2.5, rcVar:30, safeTest:0};
+// ---------- درع الأمان الذكي وكشف السقوط والنزول التلقائي (مفصول ومحصن ضد صدمة الصعود على السير) ----------
+let sfCfg = {fsEn:1, fsMs:750, fsVmin:3.0, drEn:1, drMs:400, drAmp:2.0, rcEn:1, rcDrop:2.0, rcVar:40, safeTest:0};
+
+function updateSafetyEventBox(txt, colorCss, borderCss, bgCss){
+  const box = $('sfEventLogBox');
+  const tEl = $('sfEventText');
+  const tmEl = $('sfEventTime');
+  if(tEl) tEl.textContent = txt;
+  if(tmEl) tmEl.textContent = new Date().toLocaleTimeString();
+  if(box){
+    box.style.color = colorCss || 'var(--ok)';
+    box.style.borderColor = borderCss || 'rgba(16,185,129,0.25)';
+    box.style.background = bgCss || 'rgba(16,185,129,0.08)';
+  }
+}
 
 
 // ---------- الإيقاف المؤقت الذكي والاستئناف التلقائي لبرامج التمرين (Smart Auto-Pause & Resume) ----------
@@ -4320,21 +4337,28 @@ function onSafetyLine(line){
     const p = line.slice(2).split(',');
     if(p.length >= 10){
       sfCfg.fsEn = parseInt(p[0], 10) || 0;
-      sfCfg.fsMs = parseInt(p[1], 10) || 500;
+      sfCfg.fsMs = Math.max(650, parseInt(p[1], 10) || 750);
       sfCfg.fsVmin = parseFloat(p[2]) || 3.0;
       sfCfg.drEn = parseInt(p[3], 10) || 0;
-      sfCfg.drMs = parseInt(p[4], 10) || 200;
-      sfCfg.drAmp = parseFloat(p[5]) || 1.2;
+      sfCfg.drMs = Math.max(350, parseInt(p[4], 10) || 400);
+      sfCfg.drAmp = Math.max(1.8, parseFloat(p[5]) || 2.0);
       sfCfg.rcEn = parseInt(p[6], 10) || 0;
-      sfCfg.rcDrop = parseFloat(p[7]) || 2.5;
-      sfCfg.rcVar = parseInt(p[8], 10) || 30;
+      sfCfg.rcDrop = parseFloat(p[7]) || 2.0;
+      sfCfg.rcVar = Math.max(35, parseInt(p[8], 10) || 40);
       sfCfg.safeTest = parseInt(p[9], 10) || 0;
       updateSafetyUIFromConfig();
+      // إذا كانت اللوحة تحمل قيماً قديمة مفرطة الحساسية (مثل drMs=200 أو drAmp=1.2)، نرفعها تلقائياً لمنع التوقف عند الصعود!
+      if((parseInt(p[4], 10) || 0) < 350 || (parseFloat(p[5]) || 0) < 1.8 || (parseInt(p[8], 10) || 0) < 35){
+        setTimeout(() => { try{ saveSafetyConfigToBoard(true); }catch(_){} }, 400);
+      }
     }
     return;
   }
   if(line.indexOf('OK') === 0){
-    toast('✓ تم حفظ وتفعيل إعدادات درع الأمان في فلاش اللوحة (NVS)!');
+    if(!window._silentSfSync){
+      toast('✓ تم حفظ وتفعيل إعدادات درع الأمان في فلاش اللوحة (NVS)!');
+    }
+    window._silentSfSync = false;
     if($('sfLiveStatus')){
       $('sfLiveStatus').textContent = '✓ الإعدادات متزامنة ومحفوظة في فلاش اللوحة (NVS)';
       $('sfLiveStatus').style.color = 'var(--ok)';
@@ -4347,25 +4371,55 @@ function onSafetyLine(line){
     const val = p[1] || '0';
     const mode = p[2] || 'ACT';
     const isTest = (mode === 'TEST');
+    const now = Date.now();
 
-    playSafetyBeep();
+    // محلل شكل الموجة الذكي (Smart Waveform Valley-Floor & Step-Impulse Discriminator) — بدون اشتراط وقت ركوب أو عدد خطوات!
+    // كيف يفرق ذكياً بين صدمة القدم (عند الصعود أو الجري) وبين الانحشار الحقيقي؟
+    // - نبضة القدم البشرية: ترفع قمة التيار لحظياً لكن «قاع الموجة» (I_valley / I_floor = I_avg - 0.5*P2P) يظل منخفضاً ويعود للهبوط بين الخطوات.
+    // - الانحشار/الكبح الحقيقي: يرتفع «قاع الموجة المستمر» نفسه ويبقى مرتفعاً دون تفريغ أو يستمر في الصعود المتصل (dI/dt >= 0).
+    if(!isTest && type === 'DRAG'){
+      const baseFloorRef = (WEB_SAFETY.dynFloorA > 0.8) ? WEB_SAFETY.dynFloorA : ((WEB_SAFETY.dynEmptyA > 0.5) ? (WEB_SAFETY.dynEmptyA + 0.55) : 2.15);
+      const liveFloorA = (WEB_SAFETY.liveFloorA > 0) ? WEB_SAFETY.liveFloorA : (lastCurAmp || 0);
+      const reqDragDelta = Math.max(1.6, sfCfg.drAmp || 2.0);
+      const isStepPulseOnly = (WEB_SAFETY.lastP2pA >= 0.55) && (liveFloorA < (baseFloorRef + reqDragDelta * 0.85)) && !WEB_SAFETY.monotonicRising;
+      if(isStepPulseOnly || (lastCurAmp != null && liveFloorA < (baseFloorRef + reqDragDelta - 0.15) && lastCurAmp < 5.2)){
+        updateSafetyEventBox('🧠 تحليل الموجة الذكي: نبضة قدم طبيعية (قاع الموجة ' + liveFloorA.toFixed(2) + 'A مستقر) — ليست انحشاراً ✓', 'var(--ok)', 'rgba(16,185,129,0.25)', 'rgba(16,185,129,0.08)');
+        return;
+      }
+    }
+
+    // كاشف التشتت الذكي (Smart Rhythm-Break Detector):
+    // لا يعتمد على وقت ركوب، بل يتحقق مما إذا كان هناك إيقاع مشي قائم انكسر فعلياً أم أنها مجرد أول خطوة عند الصعود من السكون
+    if(!isTest && type === 'RESCUE'){
+      if(!WEB_SAFETY.rhythmEstablished){
+        updateSafetyEventBox('🧠 تحليل الإيقاع الذكي: بدء خطو جديد (تأسيس الإيقاع المرجعي) ✓', 'var(--ok)', 'rgba(16,185,129,0.25)', 'rgba(16,185,129,0.08)');
+        return;
+      }
+      if(!WEB_SAFETY.lastRescueWarnMs || (now - WEB_SAFETY.lastRescueWarnMs) > 4500){
+        WEB_SAFETY.lastRescueWarnMs = now;
+        updateSafetyEventBox('ℹ️ رصد انحراف فردي في الخطوة — ينفذ الإنقاذ فقط إذا استمر اضطراب الإيقاع', 'var(--amber)', 'rgba(245,158,11,0.3)', 'rgba(245,158,11,0.08)');
+        return;
+      }
+      WEB_SAFETY.lastRescueWarnMs = 0;
+    }
 
     let msg = '';
     if(type === 'DISMOUNT'){
       if(!isTest){
-        msg = '⏸️ تم إيقاف المشاية مؤقتاً لنزولك عن السير (' + val + ' ms) — اضغط استئناف عند عودتك!';
+        msg = '⏸️ درع الأمان: تم إيقاف المشاية مؤقتاً لنزولك عن السير (' + val + ' ms)';
         autoPauseWorkoutOnDismount();
       } else {
         msg = '⚠️ [تجربة أمان] تم رصد النزول من السير خلال ' + val + ' ms!';
       }
     } else if(type === 'DRAG'){
-      msg = (isTest ? '⚠️ [تجربة أمان] تم رصد احتكاك وانزلاق شاذ خلال ' : '🛑 فرملة طوارئ: رصد انزلاق شاذ على السير خلال ') + val + ' ms!';
+      msg = (isTest ? '⚠️ [تجربة أمان] تم رصد احتكاك وانزلاق شاذ خلال ' : '🛑 درع الأمان: رصد انزلاق/احتكاك شاذ مستمر خلال ') + val + ' ms!';
       if(!isTest) safetyActOnPhone('stop');
     } else if(type === 'RESCUE'){
-      msg = '🏃 ' + (isTest ? '[تجربة أمان] إشارة إنقاذ: خفض السرعة المقترح إلى ' : 'تم خفض السرعة تلقائياً للإنقاذ إلى ') + val + ' كم/س!';
+      msg = '🏃 ' + (isTest ? '[تجربة أمان] إشارة إنقاذ: خفض السرعة المقترح إلى ' : 'درع الأمان: خفض السرعة تلقائياً للإنقاذ إلى ') + val + ' كم/س!';
       if(!isTest) safetyActOnPhone('rescue', parseFloat(val));
     }
 
+    updateSafetyEventBox(msg, isTest ? 'var(--amber)' : 'var(--red)', isTest ? 'rgba(245,158,11,0.35)' : 'rgba(239,68,68,0.4)', isTest ? 'rgba(245,158,11,0.1)' : 'rgba(239,68,68,0.12)');
     toast(msg);
 
     if($('sfBadge')){
@@ -4427,7 +4481,7 @@ function onSfTestToggleChanged(){
   }
 }
 
-async function saveSafetyConfigToBoard(){
+async function saveSafetyConfigToBoard(silent){ window._silentSfSync = !!silent;
   updateSafetyConfigFromUI();
   try{ localStorage.setItem('kettler_sf_cfg', JSON.stringify(sfCfg)); }catch(_){}
   const cmd = 'SFS:' + sfCfg.fsEn + ',' + sfCfg.fsMs + ',' + sfCfg.fsVmin.toFixed(1) + ',' +
@@ -7024,8 +7078,10 @@ function onFaultLogLine(str){
       if(idx > 0){
         const v = p.slice(idx + 1).split(',');
         if(v.length >= 5){
+          const fCode = parseInt(v[0], 10) || 0;
+          if(fCode === 9 || fCode === 10 || fCode === 11) return; // فصل أحداث درع الأمان نهائياً عن مربع أخطاء المحرك
           items.push({
-            code: parseInt(v[0], 10) || 0,
+            code: fCode,
             agoSec: parseInt(v[1], 10) || 0,
             currentA: parseFloat(v[2]) || 0,
             tempC: parseFloat(v[3]) || 0,
@@ -7102,6 +7158,10 @@ function onDiagLine(str){
     rawReason = parts[1] || '';
   }
 
+  if(code === 9 || code === 10 || code === 11){
+    // أحداث درع الأمان (9 و 10 و 11) تُعرض في بطاقة درع الأمان المستقلة فقط ولا تلوث مربع أخطاء المحرك
+    return;
+  }
   const def = DIAG_DEFS[code] || { badge: '⚠️ كود غير معروف (' + code + ')', c: 'var(--amber)', reason: rawReason || 'حدث أمان غير محدد', tip: '💡 افحص حالة المشاية وسجل التشخيص في اللوحة.' };
   
   if($('diagBadge')){
@@ -7179,7 +7239,7 @@ function curOnLine(t){
     const pkTxt = (window._sessionPeakAmp && window._sessionPeakAmp > 0.1) ? (' · الذروة: <b dir="ltr" style="color:var(--amber)">' + window._sessionPeakAmp.toFixed(2) + ' A</b>') : '';
     if($('curAmp')) $('curAmp').innerHTML = '<span dir="ltr">' + o.I.toFixed(2) + ' A</span>' + pkTxt;
     const cAmp = document.getElementById('cockpitLiveAmp');
-    if(cAmp) cAmp.textContent = o.I.toFixed(2) + ' A'; try{ checkWebSideDismount(o.I, o.EB); }catch(_){}
+    if(cAmp) cAmp.textContent = o.I.toFixed(2) + ' A'; try{ checkWebSideDismount(o.I, o.EB, o.P2P, o.PK); }catch(_){}
     updateTempDisplays();
   }
   if(o.W != null){
@@ -7209,6 +7269,25 @@ function curOnLine(t){
     const nowMs = Date.now();
     if(window._prevStepVal != null && curS > window._prevStepVal){
       const dS = curS - window._prevStepVal;
+      try{
+        if(typeof WEB_SAFETY !== 'undefined'){
+          const stepDt = WEB_SAFETY.lastStepAtMs ? (nowMs - WEB_SAFETY.lastStepAtMs) : 0;
+          WEB_SAFETY.lastStepAtMs = nowMs;
+          if(stepDt >= 220 && stepDt <= 1500){
+            WEB_SAFETY.stepDts.push(stepDt / Math.max(1, dS));
+            if(WEB_SAFETY.stepDts.length > 4) WEB_SAFETY.stepDts.shift();
+            if(WEB_SAFETY.stepDts.length >= 3){
+              const a = WEB_SAFETY.stepDts;
+              const mean = a.reduce((x,y)=>x+y,0)/a.length;
+              const maxDev = Math.max(...a.map(x => Math.abs(x - mean) / mean));
+              if(maxDev < 0.28) WEB_SAFETY.rhythmEstablished = true;
+            }
+          } else if(stepDt > 2500){
+            WEB_SAFETY.stepDts = [];
+            WEB_SAFETY.rhythmEstablished = false;
+          }
+        }
+      }catch(_){}
       const dt = nowMs - (window._lastStepChangeMs || nowMs);
       if(dt >= 220 && dt <= 4000 && dS <= 6){
         const instSpm = Math.round((dS * 60000) / dt);
@@ -7917,22 +7996,18 @@ window.quickSetIncline = quickSetIncline;
 // - الاستمرار الطويل (حتى نغمة الرنين المزدوجة) -> وضع قياس النبض فقط (قفل السرعة تماماً)
 // ============================================================================
 
-const GRIP_TAIL_MS = 7000;          // ذيل التثبيت في الكونسول أثناء المشي (~7.0 ثوانٍ)
-const GRIP_UI_ORANGE_MS = 3800;     // عند 3.8 ثانية من الرنة الأولى: يظهر البرتقالي وترن النغمة 2 لتعرف أنك دخلت زمن الخفض وترفع يدك فوراً!
-const GRIP_RAW_UP_MAX_MS = 10200;   // في النسخة التي نجحت معك كان الحد 8.5ث (فكان ضيقاً بثانية واحدة)؛ الآن رفعناه إلى 10.2ث ليعطيك هامشاً مريحاً جداً للزيادة (+1.0)!
-const GRIP_UI_LOCK_MS = 18000;      // وضع القفل عند 18.0 ثانية (حتى لا يدخل في القفل الأخضر أبداً أثناء ذيل الزيادة أو الخفض كما حدث في التجربة السابقة!)
+const GRIP_TAIL_MS = 7000;      // ذيل التثبيت في الكونسول بعد رفع اليد
+const GRIP_TONE2_MS = 9200;     // عند 9.2 ثانية (بعد انتهاء ذيل اللمسة الزرقاء بهامش مريح): يتحول للبرتقالي وينفذ خفض السرعة (-1.0) فوراً!
 const GRIP = {
   enabled: true,
-  state: 'IDLE',          // 'IDLE' | 'CONTACT' | 'LOCKED_HR' | 'WAIT_RELEASE' | 'COOLDOWN'
+  state: 'IDLE',          // 'IDLE' | 'CONTACT' | 'WAIT_RELEASE'
   touchStart: 0,
   lastContact: 0,
   lastHrVal: 0,
   sameHrSince: 0,
   hrChanged: false,
-  tone2At: 0,
   beepUpPlayed: false,
   beepDownPlayed: false,
-  lockPlayed: false,
   cooldownEnd: 0,
   ticker: null,
   fadeTimer: null
@@ -7998,11 +8073,6 @@ function playGripLowTone(){
   playGripAudioTone(440, 0.22, 'sine', 0.42); // A4
 }
 
-function playGripLockTone(){
-  playGripAudioTone(523.25, 0.15, 'triangle', 0.32); // C5
-  setTimeout(() => playGripAudioTone(659.25, 0.25, 'triangle', 0.38), 140); // E5
-}
-
 function playGripSuccessTone(isUp){
   if(isUp){
     playGripAudioTone(783.99, 0.12, 'sine', 0.32);
@@ -8030,20 +8100,12 @@ function checkGripWindowTransitions(now){
     try{ if(navigator.vibrate) navigator.vibrate(45); }catch(_){}
   }
 
-  // 2. النغمة الثانية (440Hz - برتقالي -1.0 كم/س): تظهر وترن حتمياً عند 3.8 ثانية من الرنة الأولى
-  if(GRIP.beepUpPlayed && !GRIP.beepDownPlayed && elapsed >= GRIP_UI_ORANGE_MS){
+  // 2. النغمة الثانية (440Hz - برتقالي -1.0 كم/س): عند 9.2 ثانية يتحول للبرتقالي وينفذ الخفض (-1.0) فوراً دون انتظار إضافي!
+  if(GRIP.beepUpPlayed && !GRIP.beepDownPlayed && elapsed >= GRIP_TONE2_MS){
     GRIP.beepDownPlayed = true;
-    GRIP.tone2At = now;
-    playGripLowTone(); try{ gtMark('APP نغمة2(برتقالي)'); }catch(_){}
+    playGripLowTone(); try{ gtMark('APP نغمة2(برتقالي-تنفيذ-فوري)'); }catch(_){}
     try{ if(navigator.vibrate) navigator.vibrate([45, 60, 45]); }catch(_){}
-  }
-
-  // 3. النغمة الثالثة (نغمة مزدوجة - أخضر): عند 18.0 ثانية فقط حتى لا تقطع أوامر الزيادة أو الخفض أثناء ذيل الكونسول!
-  if(GRIP.beepDownPlayed && !GRIP.lockPlayed && elapsed >= GRIP_UI_LOCK_MS){
-    GRIP.lockPlayed = true;
-    GRIP.state = 'LOCKED_HR';
-    playGripLockTone(); try{ gtMark('APP نغمة3(قفل-أخضر)'); }catch(_){}
-    try{ if(navigator.vibrate) navigator.vibrate([60, 80, 60]); }catch(_){}
+    onGripRelease(now);
   }
 }
 
@@ -8057,12 +8119,9 @@ function onGripHeartRatePacket(hr, flagPresent){
 
   if(flagPresent && hr > 0){
     if(GRIP.state === 'WAIT_RELEASE'){
-      if(now >= GRIP.cooldownEnd && Math.abs(hr - GRIP.lastHrVal) >= 2){
-        GRIP.state = 'IDLE';
-      } else {
-        GRIP.lastContact = now;
-        return;
-      }
+      // نبقى في WAIT_RELEASE طالما أن الحساس لم يتصفر بعد، حتى لا يعيد بدء دورة جديدة أثناء رفع اليد
+      GRIP.lastContact = now;
+      return;
     }
 
     if(now < GRIP.cooldownEnd) return;
@@ -8074,13 +8133,11 @@ function onGripHeartRatePacket(hr, flagPresent){
       GRIP.sameHrSince = now;
       GRIP.lastHrVal = hr;
       GRIP.hrChanged = false;
-      GRIP.tone2At = 0;
       GRIP.beepUpPlayed = false;
       GRIP.beepDownPlayed = false;
-      GRIP.lockPlayed = false;
       showGripBanner(true);
       checkGripWindowTransitions(now);
-      updateGripBannerUI(0, GRIP.state);
+      if(GRIP.state === 'CONTACT') updateGripBannerUI(0);
     } else {
       const elapsed = now - GRIP.touchStart;
       if(hr !== GRIP.lastHrVal){
@@ -8089,12 +8146,13 @@ function onGripHeartRatePacket(hr, flagPresent){
         GRIP.hrChanged = true;
       }
       checkGripWindowTransitions(now);
-      updateGripBannerUI(elapsed, GRIP.state);
+      if(GRIP.state === 'CONTACT') updateGripBannerUI(elapsed);
     }
   } else {
-    // وصلت حزمة hr = 0 (نفس الآلية التي نجحت 100% في النسخة الثانية ولكن بحد فاصل 10.2 ثانية بدلاً من 8.5 ثانية لإعطائك هامش زيادة واسع!)
+    // وصلت حزمة hr = 0: إذا كنا في الأزرق (رُفعت اليد في الأزرق) ننفذ الزيادة (+1.0) فوراً!
+    // وإذا كنا قد نفذنا البرتقالي، نعود لوضع الاستعداد IDLE للمسة التالية.
     if(now - GRIP.lastContact > 2000 && $('lvHr')) $('lvHr').textContent = '--';
-    if(GRIP.state === 'CONTACT' || GRIP.state === 'LOCKED_HR'){
+    if(GRIP.state === 'CONTACT'){
       onGripRelease(now);
     } else if(GRIP.state === 'WAIT_RELEASE'){
       GRIP.state = 'IDLE';
@@ -8103,8 +8161,15 @@ function onGripHeartRatePacket(hr, flagPresent){
 }
 
 function onGripPulseTick(){
-  if(!GRIP.enabled || GRIP.state === 'IDLE' || GRIP.state === 'COOLDOWN' || GRIP.state === 'WAIT_RELEASE') return;
+  if(!GRIP.enabled || GRIP.state === 'IDLE') return;
   const now = Date.now();
+
+  if(GRIP.state === 'WAIT_RELEASE'){
+    if(now - GRIP.lastContact > 1800){
+      GRIP.state = 'IDLE';
+    }
+    return;
+  }
 
   if(now - GRIP.lastContact > 1600){
     if($('lvHr')) $('lvHr').textContent = '--';
@@ -8114,45 +8179,27 @@ function onGripPulseTick(){
 
   const elapsed = now - GRIP.touchStart;
   checkGripWindowTransitions(now);
-  updateGripBannerUI(elapsed, GRIP.state);
+  if(GRIP.state === 'CONTACT') updateGripBannerUI(elapsed);
 }
 
 async function onGripRelease(now){
-  if(GRIP.state === 'IDLE' || GRIP.state === 'COOLDOWN' || GRIP.state === 'WAIT_RELEASE') return;
+  if(GRIP.state !== 'CONTACT') return;
   const rawDur = now - GRIP.touchStart;
-  const priorState = GRIP.state;
-
-  try{ console.log('[GRIP] release raw=' + rawDur + 'ms state=' + priorState); }catch(_){}
 
   GRIP.state = 'WAIT_RELEASE';
-  GRIP.cooldownEnd = now + 2000;
+  GRIP.cooldownEnd = now + 1500;
 
   if(dev === tDev && brState === 'ON' && !ready){
     ready = true;
     lock(false);
   }
 
-  // نفس منطق النسخة التي نجحت معك تماماً، مع توسيع حد الزيادة من 8500ms إلى 10200ms وإبعاد القفل إلى 18000ms:
-  // - إذا تصفّر الحساس قبل 10.2 ثانية (رفعت يدك في الأزرق حتى لو تأخرت ثانيتين بعد الرنة الأولى) => زيادة (+1.0 كم/س)
-  // - إذا تصفّر الحساس بين 10.2 و 18.0 ثانية (أبقيت يدك حتى ظهور البرتقالي عند 3.8 ثانية ثم رفعتها) => خفض (-1.0 كم/س)
-  // - إذا استمر أكثر من 18.0 ثانية => قفل السرعة
-  let gesture = 'none';
-  if(priorState === 'LOCKED_HR' || GRIP.lockPlayed || rawDur >= GRIP_UI_LOCK_MS){
-    gesture = 'lock';
-  } else if(rawDur >= GRIP_RAW_UP_MAX_MS){
-    gesture = 'down';
-  } else if(GRIP.beepUpPlayed){
-    gesture = 'up';
-  }
-
-  GRIP.dbg = 'الزمن الكلي=' + (rawDur/1000).toFixed(1) + 'ث (حد الزيادة 10.2ث)';
+  const gesture = GRIP.beepDownPlayed ? 'down' : (GRIP.beepUpPlayed ? 'up' : 'none');
+  GRIP.dbg = 'الزمن=' + (rawDur/1000).toFixed(1) + 'ث';
   try{ gtMark('APP قرار=' + gesture + ' ' + GRIP.dbg); }catch(_){}
   if(GT.rec){ hideGripBannerDirect(); GRIP.state = 'WAIT_RELEASE'; return; }
 
-  if(gesture === 'lock'){
-    updateGripBannerResult('❤️ تم قياس النبض (السرعة مقفلة)', 'lock');
-    toast('❤️ اكتمل قياس نبض القلب — بقيت السرعة دون تغيير');
-  } else if(gesture === 'up'){
+  if(gesture === 'up'){
     const currentSpd = gripCurrentSpeed();
     const maxSpd = (typeof MAX_SPEED !== 'undefined' && MAX_SPEED >= 6) ? MAX_SPEED : 16.0;
     const targetSpd = Math.min(maxSpd, Math.round((currentSpd + 1.0) * 10) / 10);
@@ -8170,9 +8217,10 @@ async function onGripRelease(now){
     try{
       await quickSetSpeed(targetSpd);
       setTimeout(() => { try{ if(cp) send(speedCmd(targetSpd)); }catch(_){} }, 380);
+      setTimeout(() => { try{ if(cp) send(speedCmd(targetSpd)); }catch(_){} }, 1200);
       playGripSuccessTone(false);
       try{ if(navigator.vibrate) navigator.vibrate(80); }catch(_){}
-      updateGripBannerResult('🔻 -1.0 كم/س ← ' + targetSpd.toFixed(1) + ' كم/س', 'down');
+      updateGripBannerResult('🔻 -1.0 كم/س ← ' + targetSpd.toFixed(1) + ' كم/س (ارفع يدك الآن)', 'down');
       toast('🔻 تم خفض السرعة بقبضة النبض: ' + targetSpd.toFixed(1) + ' كم/س (-1.0)');
     }catch(e){ toast('⚠️ فشل خفض السرعة بالقبضة: ' + (e && e.message ? e.message : e)); }
   } else {
@@ -8184,7 +8232,7 @@ async function onGripRelease(now){
   if(GRIP.fadeTimer) clearTimeout(GRIP.fadeTimer);
   GRIP.fadeTimer = setTimeout(() => {
     showGripBanner(false);
-  }, 2500);
+  }, 3000);
 }
 
 function showGripBanner(show){
@@ -8206,7 +8254,7 @@ function resetGripState(fullReset){
   if(fullReset) GRIP.cooldownEnd = 0;
 }
 
-function updateGripBannerUI(elapsed, state){
+function updateGripBannerUI(elapsed){
   const el = $('gripPulseBanner');
   const ic = $('gpbIcon');
   const tt = $('gpbTitle');
@@ -8216,41 +8264,17 @@ function updateGripBannerUI(elapsed, state){
   if(!el || !ic || !tt || !ht || !bg || !bar) return;
 
   const sec = (elapsed / 1000).toFixed(1);
-
-  if(state === 'LOCKED_HR' || elapsed >= GRIP_UI_LOCK_MS){
-    el.className = 'grip-pulse-banner lock';
-    ic.textContent = '❤️';
-    tt.textContent = 'وضع قياس النبض الحي (السرعة مقفلة)';
-    ht.textContent = 'واصل الإمساك بالمقابض لمراقبة نبض قلبك براحة  |  ❤ ' + GRIP.lastHrVal;
-    bg.textContent = '🔒 السرعة مقفلة';
-    bg.style.background = 'rgba(34,197,94,0.2)';
-    bg.style.color = '#22c55e';
-    bar.style.width = '100%';
-    bar.style.backgroundColor = '#22c55e';
-  } else if(elapsed >= GRIP_UI_ORANGE_MS){
-    el.className = 'grip-pulse-banner down';
-    ic.textContent = '🔻';
-    tt.textContent = 'زمن الخفض (-1.0 كم/س) — ارفع يدك الآن للخفض';
-    ht.textContent = '(إن كنت رفعت يدك في الأزرق فستُنفذ الزيادة +1.0 تلقائياً فور تصفير الحساس)  |  ❤ ' + GRIP.lastHrVal;
-    bg.textContent = sec + ' ث (خفض)';
-    bg.style.background = 'rgba(249,115,22,0.2)';
-    bg.style.color = '#f97316';
-    const pct = Math.min(100, ((elapsed - GRIP_UI_ORANGE_MS) / (GRIP_UI_LOCK_MS - GRIP_UI_ORANGE_MS)) * 100);
-    bar.style.width = pct + '%';
-    bar.style.backgroundColor = '#f97316';
-  } else {
-    const remOrange = Math.max(0, ((GRIP_UI_ORANGE_MS - elapsed) / 1000)).toFixed(1);
-    el.className = 'grip-pulse-banner up';
-    ic.textContent = '⚡';
-    tt.textContent = 'زمن الزيادة (+1.0 كم/س) — ارفع يدك الآن';
-    ht.textContent = 'هامش الزيادة (' + remOrange + 'ث) — أو ابقَ ممسكاً للبرتقالي (الخفض)  |  ❤ ' + GRIP.lastHrVal;
-    bg.textContent = sec + ' ث (زيادة)';
-    bg.style.background = 'rgba(0,229,255,0.2)';
-    bg.style.color = '#00e5ff';
-    const pct = Math.min(100, (elapsed / GRIP_UI_ORANGE_MS) * 100);
-    bar.style.width = pct + '%';
-    bar.style.backgroundColor = '#00e5ff';
-  }
+  const remDown = Math.max(0, ((GRIP_TONE2_MS - elapsed) / 1000)).toFixed(1);
+  el.className = 'grip-pulse-banner up';
+  ic.textContent = '⚡';
+  tt.textContent = 'زيادة السرعة (+1.0 كم/س) — ارفع يدك الآن!';
+  ht.textContent = 'ارفع يدك للزيادة (+1.0) — أو ابقَ ممسكاً (' + remDown + 'ث) ليتحول للبرتقالي ويخفض السرعة فوراً  |  ❤ ' + GRIP.lastHrVal;
+  bg.textContent = sec + ' ث (أزرق)';
+  bg.style.background = 'rgba(0,229,255,0.2)';
+  bg.style.color = '#00e5ff';
+  const pct = Math.min(100, (elapsed / GRIP_TONE2_MS) * 100);
+  bar.style.width = pct + '%';
+  bar.style.backgroundColor = '#00e5ff';
 }
 
 function updateGripBannerResult(text, cls){
@@ -8358,26 +8382,51 @@ window.gtStartTest = gtStartTest; window.gtStopTest = gtStopTest; window.gtCopy 
 const WEB_SAFETY = {
   dynEmptyA: 0,
   dynWalkA: 0,
+  dynFloorA: 0,
+  liveFloorA: 0,
+  lastP2pA: 0,
+  ampHist: [],
+  stepDts: [],
+  monotonicRising: false,
+  rhythmEstablished: false,
   lastSpd: 0,
   runnerLoaded: false,
+  lastStepAtMs: 0,
+  lastRescueWarnMs: 0,
   loadStartMs: 0,
   emptyStartMs: 0,
   lastTriggerMs: 0
 };
 
-function checkWebSideDismount(liveAmp, boardEmptyBeltA){
+function checkWebSideDismount(liveAmp, boardEmptyBeltA, liveP2pA, livePeakA){
   try{
-    if(!sfCfg || !sfCfg.fsEn || sfCfg.safeTest) return;
+    if(!sfCfg) return;
     const now = Date.now();
     const spd = (tel && tel.s > 0) ? tel.s : 0;
-    if(spd < (sfCfg.fsVmin || 2.5) || manPause || paused){
+    if(spd < 1.5 || manPause || paused){
       WEB_SAFETY.runnerLoaded = false;
+      WEB_SAFETY.rhythmEstablished = false;
+      WEB_SAFETY.ampHist = [];
+      WEB_SAFETY.stepDts = [];
       WEB_SAFETY.loadStartMs = 0;
       WEB_SAFETY.emptyStartMs = 0;
       WEB_SAFETY.dynWalkA = 0;
+      WEB_SAFETY.dynFloorA = 0;
       return;
     }
     if(now - WEB_SAFETY.lastTriggerMs < 6000) return;
+
+    // 1. حساب قاع الموجة اللحظي (Sustained Current Floor = I_avg - 0.50 * P2P) وتتبع القاع الأدنى لآخر 3 قراءات:
+    // عندما يضع المتدرب قدمه، يقفز التيار اللحظي (Peak) لكن فرق التموج (P2P) يكون كبيراً فيبقى قاع الموجة معتدلاً،
+    // بينما في الانحشار الحقيقي يرتفع قاع الموجة نفسه دون تفريغ بين الخطوات!
+    const p2p = (liveP2pA != null && liveP2pA >= 0) ? liveP2pA : Math.max(0, (livePeakA || liveAmp) - liveAmp);
+    WEB_SAFETY.lastP2pA = p2p;
+    const instantFloorA = Math.max(0.5, liveAmp - 0.50 * p2p);
+    WEB_SAFETY.ampHist.push(instantFloorA);
+    if(WEB_SAFETY.ampHist.length > 3) WEB_SAFETY.ampHist.shift();
+    const valleyFloorA = Math.min(...WEB_SAFETY.ampHist);
+    WEB_SAFETY.liveFloorA = valleyFloorA;
+    WEB_SAFETY.monotonicRising = (WEB_SAFETY.ampHist.length === 3 && WEB_SAFETY.ampHist[2] >= WEB_SAFETY.ampHist[1] + 0.25 && WEB_SAFETY.ampHist[1] >= WEB_SAFETY.ampHist[0] + 0.25);
 
     // تكييف قيمة السير الفارغ المكتسبة مع تغير السرعة
     if(WEB_SAFETY.lastSpd > 0.5 && Math.abs(spd - WEB_SAFETY.lastSpd) >= 0.3 && WEB_SAFETY.dynEmptyA > 0.5){
@@ -8389,38 +8438,42 @@ function checkWebSideDismount(liveAmp, boardEmptyBeltA){
       WEB_SAFETY.dynEmptyA = boardEmptyBeltA;
     }
 
-    // حساب عتبة المشي الدنيا وعملية التعلم الآلي لمتوسط تيار المشي الفعلي
-    const minWalkA = WEB_SAFETY.dynEmptyA > 0.5 ? (WEB_SAFETY.dynEmptyA + 0.75) : 2.50;
+    // التعلم الآلي لمتوسط تيار المشي وقاع الموجة أثناء الخطو الطبيعي
+    const minWalkA = WEB_SAFETY.dynEmptyA > 0.5 ? (WEB_SAFETY.dynEmptyA + 0.70) : 2.45;
     if(liveAmp >= minWalkA){
       if(WEB_SAFETY.dynWalkA < 1.0) WEB_SAFETY.dynWalkA = liveAmp;
-      else WEB_SAFETY.dynWalkA = WEB_SAFETY.dynWalkA * 0.90 + liveAmp * 0.10;
+      else if(liveAmp < WEB_SAFETY.dynWalkA + 2.2) WEB_SAFETY.dynWalkA = WEB_SAFETY.dynWalkA * 0.88 + liveAmp * 0.12;
+
+      if(WEB_SAFETY.dynFloorA < 0.8) WEB_SAFETY.dynFloorA = instantFloorA;
+      else if(instantFloorA < WEB_SAFETY.dynFloorA + 1.4) WEB_SAFETY.dynFloorA = WEB_SAFETY.dynFloorA * 0.90 + instantFloorA * 0.10;
 
       WEB_SAFETY.emptyStartMs = 0;
       if(!WEB_SAFETY.loadStartMs) WEB_SAFETY.loadStartMs = now;
-      if(now - WEB_SAFETY.loadStartMs >= 800){
+      if(now - WEB_SAFETY.loadStartMs >= 1200){
         WEB_SAFETY.runnerLoaded = true;
       }
     }
 
-    // حساب الحد الآلي الديناميكي للسير الفارغ كنقطة فاصلة بين تيار المشي المكتسب وتيار السير الفارغ المكتسب
     let dynamicEmptyCeilingA;
-    if(WEB_SAFETY.dynEmptyA > 0.5 && WEB_SAFETY.dynWalkA > (WEB_SAFETY.dynEmptyA + 0.70)){
-      dynamicEmptyCeilingA = WEB_SAFETY.dynEmptyA + 0.42 * (WEB_SAFETY.dynWalkA - WEB_SAFETY.dynEmptyA);
+    if(WEB_SAFETY.dynEmptyA > 0.5 && WEB_SAFETY.dynWalkA > (WEB_SAFETY.dynEmptyA + 0.75)){
+      dynamicEmptyCeilingA = WEB_SAFETY.dynEmptyA + 0.38 * (WEB_SAFETY.dynWalkA - WEB_SAFETY.dynEmptyA);
     } else if(WEB_SAFETY.dynWalkA > 2.40){
-      dynamicEmptyCeilingA = WEB_SAFETY.dynWalkA * 0.68;
+      dynamicEmptyCeilingA = WEB_SAFETY.dynWalkA * 0.65;
     } else if(WEB_SAFETY.dynEmptyA > 0.5){
-      dynamicEmptyCeilingA = WEB_SAFETY.dynEmptyA + 0.50;
+      dynamicEmptyCeilingA = WEB_SAFETY.dynEmptyA + 0.45;
     } else {
-      dynamicEmptyCeilingA = 1.40 + (spd * 0.08) + 0.50;
+      dynamicEmptyCeilingA = 1.40 + (spd * 0.08) + 0.45;
     }
 
-    if(!WEB_SAFETY.runnerLoaded && liveAmp > 0.7 && liveAmp < 2.4){
+    if(!WEB_SAFETY.runnerLoaded && liveAmp > 0.7 && liveAmp < 2.3){
       if(WEB_SAFETY.dynEmptyA < 0.5) WEB_SAFETY.dynEmptyA = liveAmp;
       else WEB_SAFETY.dynEmptyA = WEB_SAFETY.dynEmptyA * 0.88 + liveAmp * 0.12;
     }
 
-    if(WEB_SAFETY.runnerLoaded && liveAmp > 0.3 && liveAmp <= dynamicEmptyCeilingA){
-      // تحديث قيمة السير الفارغ آلياً فور رصد الهبوط
+    if(!sfCfg.fsEn || sfCfg.safeTest || spd < (sfCfg.fsVmin || 3.0)) return;
+
+    const noRecentStep = (!WEB_SAFETY.lastStepAtMs) || ((now - WEB_SAFETY.lastStepAtMs) > 1000);
+    if(WEB_SAFETY.runnerLoaded && noRecentStep && liveAmp > 0.3 && liveAmp <= dynamicEmptyCeilingA){
       if(liveAmp > 0.7){
         if(WEB_SAFETY.dynEmptyA < 0.5) WEB_SAFETY.dynEmptyA = liveAmp;
         else WEB_SAFETY.dynEmptyA = WEB_SAFETY.dynEmptyA * 0.85 + liveAmp * 0.15;
@@ -8429,14 +8482,18 @@ function checkWebSideDismount(liveAmp, boardEmptyBeltA){
         WEB_SAFETY.emptyStartMs = now;
       } else {
         const emptyDur = now - WEB_SAFETY.emptyStartMs;
-        const reqMs = Math.max(1100, (sfCfg.fsMs || 600) + 350);
+        const reqMs = Math.max(1100, (sfCfg.fsMs || 750) + 350);
         if(emptyDur >= reqMs){
           WEB_SAFETY.runnerLoaded = false;
+          WEB_SAFETY.rhythmEstablished = false;
+          WEB_SAFETY.ampHist = [];
+          WEB_SAFETY.stepDts = [];
           WEB_SAFETY.loadStartMs = 0;
           WEB_SAFETY.emptyStartMs = 0;
           WEB_SAFETY.lastTriggerMs = now;
-          playSafetyBeep();
-          toast('⏸️ درع الأمان الآلي: هبط التيار إلى ' + liveAmp.toFixed(2) + 'A (تحت الحد الآلي ' + dynamicEmptyCeilingA.toFixed(2) + 'A) — تم الإيقاف المؤقت!');
+          const dMsg = '⏸️ درع الأمان الآلي: هبط التيار إلى ' + liveAmp.toFixed(2) + 'A (تحت الحد الآلي ' + dynamicEmptyCeilingA.toFixed(2) + 'A) — تم الإيقاف المؤقت!';
+          updateSafetyEventBox(dMsg, 'var(--amber)', 'rgba(245,158,11,0.35)', 'rgba(245,158,11,0.1)');
+          toast(dMsg);
           autoPauseWorkoutOnDismount();
         }
       }
