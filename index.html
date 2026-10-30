@@ -2124,7 +2124,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <body>
 <div id="gate" onclick="if(event.target===this)hideGate()"><div class="gbox" style="position:relative">
   <button type="button" onclick="hideGate()" style="position:absolute;top:12px;left:12px;width:34px;height:34px;min-height:34px;padding:0;background:rgba(255,255,255,0.12);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;">✕</button>
-  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v96.0 (درع الأمان والاستئناف التلقائي)</div>
+  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v105.0 (اتصال مباشر سريع + درع الأمان الذكي)</div>
   <h1 style="margin:0 0 8px">الاتصال بحساس الحرارة</h1>
   <p style="margin:0 0 12px">لحماية المحرك، يرجى الاتصال بحساس الحرارة أو الضغط على تخطي للمتابعة فوراً.</p>
   <div id="gMsg"></div>
@@ -2139,7 +2139,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v96.0 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v105.0 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -4573,7 +4573,6 @@ async function connectTemp(forceAll = false){
     return;
   }
 
-  // تصفير أي محاولة سابقة فور ضغط المستخدم وتفريغ أي اتصال عالق في أندرويد
   clearTimeout(tTimer); tTimer = null;
   tBusy = true;
   tBusyAt = Date.now();
@@ -4585,30 +4584,27 @@ async function connectTemp(forceAll = false){
       try{ tDev.removeEventListener('gattserverdisconnected', onTDisc); }catch(_){}
       try{ if(tDev.gatt && tDev.gatt.connected) tDev.gatt.disconnect(); }catch(_){}
       tDev = null;
-      await sleep(450); // منح مكدس بلوتوث أندرويد وقتاً لتحرير القناة السابقة
     }
 
-    tempOff('جارٍ البحث عن Kettler-Temp...');
-    
+    tempOff('جارٍ البحث... اختر Kettler-Temp من القائمة');
+
     let reqOptions;
     if(forceAll){
       reqOptions = { acceptAllDevices: true, optionalServices: [NUS, OTA_SVC, SVC] };
     } else {
       reqOptions = {
         filters: [
-          { name: 'Kettler-Temp' },
-          { namePrefix: 'Kettler-Temp' },
-          { services: [NUS] }
+          { services: [NUS] },
+          { namePrefix: 'Kettler' },
+          { name: 'Kettler-Temp' }
         ],
         optionalServices: [NUS, OTA_SVC, SVC]
       };
     }
 
     tDev = await navigator.bluetooth.requestDevice(reqOptions);
-    await openTemp();
-    // نربط مستمع الانفصال فقط بعد نجاح الاتصال الكامل حتى لا يقاطع خطوات التأسيس!
-    tDev.removeEventListener('gattserverdisconnected', onTDisc);
     tDev.addEventListener('gattserverdisconnected', onTDisc);
+    await openTemp();
   }catch(e){
     if(e && e.name === 'SecurityError'){
       tempOff('اضغط "الاتصال بالحساس" لإكمال الاتصال');
@@ -4617,13 +4613,9 @@ async function connectTemp(forceAll = false){
       tempOff('تم إلغاء نافذة اختيار الحساس — اضغط مجدداً للاتصال');
     }else{
       tempOff('تعذر الاتصال: ' + (e && e.message ? e.message : e));
-      toast('💡 إذا استمر الخطأ أطفئ بلوتوث الهاتف وشغله أو اضغط «بحث شامل»');
+      toast('💡 تأكد من اختيار Kettler-Temp (وليس المشاية) أو اضغط «بحث شامل»');
     }
-    if(tDev){
-      try{ tDev.removeEventListener('gattserverdisconnected', onTDisc); }catch(_){}
-      try{ tDev.addEventListener('gattserverdisconnected', onTDisc); }catch(_){}
-      tSched(4500);
-    }
+    if(tDev) tSched(4000);
   } finally {
     tBusy = false;
   }
@@ -4631,67 +4623,39 @@ async function connectTemp(forceAll = false){
 
 async function openTemp(){
   if(!tDev) return;
-  tempOff('جارٍ فتح الاتصال باللوحة...');
+  tempOff('جارٍ الاتصال بالحساس...');
 
-  // إيقاف أي مستمع انفصال مؤقتاً أثناء التأسيس لمنع التداخل
-  try{ tDev.removeEventListener('gattserverdisconnected', onTDisc); }catch(_){}
-
-  let srv = null;
-  let svc = null;
-  // حلقة تأسيس متكاملة مقاومة لخطأ أندرويد GATT 133 (Connection attempt failed):
-  // عند فشل أي محاولة نغلق القناة صراحةً وننتظر 1100ms لتحرير مكدس البلوتوث في أندرويد قبل المحاولة التالية
-  for(let att = 1; att <= 4; att++){
-    try{
-      if(att > 1){
-        tempOff('إعادة تثبيت القناة (' + (att - 1) + '/3)...');
-        try{ if(tDev.gatt) tDev.gatt.disconnect(); }catch(_){}
-        await sleep(1100);
-      }
-      srv = await withTimeout(tDev.gatt.connect(), 10000, 'الاتصال باللوحة');
-      await sleep(450); // مهلة استقرار تبادل الـ MTU في أندرويد
-      if(!tDev.gatt.connected){
-        throw new Error('انفصلت القناة أثناء التفاوض');
-      }
-      svc = await withTimeout(srv.getPrimaryService(NUS), 8000, 'إيجاد خدمة UART');
-      if(svc) break;
-    }catch(err){
-      if(att === 4) throw err;
-    }
+  // استدعاء getPrimaryService فوراً بعد gatt.connect بدون أي sleep فاصل (لمنع سقوط جلسة GATT في أندرويد!)
+  let srv = null, svc = null;
+  try{
+    srv = await withTimeout(tDev.gatt.connect(), 10000, 'الاتصال');
+    svc = await withTimeout(srv.getPrimaryService(NUS), 8000, 'إيجاد الخدمة');
+  }catch(firstErr){
+    tempOff('إعادة تثبيت الاتصال...');
+    await sleep(600);
+    srv = await withTimeout(tDev.gatt.connect(), 10000, 'الاتصال');
+    svc = await withTimeout(srv.getPrimaryService(NUS), 8000, 'إيجاد الخدمة');
   }
 
-  // إعداد قناة الاستقبال TX
   const ch = await svc.getCharacteristic(NUS_TX);
   const dec = new TextDecoder();
   tBuf = '';
   ch.addEventListener('characteristicvaluechanged', ev => onTempData(dec.decode(ev.target.value)));
+  await ch.startNotifications();
 
-  // تفعيل الإشعارات مع إعادة محاولة لتفادي رفض الـ CCCD على أندرويد
-  try{
-    await sleep(100);
-    await ch.startNotifications();
-  }catch(err){
-    console.warn('startNotifications first try failed, retrying...', err);
-    await sleep(300);
-    await ch.startNotifications();
-  }
-
-  // إعداد قناة الإرسال RX
   try{
     tRx = await svc.getCharacteristic(NUS_RX);
-    await sleep(80);
     await pushLimits();
   }catch(_){
     tRx = null;
   }
 
-  // إعداد خدمة التحديث اللاسلكي OTA
   oCtl = oDat = null;
   try{
     const os = await srv.getPrimaryService(OTA_SVC);
     oCtl = await os.getCharacteristic(OTA_CTL);
     oDat = await os.getCharacteristic(OTA_DAT);
     oCtl.addEventListener('characteristicvaluechanged', ev => otaOnMsg(dec.decode(ev.target.value)));
-    await sleep(80);
     await oCtl.startNotifications();
   }catch(_){
     oCtl = oDat = null;
