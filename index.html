@@ -4573,7 +4573,7 @@ async function connectTemp(forceAll = false){
     return;
   }
 
-  // تصفير أي محاولة سابقة فور ضغط المستخدم
+  // تصفير أي محاولة سابقة فور ضغط المستخدم وتفريغ أي اتصال عالق في أندرويد
   clearTimeout(tTimer); tTimer = null;
   tBusy = true;
   tBusyAt = Date.now();
@@ -4582,9 +4582,10 @@ async function connectTemp(forceAll = false){
 
   try{
     if(tDev){
-      tDev.removeEventListener('gattserverdisconnected', onTDisc);
+      try{ tDev.removeEventListener('gattserverdisconnected', onTDisc); }catch(_){}
       try{ if(tDev.gatt && tDev.gatt.connected) tDev.gatt.disconnect(); }catch(_){}
       tDev = null;
+      await sleep(450); // منح مكدس بلوتوث أندرويد وقتاً لتحرير القناة السابقة
     }
 
     tempOff('جارٍ البحث عن Kettler-Temp...');
@@ -4595,17 +4596,19 @@ async function connectTemp(forceAll = false){
     } else {
       reqOptions = {
         filters: [
-          { namePrefix: 'Kettler' },
           { name: 'Kettler-Temp' },
-          { services: [SVC] } // 0x1826 في حزمة advData الرئيسية
+          { namePrefix: 'Kettler-Temp' },
+          { services: [NUS] }
         ],
         optionalServices: [NUS, OTA_SVC, SVC]
       };
     }
 
     tDev = await navigator.bluetooth.requestDevice(reqOptions);
-    tDev.addEventListener('gattserverdisconnected', onTDisc);
     await openTemp();
+    // نربط مستمع الانفصال فقط بعد نجاح الاتصال الكامل حتى لا يقاطع خطوات التأسيس!
+    tDev.removeEventListener('gattserverdisconnected', onTDisc);
+    tDev.addEventListener('gattserverdisconnected', onTDisc);
   }catch(e){
     if(e && e.name === 'SecurityError'){
       tempOff('اضغط "الاتصال بالحساس" لإكمال الاتصال');
@@ -4614,9 +4617,13 @@ async function connectTemp(forceAll = false){
       tempOff('تم إلغاء نافذة اختيار الحساس — اضغط مجدداً للاتصال');
     }else{
       tempOff('تعذر الاتصال: ' + (e && e.message ? e.message : e));
-      toast('💡 تلميح: أعد تشغيل بلوتوث الهاتف أو اضغط "بحث شامل"');
+      toast('💡 إذا استمر الخطأ أطفئ بلوتوث الهاتف وشغله أو اضغط «بحث شامل»');
     }
-    if(tDev) tSched(4000);
+    if(tDev){
+      try{ tDev.removeEventListener('gattserverdisconnected', onTDisc); }catch(_){}
+      try{ tDev.addEventListener('gattserverdisconnected', onTDisc); }catch(_){}
+      tSched(4500);
+    }
   } finally {
     tBusy = false;
   }
@@ -4626,33 +4633,29 @@ async function openTemp(){
   if(!tDev) return;
   tempOff('جارٍ فتح الاتصال باللوحة...');
 
-  let srv = null;
-  // محاولة الاتصال بـ GATT مع معالجة استقرار أندرويد
-  for(let att = 1; att <= 2; att++){
-    try{
-      srv = await withTimeout(tDev.gatt.connect(), 12000, 'الاتصال باللوحة');
-      await sleep(250); // مهلة ضرورية جداً لأندرويد لإنهاء تبادل الـ MTU
-      if(tDev.gatt.connected) break;
-    }catch(err){
-      if(att === 2) throw err;
-      await sleep(350);
-    }
-  }
+  // إيقاف أي مستمع انفصال مؤقتاً أثناء التأسيس لمنع التداخل
+  try{ tDev.removeEventListener('gattserverdisconnected', onTDisc); }catch(_){}
 
-  // إيجاد خدمة UART مع إعادة محاولة ذكية إذا حدث انفصال لحظي (GATT Server disconnected fix)
+  let srv = null;
   let svc = null;
-  for(let att = 1; att <= 3; att++){
+  // حلقة تأسيس متكاملة مقاومة لخطأ أندرويد GATT 133 (Connection attempt failed):
+  // عند فشل أي محاولة نغلق القناة صراحةً وننتظر 1100ms لتحرير مكدس البلوتوث في أندرويد قبل المحاولة التالية
+  for(let att = 1; att <= 4; att++){
     try{
+      if(att > 1){
+        tempOff('إعادة تثبيت القناة (' + (att - 1) + '/3)...');
+        try{ if(tDev.gatt) tDev.gatt.disconnect(); }catch(_){}
+        await sleep(1100);
+      }
+      srv = await withTimeout(tDev.gatt.connect(), 10000, 'الاتصال باللوحة');
+      await sleep(450); // مهلة استقرار تبادل الـ MTU في أندرويد
       if(!tDev.gatt.connected){
-        tempOff('إعادة تثبيت القناة (' + att + ')...');
-        await withTimeout(tDev.gatt.connect(), 8000, 'إعادة الاتصال');
-        await sleep(300);
+        throw new Error('انفصلت القناة أثناء التفاوض');
       }
       svc = await withTimeout(srv.getPrimaryService(NUS), 8000, 'إيجاد خدمة UART');
       if(svc) break;
     }catch(err){
-      if(att === 3) throw err;
-      await sleep(400);
+      if(att === 4) throw err;
     }
   }
 
@@ -4695,6 +4698,10 @@ async function openTemp(){
   }
   otaUi();
 
+  try{
+    tDev.removeEventListener('gattserverdisconnected', onTDisc);
+    tDev.addEventListener('gattserverdisconnected', onTDisc);
+  }catch(_){}
   tempOff('متصل — بانتظار القراءة...');
   hideGate();
   dev = tDev;
