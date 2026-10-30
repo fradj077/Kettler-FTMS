@@ -2708,9 +2708,9 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
           <div>
             <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
               <span>مهلة انعدام الخطوة:</span>
-              <b id="sfFsMsLbl" style="color:var(--accent)">750 ms</b>
+              <b id="sfFsMsLbl" style="color:var(--accent)">600 ms</b>
             </div>
-            <input type="range" id="sfFsMs" min="350" max="1500" step="25" value="750" oninput="$('sfFsMsLbl').textContent=this.value+' ms'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+            <input type="range" id="sfFsMs" min="250" max="1500" step="25" value="600" oninput="$('sfFsMsLbl').textContent=this.value+' ms'" onchange="updateSafetyConfigFromUI()" style="width:100%">
           </div>
           <div>
             <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
@@ -2737,16 +2737,16 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
           <div>
             <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
               <span>مدة الصدمة الميكانيكية:</span>
-              <b id="sfDrMsLbl" style="color:var(--accent)">400 ms</b>
+              <b id="sfDrMsLbl" style="color:var(--accent)">250 ms</b>
             </div>
-            <input type="range" id="sfDrMs" min="150" max="800" step="25" value="400" oninput="$('sfDrMsLbl').textContent=this.value+' ms'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+            <input type="range" id="sfDrMs" min="100" max="600" step="25" value="250" oninput="$('sfDrMsLbl').textContent=this.value+' ms'" onchange="updateSafetyConfigFromUI()" style="width:100%">
           </div>
           <div>
             <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
               <span>فارق أمبير الصدمة:</span>
-              <b id="sfDrAmpLbl" style="color:var(--accent)">+2.0 A</b>
+              <b id="sfDrAmpLbl" style="color:var(--accent)">+1.2 A</b>
             </div>
-            <input type="range" id="sfDrAmp" min="1.0" max="3.5" step="0.1" value="2.0" oninput="$('sfDrAmpLbl').textContent='+'+(+this.value).toFixed(1)+' A'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+            <input type="range" id="sfDrAmp" min="0.6" max="3.0" step="0.1" value="1.2" oninput="$('sfDrAmpLbl').textContent='+'+(+this.value).toFixed(1)+' A'" onchange="updateSafetyConfigFromUI()" style="width:100%">
           </div>
         </div>
       </div>
@@ -2773,9 +2773,9 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
           <div>
             <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
               <span>نسبة تشتت الخطوات:</span>
-              <b id="sfRcVarLbl" style="color:var(--accent)">40%</b>
+              <b id="sfRcVarLbl" style="color:var(--accent)">35%</b>
             </div>
-            <input type="range" id="sfRcVar" min="20" max="60" step="5" value="40" oninput="$('sfRcVarLbl').textContent=this.value+'%'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+            <input type="range" id="sfRcVar" min="15" max="55" step="5" value="35" oninput="$('sfRcVarLbl').textContent=this.value+'%'" onchange="updateSafetyConfigFromUI()" style="width:100%">
           </div>
         </div>
       </div>
@@ -3712,8 +3712,8 @@ function onCPraw(ev){
 
 // Treadmill Data: fields appear in flag-bit order.
 // Time and distance are also tracked locally from the belt speed, because the treadmill's own values looked unreliable.
-const lt = {t: 0, d: 0, k: 0, last: 0, idle: 0, devBase: 0, lastDev: 0};
-function resetLocal(){ lt.t = 0; lt.d = 0; lt.k = 0; lt.last = 0; lt.idle = 0; }
+const lt = {t: 0, d: 0, k: 0, last: 0, idle: 0, devBase: 0, lastDev: 0, devCarry: 0};
+function resetLocal(){ lt.t = 0; lt.d = 0; lt.k = 0; lt.last = 0; lt.idle = 0; lt.devCarry = 0; }
 // session finished (stop pressed, program ended, or belt idle): zero time, distance, calories and incline
 function resetSession(){
   resetLocal(); lt.devBase = lt.lastDev;
@@ -3763,9 +3763,15 @@ function onTDraw(ev){
   if(lt.last && spd > 0.05){ const dt = (now - lt.last)/1000; if(dt < 5){ lt.t += dt; lt.d += spd*dt/3600; lt.k += kcalPerMin(spd, cur.i)*dt/60; } }
   lt.last = now;
   $('lvTime').textContent = fmt(Math.floor(lt.t));
-  lt.lastDev = devD; if(devD < lt.devBase) lt.devBase = 0;
-  const dd = devD - lt.devBase;
-  tel.d = dd > 0 ? dd : lt.d;
+  if(devD + 0.005 < lt.lastDev){
+    // إذا صفّرت شاشة المشاية عداد المسافة الداخلي أثناء التوقف المؤقت، نحتفظ بالمسافة السابقة في devCarry حتى لا تعود المسافة للصفر عند الاستئناف!
+    lt.devCarry = (lt.devCarry || 0) + Math.max(0, lt.lastDev - lt.devBase);
+    lt.devBase = devD;
+  }
+  lt.lastDev = devD;
+  if(devD < lt.devBase) lt.devBase = devD;
+  const dd = (lt.devCarry || 0) + Math.max(0, devD - lt.devBase);
+  tel.d = Math.max(dd, lt.d);
   $('lvDist').textContent = tel.d.toFixed(2);
   tel.k = Math.round(lt.k); $('lvKcal').textContent = tel.k;
   // belt idle for a while after a session (e.g. stopped from the treadmill itself): reset, unless paused on purpose
@@ -4221,8 +4227,14 @@ async function bridgeCmd(c){
   return ok;
 }
 
-// ---------- درع الأمان الذكي وكشف السقوط والنزول التلقائي (مفصول ومحصن ضد صدمة الصعود على السير) ----------
-let sfCfg = {fsEn:1, fsMs:750, fsVmin:3.0, drEn:1, drMs:400, drAmp:2.0, rcEn:1, rcDrop:2.0, rcVar:40, safeTest:0};
+// ---------- درع الأمان الذكي وكشف السقوط والنزول التلقائي (مفصول ومعاير بدقة) ----------
+let sfCfg = {fsEn:1, fsMs:600, fsVmin:3.0, drEn:1, drMs:250, drAmp:1.2, rcEn:1, rcDrop:2.5, rcVar:35, safeTest:0};
+try{
+  const savedSf = JSON.parse(localStorage.getItem('kettler_sf_cfg'));
+  if(savedSf && typeof savedSf === 'object'){
+    sfCfg = Object.assign(sfCfg, savedSf);
+  }
+}catch(_){}
 
 function updateSafetyEventBox(txt, colorCss, borderCss, bgCss){
   const box = $('sfEventLogBox');
@@ -4236,7 +4248,6 @@ function updateSafetyEventBox(txt, colorCss, borderCss, bgCss){
     box.style.background = bgCss || 'rgba(16,185,129,0.08)';
   }
 }
-
 
 // ---------- الإيقاف المؤقت الذكي والاستئناف التلقائي لبرامج التمرين (Smart Auto-Pause & Resume) ----------
 function showResumeModal(show){
@@ -4283,9 +4294,14 @@ async function autoPauseWorkoutOnDismount(){
   try{
     if(cp){
       await send([0x00]);
-      await send([0x08, 0x02]);
-      await sleep(120);
-      await send([0x08, 0x01]);
+      await send([0x08, 0x02]); // أمر إيقاف مؤقت يحافظ على أرقام شاشة الكونسول دون تصفير
+      setTimeout(async () => {
+        try{
+          if(manPause && tel && tel.s > 0.3 && cp){
+            await send([0x08, 0x01]);
+          }
+        }catch(_){}
+      }, 900);
     }
   }catch(_){}
   showResumeModal(true);
@@ -4332,35 +4348,66 @@ async function safetyActOnPhone(kind, spd){
   }catch(e){ try{ toast('⚠️ تعذر تنفيذ إجراء الأمان: ' + (e && e.message ? e.message : e)); }catch(_){} }
 }
 
+function triggerSafetyEventAction(type, val, isTest){
+  let msg = '';
+  if(type === 'DISMOUNT'){
+    if(!isTest){
+      msg = '⏸️ درع الأمان: تم إيقاف المشاية مؤقتاً لنزولك عن السير (' + val + ' ms)';
+      autoPauseWorkoutOnDismount();
+    } else {
+      msg = '⚠️ [تجربة أمان] تم رصد النزول من السير خلال ' + val + ' ms!';
+    }
+  } else if(type === 'DRAG'){
+    msg = (isTest ? '⚠️ [تجربة أمان] تم رصد فرملة/احتكاك شاذ خلال ' : '🛑 درع الأمان: فرملة طوارئ لرصد انزلاق/كبح على السير خلال ') + val + ' ms!';
+    if(!isTest) safetyActOnPhone('stop');
+  } else if(type === 'RESCUE'){
+    msg = '🏃 ' + (isTest ? '[تجربة أمان] إشارة إنقاذ: خفض السرعة المقترح إلى ' : 'درع الأمان: خفض السرعة تلقائياً للإنقاذ إلى ') + val + ' كم/س!';
+    if(!isTest) safetyActOnPhone('rescue', parseFloat(val));
+  }
+
+  updateSafetyEventBox(msg, isTest ? 'var(--amber)' : 'var(--red)', isTest ? 'rgba(245,158,11,0.35)' : 'rgba(239,68,68,0.4)', isTest ? 'rgba(245,158,11,0.1)' : 'rgba(239,68,68,0.12)');
+  toast(msg);
+
+  if($('sfBadge')){
+    $('sfBadge').textContent = isTest ? '🧪 حدث تجريبي مرصود' : '⚠️ تدخل الأمان نشط';
+    $('sfBadge').style.background = isTest ? 'rgba(245,158,11,0.2)' : 'rgba(239,68,68,0.2)';
+    $('sfBadge').style.color = isTest ? 'var(--amber)' : 'var(--red)';
+    $('sfBadge').style.borderColor = isTest ? 'var(--amber)' : 'var(--red)';
+    setTimeout(() => {
+      if($('sfBadge')){
+        $('sfBadge').textContent = '🟢 المراقبة جاهزة';
+        $('sfBadge').style.background = 'rgba(16,185,129,0.15)';
+        $('sfBadge').style.color = 'var(--ok)';
+        $('sfBadge').style.borderColor = 'rgba(16,185,129,0.3)';
+      }
+    }, 6000);
+  }
+}
+
 function onSafetyLine(line){
   if(line.indexOf('C=') === 0){
     const p = line.slice(2).split(',');
     if(p.length >= 10){
-      sfCfg.fsEn = parseInt(p[0], 10) || 0;
-      sfCfg.fsMs = Math.max(650, parseInt(p[1], 10) || 750);
+      // قراءة القيم المحفوظة في اللوحة كما هي 100% بدون أي إجبار أو تغيير لـ drAmp أو غيره!
+      sfCfg.fsEn = parseInt(p[0], 10) ? 1 : 0;
+      sfCfg.fsMs = parseInt(p[1], 10) || 600;
       sfCfg.fsVmin = parseFloat(p[2]) || 3.0;
-      sfCfg.drEn = parseInt(p[3], 10) || 0;
-      sfCfg.drMs = Math.max(350, parseInt(p[4], 10) || 400);
-      sfCfg.drAmp = Math.max(1.8, parseFloat(p[5]) || 2.0);
-      sfCfg.rcEn = parseInt(p[6], 10) || 0;
-      sfCfg.rcDrop = parseFloat(p[7]) || 2.0;
-      sfCfg.rcVar = Math.max(35, parseInt(p[8], 10) || 40);
-      sfCfg.safeTest = parseInt(p[9], 10) || 0;
+      sfCfg.drEn = parseInt(p[3], 10) ? 1 : 0;
+      sfCfg.drMs = parseInt(p[4], 10) || 250;
+      sfCfg.drAmp = parseFloat(p[5]) || 1.2;
+      sfCfg.rcEn = parseInt(p[6], 10) ? 1 : 0;
+      sfCfg.rcDrop = parseFloat(p[7]) || 2.5;
+      sfCfg.rcVar = parseInt(p[8], 10) || 35;
+      sfCfg.safeTest = parseInt(p[9], 10) ? 1 : 0;
+      try{ localStorage.setItem('kettler_sf_cfg', JSON.stringify(sfCfg)); }catch(_){}
       updateSafetyUIFromConfig();
-      // إذا كانت اللوحة تحمل قيماً قديمة مفرطة الحساسية (مثل drMs=200 أو drAmp=1.2)، نرفعها تلقائياً لمنع التوقف عند الصعود!
-      if((parseInt(p[4], 10) || 0) < 350 || (parseFloat(p[5]) || 0) < 1.8 || (parseInt(p[8], 10) || 0) < 35){
-        setTimeout(() => { try{ saveSafetyConfigToBoard(true); }catch(_){} }, 400);
-      }
     }
     return;
   }
   if(line.indexOf('OK') === 0){
-    if(!window._silentSfSync){
-      toast('✓ تم حفظ وتفعيل إعدادات درع الأمان في فلاش اللوحة (NVS)!');
-    }
-    window._silentSfSync = false;
+    toast('✅ تم حفظ وتفعيل إعدادات درع الأمان في فلاش اللوحة (NVS) بنجاح!');
     if($('sfLiveStatus')){
-      $('sfLiveStatus').textContent = '✓ الإعدادات متزامنة ومحفوظة في فلاش اللوحة (NVS)';
+      $('sfLiveStatus').textContent = '✅ الإعدادات متزامنة ومحفوظة في فلاش اللوحة (NVS)';
       $('sfLiveStatus').style.color = 'var(--ok)';
     }
     return;
@@ -4373,69 +4420,29 @@ function onSafetyLine(line){
     const isTest = (mode === 'TEST');
     const now = Date.now();
 
-    // محلل شكل الموجة الذكي (Smart Waveform Valley-Floor & Step-Impulse Discriminator) — بدون اشتراط وقت ركوب أو عدد خطوات!
-    // كيف يفرق ذكياً بين صدمة القدم (عند الصعود أو الجري) وبين الانحشار الحقيقي؟
-    // - نبضة القدم البشرية: ترفع قمة التيار لحظياً لكن «قاع الموجة» (I_valley / I_floor = I_avg - 0.5*P2P) يظل منخفضاً ويعود للهبوط بين الخطوات.
-    // - الانحشار/الكبح الحقيقي: يرتفع «قاع الموجة المستمر» نفسه ويبقى مرتفعاً دون تفريغ أو يستمر في الصعود المتصل (dI/dt >= 0).
+    // لماذا لم يتوقف السير عند فرملة الرجل في التجربة السابقة؟
+    // لأن فحص lastCurAmp < 5.2 في الهاتف كان يقرأ قيمة التيار القديمة (لأن CUR يصل كل 500ms بينما SF:EVT=DRAG يصل خلال 15ms!).
+    // الحل الذكي الدقيق هنا:
+    // - نقبل إشارة DRAG الفورية من اللوحة مباشرة عند فرملة السير بالرجل!
+    // - ونمنع فقط حالة واحدة محددة: لحظة انتقال الوزن الطبيعي عند بداية الصعود من السير الفارغ (خلال أول 1.5 ثانية من لمس السير عندما يكون التيار ضمن وزن المشي العادي < 3.6A).
     if(!isTest && type === 'DRAG'){
-      const baseFloorRef = (WEB_SAFETY.dynFloorA > 0.8) ? WEB_SAFETY.dynFloorA : ((WEB_SAFETY.dynEmptyA > 0.5) ? (WEB_SAFETY.dynEmptyA + 0.55) : 2.15);
-      const liveFloorA = (WEB_SAFETY.liveFloorA > 0) ? WEB_SAFETY.liveFloorA : (lastCurAmp || 0);
-      const reqDragDelta = Math.max(1.6, sfCfg.drAmp || 2.0);
-      const isStepPulseOnly = (WEB_SAFETY.lastP2pA >= 0.55) && (liveFloorA < (baseFloorRef + reqDragDelta * 0.85)) && !WEB_SAFETY.monotonicRising;
-      if(isStepPulseOnly || (lastCurAmp != null && liveFloorA < (baseFloorRef + reqDragDelta - 0.15) && lastCurAmp < 5.2)){
-        updateSafetyEventBox('🧠 تحليل الموجة الذكي: نبضة قدم طبيعية (قاع الموجة ' + liveFloorA.toFixed(2) + 'A مستقر) — ليست انحشاراً ✓', 'var(--ok)', 'rgba(16,185,129,0.25)', 'rgba(16,185,129,0.08)');
+      const inFirstStepTransition = WEB_SAFETY.loadTransitionStartMs > 0 && (now - WEB_SAFETY.loadTransitionStartMs) < 1500 && !WEB_SAFETY.weightSettled;
+      if(inFirstStepTransition && (lastCurAmp == null || lastCurAmp < 3.6)){
+        updateSafetyEventBox('🛡️ استقرار وزن الصعود الطبيعي — جاهز لمراقبة الانزلاق ✓', 'var(--ok)', 'rgba(16,185,129,0.25)', 'rgba(16,185,129,0.08)');
         return;
       }
     }
 
-    // كاشف التشتت الذكي (Smart Rhythm-Break Detector):
-    // لا يعتمد على وقت ركوب، بل يتحقق مما إذا كان هناك إيقاع مشي قائم انكسر فعلياً أم أنها مجرد أول خطوة عند الصعود من السكون
+    // في تشتت الخطوات (RESCUE): نتجاهل فقط أول خطوتين عند بدء الصعود من السير الفارغ ريثما ينتظم الإيقاع
     if(!isTest && type === 'RESCUE'){
       if(!WEB_SAFETY.rhythmEstablished){
-        updateSafetyEventBox('🧠 تحليل الإيقاع الذكي: بدء خطو جديد (تأسيس الإيقاع المرجعي) ✓', 'var(--ok)', 'rgba(16,185,129,0.25)', 'rgba(16,185,129,0.08)');
+        updateSafetyEventBox('🛡️ بدء تأسيس إيقاع المشي — جاهز لمراقبة التشتت ✓', 'var(--ok)', 'rgba(16,185,129,0.25)', 'rgba(16,185,129,0.08)');
         return;
       }
-      if(!WEB_SAFETY.lastRescueWarnMs || (now - WEB_SAFETY.lastRescueWarnMs) > 4500){
-        WEB_SAFETY.lastRescueWarnMs = now;
-        updateSafetyEventBox('ℹ️ رصد انحراف فردي في الخطوة — ينفذ الإنقاذ فقط إذا استمر اضطراب الإيقاع', 'var(--amber)', 'rgba(245,158,11,0.3)', 'rgba(245,158,11,0.08)');
-        return;
-      }
-      WEB_SAFETY.lastRescueWarnMs = 0;
     }
 
-    let msg = '';
-    if(type === 'DISMOUNT'){
-      if(!isTest){
-        msg = '⏸️ درع الأمان: تم إيقاف المشاية مؤقتاً لنزولك عن السير (' + val + ' ms)';
-        autoPauseWorkoutOnDismount();
-      } else {
-        msg = '⚠️ [تجربة أمان] تم رصد النزول من السير خلال ' + val + ' ms!';
-      }
-    } else if(type === 'DRAG'){
-      msg = (isTest ? '⚠️ [تجربة أمان] تم رصد احتكاك وانزلاق شاذ خلال ' : '🛑 درع الأمان: رصد انزلاق/احتكاك شاذ مستمر خلال ') + val + ' ms!';
-      if(!isTest) safetyActOnPhone('stop');
-    } else if(type === 'RESCUE'){
-      msg = '🏃 ' + (isTest ? '[تجربة أمان] إشارة إنقاذ: خفض السرعة المقترح إلى ' : 'درع الأمان: خفض السرعة تلقائياً للإنقاذ إلى ') + val + ' كم/س!';
-      if(!isTest) safetyActOnPhone('rescue', parseFloat(val));
-    }
-
-    updateSafetyEventBox(msg, isTest ? 'var(--amber)' : 'var(--red)', isTest ? 'rgba(245,158,11,0.35)' : 'rgba(239,68,68,0.4)', isTest ? 'rgba(245,158,11,0.1)' : 'rgba(239,68,68,0.12)');
-    toast(msg);
-
-    if($('sfBadge')){
-      $('sfBadge').textContent = isTest ? '🧪 حدث تجريبي مرصود' : '⚠️ تدخل الأمان نشط';
-      $('sfBadge').style.background = isTest ? 'rgba(245,158,11,0.2)' : 'rgba(239,68,68,0.2)';
-      $('sfBadge').style.color = isTest ? 'var(--amber)' : 'var(--red)';
-      $('sfBadge').style.borderColor = isTest ? 'var(--amber)' : 'var(--red)';
-      setTimeout(() => {
-        if($('sfBadge')){
-          $('sfBadge').textContent = '🟢 المراقبة جاهزة';
-          $('sfBadge').style.background = 'rgba(16,185,129,0.15)';
-          $('sfBadge').style.color = 'var(--ok)';
-          $('sfBadge').style.borderColor = 'rgba(16,185,129,0.3)';
-        }
-      }, 6000);
-    }
+    WEB_SAFETY.lastTriggerMs = now;
+    triggerSafetyEventAction(type, val, isTest);
     return;
   }
 }
@@ -4456,14 +4463,14 @@ function updateSafetyUIFromConfig(){
 function updateSafetyConfigFromUI(){
   if($('sfTestToggle')) sfCfg.safeTest = $('sfTestToggle').checked ? 1 : 0;
   if($('sfFsEn')) sfCfg.fsEn = $('sfFsEn').checked ? 1 : 0;
-  if($('sfFsMs')) sfCfg.fsMs = parseInt($('sfFsMs').value, 10) || 500;
+  if($('sfFsMs')) sfCfg.fsMs = parseInt($('sfFsMs').value, 10) || 600;
   if($('sfFsVmin')) sfCfg.fsVmin = parseFloat($('sfFsVmin').value) || 3.0;
   if($('sfDrEn')) sfCfg.drEn = $('sfDrEn').checked ? 1 : 0;
-  if($('sfDrMs')) sfCfg.drMs = parseInt($('sfDrMs').value, 10) || 200;
+  if($('sfDrMs')) sfCfg.drMs = parseInt($('sfDrMs').value, 10) || 250;
   if($('sfDrAmp')) sfCfg.drAmp = parseFloat($('sfDrAmp').value) || 1.2;
   if($('sfRcEn')) sfCfg.rcEn = $('sfRcEn').checked ? 1 : 0;
   if($('sfRcDrop')) sfCfg.rcDrop = parseFloat($('sfRcDrop').value) || 2.5;
-  if($('sfRcVar')) sfCfg.rcVar = parseInt($('sfRcVar').value, 10) || 30;
+  if($('sfRcVar')) sfCfg.rcVar = parseInt($('sfRcVar').value, 10) || 35;
 
   if($('sfLiveStatus')){
     $('sfLiveStatus').textContent = '⚠️ تم تعديل القيم محلياً — اضغط "حفظ في اللوحة" للمزامنة';
@@ -4477,11 +4484,11 @@ function onSfTestToggleChanged(){
   if($('sfTestToggle') && $('sfTestToggle').checked){
     toast('🧪 تم تفعيل وضع الاختبار الآمن — التنبيهات ستعمل دون إيقاف المحرك!');
   } else {
-    toast('🛡️ تم تفعيل وحفظ وضع الأمان النشط — ستتوقف المشاية فعلياً عند النزول!');
+    toast('🛡️ تم تفعيل وحفظ وضع الأمان النشط — ستتوقف المشاية فعلياً عند النزول أو الانزلاق!');
   }
 }
 
-async function saveSafetyConfigToBoard(silent){ window._silentSfSync = !!silent;
+async function saveSafetyConfigToBoard(){
   updateSafetyConfigFromUI();
   try{ localStorage.setItem('kettler_sf_cfg', JSON.stringify(sfCfg)); }catch(_){}
   const cmd = 'SFS:' + sfCfg.fsEn + ',' + sfCfg.fsMs + ',' + sfCfg.fsVmin.toFixed(1) + ',' +
@@ -4491,20 +4498,19 @@ async function saveSafetyConfigToBoard(silent){ window._silentSfSync = !!silent;
   if(ok){
     toast('✅ تم إرسال وحفظ إعدادات درع الأمان في اللوحة (NVS) بنجاح!');
     if($('sfLiveStatus')){
-      $('sfLiveStatus').textContent = '✅ تم الحفظ في فلاش اللوحة (NVS) وتفعيله بنجاح';
+      $('sfLiveStatus').textContent = '✅ تم الحفظ في فلاش اللوحة (NVS): فارق الصدمة +' + sfCfg.drAmp.toFixed(1) + 'A / ' + sfCfg.drMs + 'ms';
       $('sfLiveStatus').style.color = 'var(--ok)';
     }
   } else {
     toast('💾 تم حفظ إعدادات درع الأمان محلياً في الهاتف (اللوحة غير متصلة حالياً)');
     if($('sfLiveStatus')){
-      $('sfLiveStatus').textContent = '💾 محفوظ محلياً في الهاتف — اتصل باللوحة للمزامنة في NVS';
+      $('sfLiveStatus').textContent = '💾 محفوظ محلياً في الهاتف (+' + sfCfg.drAmp.toFixed(1) + 'A) — اتصل باللوحة للمزامنة';
       $('sfLiveStatus').style.color = 'var(--amber)';
     }
   }
 }
 
 function playSafetyBeep(){
-  // تم إلغاء رنة كاشف الانزلاق ودرع الأمان نهائياً بناءً على طلب المستخدم لأنها مزعجة
   return;
 }
 
@@ -7210,7 +7216,7 @@ function curOnLine(t){
     const pkTxt = (window._sessionPeakAmp && window._sessionPeakAmp > 0.1) ? (' · الذروة: <b dir="ltr" style="color:var(--amber)">' + window._sessionPeakAmp.toFixed(2) + ' A</b>') : '';
     if($('curAmp')) $('curAmp').innerHTML = '<span dir="ltr">' + o.I.toFixed(2) + ' A</span>' + pkTxt;
     const cAmp = document.getElementById('cockpitLiveAmp');
-    if(cAmp) cAmp.textContent = o.I.toFixed(2) + ' A'; try{ checkWebSideDismount(o.I, o.EB, o.P2P, o.PK); }catch(_){}
+    if(cAmp) cAmp.textContent = o.I.toFixed(2) + ' A'; try{ checkWebSideDismount(o.I, o.E, o.PK); }catch(_){}
     updateTempDisplays();
   }
   if(o.W != null){
@@ -8353,51 +8359,37 @@ window.gtStartTest = gtStartTest; window.gtStopTest = gtStopTest; window.gtCopy 
 const WEB_SAFETY = {
   dynEmptyA: 0,
   dynWalkA: 0,
-  dynFloorA: 0,
-  liveFloorA: 0,
-  lastP2pA: 0,
-  ampHist: [],
-  stepDts: [],
-  monotonicRising: false,
-  rhythmEstablished: false,
   lastSpd: 0,
   runnerLoaded: false,
+  weightSettled: false,
+  loadTransitionStartMs: 0,
+  stepDts: [],
+  rhythmEstablished: false,
   lastStepAtMs: 0,
-  lastRescueWarnMs: 0,
   loadStartMs: 0,
   emptyStartMs: 0,
+  dragStartMs: 0,
   lastTriggerMs: 0
 };
 
-function checkWebSideDismount(liveAmp, boardEmptyBeltA, liveP2pA, livePeakA){
+function checkWebSideDismount(liveAmp, boardEmptyBeltA, livePeakA){
   try{
     if(!sfCfg) return;
     const now = Date.now();
-    const spd = (tel && tel.s > 0) ? tel.s : 0;
-    if(spd < 1.5 || manPause || paused){
+    const spd = (tel && tel.s > 0) ? tel.s : ((cur && cur.s > 0 && !manPause && !paused) ? cur.s : 0);
+    if(spd < 1.2 || manPause || paused){
       WEB_SAFETY.runnerLoaded = false;
+      WEB_SAFETY.weightSettled = false;
+      WEB_SAFETY.loadTransitionStartMs = 0;
       WEB_SAFETY.rhythmEstablished = false;
-      WEB_SAFETY.ampHist = [];
       WEB_SAFETY.stepDts = [];
       WEB_SAFETY.loadStartMs = 0;
       WEB_SAFETY.emptyStartMs = 0;
+      WEB_SAFETY.dragStartMs = 0;
       WEB_SAFETY.dynWalkA = 0;
-      WEB_SAFETY.dynFloorA = 0;
       return;
     }
-    if(now - WEB_SAFETY.lastTriggerMs < 6000) return;
-
-    // 1. حساب قاع الموجة اللحظي (Sustained Current Floor = I_avg - 0.50 * P2P) وتتبع القاع الأدنى لآخر 3 قراءات:
-    // عندما يضع المتدرب قدمه، يقفز التيار اللحظي (Peak) لكن فرق التموج (P2P) يكون كبيراً فيبقى قاع الموجة معتدلاً،
-    // بينما في الانحشار الحقيقي يرتفع قاع الموجة نفسه دون تفريغ بين الخطوات!
-    const p2p = (liveP2pA != null && liveP2pA >= 0) ? liveP2pA : Math.max(0, (livePeakA || liveAmp) - liveAmp);
-    WEB_SAFETY.lastP2pA = p2p;
-    const instantFloorA = Math.max(0.5, liveAmp - 0.50 * p2p);
-    WEB_SAFETY.ampHist.push(instantFloorA);
-    if(WEB_SAFETY.ampHist.length > 3) WEB_SAFETY.ampHist.shift();
-    const valleyFloorA = Math.min(...WEB_SAFETY.ampHist);
-    WEB_SAFETY.liveFloorA = valleyFloorA;
-    WEB_SAFETY.monotonicRising = (WEB_SAFETY.ampHist.length === 3 && WEB_SAFETY.ampHist[2] >= WEB_SAFETY.ampHist[1] + 0.25 && WEB_SAFETY.ampHist[1] >= WEB_SAFETY.ampHist[0] + 0.25);
+    if(now - WEB_SAFETY.lastTriggerMs < 4500) return;
 
     // تكييف قيمة السير الفارغ المكتسبة مع تغير السرعة
     if(WEB_SAFETY.lastSpd > 0.5 && Math.abs(spd - WEB_SAFETY.lastSpd) >= 0.3 && WEB_SAFETY.dynEmptyA > 0.5){
@@ -8405,71 +8397,102 @@ function checkWebSideDismount(liveAmp, boardEmptyBeltA, liveP2pA, livePeakA){
     }
     WEB_SAFETY.lastSpd = spd;
 
-    if(WEB_SAFETY.dynEmptyA < 0.5 && boardEmptyBeltA && boardEmptyBeltA > 0.8 && boardEmptyBeltA < 2.8){
-      WEB_SAFETY.dynEmptyA = boardEmptyBeltA;
+    if(boardEmptyBeltA && boardEmptyBeltA > 0.7 && boardEmptyBeltA < 2.6){
+      if(WEB_SAFETY.dynEmptyA < 0.5) WEB_SAFETY.dynEmptyA = boardEmptyBeltA;
+      else WEB_SAFETY.dynEmptyA = WEB_SAFETY.dynEmptyA * 0.90 + boardEmptyBeltA * 0.10;
     }
 
-    // التعلم الآلي لمتوسط تيار المشي وقاع الموجة أثناء الخطو الطبيعي
-    const minWalkA = WEB_SAFETY.dynEmptyA > 0.5 ? (WEB_SAFETY.dynEmptyA + 0.70) : 2.45;
-    if(liveAmp >= minWalkA){
-      if(WEB_SAFETY.dynWalkA < 1.0) WEB_SAFETY.dynWalkA = liveAmp;
-      else if(liveAmp < WEB_SAFETY.dynWalkA + 2.2) WEB_SAFETY.dynWalkA = WEB_SAFETY.dynWalkA * 0.88 + liveAmp * 0.12;
+    const emptyRefA = WEB_SAFETY.dynEmptyA > 0.5 ? WEB_SAFETY.dynEmptyA : (1.35 + spd * 0.06);
+    const minWalkA = emptyRefA + 0.65;
 
-      if(WEB_SAFETY.dynFloorA < 0.8) WEB_SAFETY.dynFloorA = instantFloorA;
-      else if(instantFloorA < WEB_SAFETY.dynFloorA + 1.4) WEB_SAFETY.dynFloorA = WEB_SAFETY.dynFloorA * 0.90 + instantFloorA * 0.10;
-
-      WEB_SAFETY.emptyStartMs = 0;
-      if(!WEB_SAFETY.loadStartMs) WEB_SAFETY.loadStartMs = now;
-      if(now - WEB_SAFETY.loadStartMs >= 1200){
-        WEB_SAFETY.runnerLoaded = true;
-      }
-    }
-
-    let dynamicEmptyCeilingA;
-    if(WEB_SAFETY.dynEmptyA > 0.5 && WEB_SAFETY.dynWalkA > (WEB_SAFETY.dynEmptyA + 0.75)){
-      dynamicEmptyCeilingA = WEB_SAFETY.dynEmptyA + 0.38 * (WEB_SAFETY.dynWalkA - WEB_SAFETY.dynEmptyA);
-    } else if(WEB_SAFETY.dynWalkA > 2.40){
-      dynamicEmptyCeilingA = WEB_SAFETY.dynWalkA * 0.65;
-    } else if(WEB_SAFETY.dynEmptyA > 0.5){
-      dynamicEmptyCeilingA = WEB_SAFETY.dynEmptyA + 0.45;
-    } else {
-      dynamicEmptyCeilingA = 1.40 + (spd * 0.08) + 0.45;
-    }
-
-    if(!WEB_SAFETY.runnerLoaded && liveAmp > 0.7 && liveAmp < 2.3){
+    // 1. تتبع السير الفارغ عندما لا يوجد متدرب فوق السير
+    if(!WEB_SAFETY.runnerLoaded && liveAmp > 0.6 && liveAmp < minWalkA){
       if(WEB_SAFETY.dynEmptyA < 0.5) WEB_SAFETY.dynEmptyA = liveAmp;
       else WEB_SAFETY.dynEmptyA = WEB_SAFETY.dynEmptyA * 0.88 + liveAmp * 0.12;
     }
 
-    if(!sfCfg.fsEn || sfCfg.safeTest || spd < (sfCfg.fsVmin || 3.0)) return;
-
-    const noRecentStep = (!WEB_SAFETY.lastStepAtMs) || ((now - WEB_SAFETY.lastStepAtMs) > 1000);
-    if(WEB_SAFETY.runnerLoaded && noRecentStep && liveAmp > 0.3 && liveAmp <= dynamicEmptyCeilingA){
-      if(liveAmp > 0.7){
-        if(WEB_SAFETY.dynEmptyA < 0.5) WEB_SAFETY.dynEmptyA = liveAmp;
-        else WEB_SAFETY.dynEmptyA = WEB_SAFETY.dynEmptyA * 0.85 + liveAmp * 0.15;
-      }
-      if(!WEB_SAFETY.emptyStartMs){
-        WEB_SAFETY.emptyStartMs = now;
-      } else {
-        const emptyDur = now - WEB_SAFETY.emptyStartMs;
-        const reqMs = Math.max(1100, (sfCfg.fsMs || 750) + 350);
-        if(emptyDur >= reqMs){
-          WEB_SAFETY.runnerLoaded = false;
-          WEB_SAFETY.rhythmEstablished = false;
-          WEB_SAFETY.ampHist = [];
-          WEB_SAFETY.stepDts = [];
-          WEB_SAFETY.loadStartMs = 0;
-          WEB_SAFETY.emptyStartMs = 0;
-          WEB_SAFETY.lastTriggerMs = now;
-          const dMsg = '⏸️ درع الأمان الآلي: هبط التيار إلى ' + liveAmp.toFixed(2) + 'A (تحت الحد الآلي ' + dynamicEmptyCeilingA.toFixed(2) + 'A) — تم الإيقاف المؤقت!';
-          updateSafetyEventBox(dMsg, 'var(--amber)', 'rgba(245,158,11,0.35)', 'rgba(245,158,11,0.1)');
-          toast(dMsg);
-          autoPauseWorkoutOnDismount();
-        }
-      }
-    } else if(liveAmp > dynamicEmptyCeilingA){
+    // 2. التقاط سريع لوزن المتدرب عند الصعود (Fast Baseline Settlement):
+    // خلال أول 1.5 ثانية من الصعود، يتبع dynWalkA التيار بسرعة (معامل 0.45) ليستقر فوراً على وزن المتدرب الحقيقي (~3.0A)
+    // فلا يظن وزن المتدرب نفسه انحشاراً، وبعد 1.5 ثانية يثبت المرجع ليكشف أي فرملة بالرجل فوراً!
+    if(liveAmp >= minWalkA){
       WEB_SAFETY.emptyStartMs = 0;
+      if(!WEB_SAFETY.loadStartMs){
+        WEB_SAFETY.loadStartMs = now;
+        WEB_SAFETY.loadTransitionStartMs = now;
+        WEB_SAFETY.weightSettled = false;
+      }
+      const loadAge = now - WEB_SAFETY.loadStartMs;
+      if(loadAge >= 800) WEB_SAFETY.runnerLoaded = true;
+      if(loadAge >= 1500) WEB_SAFETY.weightSettled = true;
+
+      if(WEB_SAFETY.dynWalkA < 1.0){
+        WEB_SAFETY.dynWalkA = liveAmp;
+      } else if(!WEB_SAFETY.weightSettled && liveAmp < 4.2){
+        // تتبع سريع لوزن المتدرب أثناء ثانية الصعود الأولى فقط
+        WEB_SAFETY.dynWalkA = WEB_SAFETY.dynWalkA * 0.55 + liveAmp * 0.45;
+      } else if(liveAmp < WEB_SAFETY.dynWalkA + (sfCfg.drAmp || 1.2) * 0.85){
+        // تتبع بطيء ومستقر أثناء المشي العادي حتى لا يرتفع المرجع أثناء الفرملة!
+        WEB_SAFETY.dynWalkA = WEB_SAFETY.dynWalkA * 0.92 + liveAmp * 0.08;
+      }
+    }
+
+    // 3. كاشف الفرملة والانزلاق المباشر في التطبيق (يعمل سواء فرملت السير وأنت تمشي أو فرملته برجلك وهو يدور!):
+    if(sfCfg.drEn){
+      const userDrAmp = sfCfg.drAmp || 1.2;
+      // إذا استقر المتدرب نقيس فوق تيار مشيه (dynWalkA + drAmp)، وإذا فرمل السير برجله من وضع السير الفارغ نقيس فوق (emptyRefA + 1.0 + drAmp)
+      const baseForDrag = (WEB_SAFETY.weightSettled && WEB_SAFETY.dynWalkA > 1.8)
+        ? WEB_SAFETY.dynWalkA
+        : Math.max(WEB_SAFETY.dynWalkA || 0, emptyRefA + 1.15);
+      const dragTrigA = baseForDrag + userDrAmp;
+      if(liveAmp >= dragTrigA){
+        if(!WEB_SAFETY.dragStartMs){
+          WEB_SAFETY.dragStartMs = now;
+        } else {
+          const dragDur = now - WEB_SAFETY.dragStartMs;
+          // بما أن CUR يصل كل 500ms، فاستمرار الارتفاع لقراءتين أو لتجاوز drMs يؤكد الفرملة ويوقف السير فوراً!
+          if(dragDur >= Math.max(150, sfCfg.drMs || 250)){
+            WEB_SAFETY.dragStartMs = 0;
+            WEB_SAFETY.lastTriggerMs = now;
+            triggerSafetyEventAction('DRAG', dragDur, sfCfg.safeTest === 1);
+            return;
+          }
+        }
+      } else {
+        WEB_SAFETY.dragStartMs = 0;
+      }
+    }
+
+    // 4. كاشف النزول أو الخروج من السير (Dismount):
+    if(sfCfg.fsEn && spd >= (sfCfg.fsVmin || 3.0) && WEB_SAFETY.runnerLoaded){
+      let dynamicEmptyCeilingA;
+      if(WEB_SAFETY.dynEmptyA > 0.5 && WEB_SAFETY.dynWalkA > (WEB_SAFETY.dynEmptyA + 0.70)){
+        dynamicEmptyCeilingA = WEB_SAFETY.dynEmptyA + 0.40 * (WEB_SAFETY.dynWalkA - WEB_SAFETY.dynEmptyA);
+      } else if(WEB_SAFETY.dynWalkA > 2.35){
+        dynamicEmptyCeilingA = WEB_SAFETY.dynWalkA * 0.68;
+      } else {
+        dynamicEmptyCeilingA = emptyRefA + 0.45;
+      }
+
+      const noRecentStep = (!WEB_SAFETY.lastStepAtMs) || ((now - WEB_SAFETY.lastStepAtMs) > 900);
+      if(noRecentStep && liveAmp > 0.3 && liveAmp <= dynamicEmptyCeilingA){
+        if(!WEB_SAFETY.emptyStartMs){
+          WEB_SAFETY.emptyStartMs = now;
+        } else {
+          const emptyDur = now - WEB_SAFETY.emptyStartMs;
+          const reqMs = Math.max(600, sfCfg.fsMs || 600);
+          if(emptyDur >= reqMs){
+            WEB_SAFETY.runnerLoaded = false;
+            WEB_SAFETY.weightSettled = false;
+            WEB_SAFETY.loadStartMs = 0;
+            WEB_SAFETY.emptyStartMs = 0;
+            WEB_SAFETY.lastTriggerMs = now;
+            triggerSafetyEventAction('DISMOUNT', emptyDur, sfCfg.safeTest === 1);
+            return;
+          }
+        }
+      } else if(liveAmp > dynamicEmptyCeilingA){
+        WEB_SAFETY.emptyStartMs = 0;
+      }
     }
   }catch(_){}
 }
