@@ -1,0 +1,27 @@
+name: Sync App from Google Drive
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/15 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull latest index.html and sw.js from Google Drive
+        run: |
+          pip install -q gdown
+          mkdir -p gdrive_sync
+          gdown --folder "https://drive.google.com/drive/folders/1dStuBSKGbNHVmeOpNWnXSsv0J62vJy_C" -O gdrive_sync --remaining-ok
+          LATEST_HTML=$(find gdrive_sync -type f -name "index.html" | head -1)
+          LATEST_SW=$(find gdrive_sync -type f -name "sw.js" | head -1)
+          if [ -n "$LATEST_HTML" ] && [ -s "$LATEST_HTML" ]; then cp "$LATEST_HTML" ./index.html; fi
+          if [ -n "$LATEST_SW" ] && [ -s "$LATEST_SW" ]; then cp "$LATEST_SW" ./sw.js; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html sw.js
+          git diff --staged --quiet || (git commit -m "chore: auto-sync index.html and sw.js from Google Drive" && git push origin HEAD:main)
