@@ -2124,7 +2124,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <body>
 <div id="gate" onclick="if(event.target===this)hideGate()"><div class="gbox" style="position:relative">
   <button type="button" onclick="hideGate()" style="position:absolute;top:12px;left:12px;width:34px;height:34px;min-height:34px;padding:0;background:rgba(255,255,255,0.12);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;">✕</button>
-  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v108.0 (إشعار تحديث برنامج اللوحة من GitHub)</div>
+  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v109.0 (إشعار تحديث اللوحة من GitHub + مهلة 20 ثانية)</div>
   <h1 style="margin:0 0 8px">الاتصال بحساس الحرارة</h1>
   <p style="margin:0 0 12px">لحماية المحرك، يرجى الاتصال بحساس الحرارة أو الضغط على تخطي للمتابعة فوراً.</p>
   <div id="gMsg"></div>
@@ -2139,7 +2139,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v108.0 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v109.0 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -2716,7 +2716,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
               <span>مهلة انعدام الخطوة:</span>
               <b id="sfFsMsLbl" style="color:var(--accent)">1.5 ثانية</b>
             </div>
-            <input type="range" id="sfFsMs" min="0.5" max="5.0" step="0.5" value="1.5" oninput="$('sfFsMsLbl').textContent=(+this.value).toFixed(1)+' ثانية'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+            <input type="range" id="sfFsMs" min="0.5" max="20.0" step="0.5" value="1.5" oninput="$('sfFsMsLbl').textContent=(+this.value).toFixed(1)+' ثانية'" onchange="updateSafetyConfigFromUI()" style="width:100%">
           </div>
           <div>
             <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
@@ -3109,7 +3109,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
     </div>
     
     <div style="display:flex;gap:8px;margin-bottom:10px">
-      <input id="otaPin" type="password" inputmode="numeric" placeholder="رمز الأمان PIN (1234)" autocomplete="off" style="flex:1;min-height:44px;padding:8px 12px;border-radius:8px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.25);color:#fff;font-size:14px">
+      <input id="otaPin" type="password" inputmode="numeric" placeholder="رمز الأمان PIN (4827)" autocomplete="off" style="flex:1;min-height:44px;padding:8px 12px;border-radius:8px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.25);color:#fff;font-size:14px">
       <button id="otaGo" class="primary" style="flex:1.2;min-height:44px;font-size:14px;font-weight:bold;background:#0284c7;border:none;border-radius:8px;color:#fff;cursor:pointer">🚀 ابدأ التحديث الآن</button>
     </div>
     
@@ -4485,7 +4485,7 @@ function updateSafetyUIFromConfig(){
   if($('sfTestToggle')) $('sfTestToggle').checked = (sfCfg.safeTest === 1);
   if($('sfFsEn')) $('sfFsEn').checked = (sfCfg.fsEn === 1);
   if($('sfFsMs')){
-    const fsSec = Math.max(0.5, Math.min(5.0, ((sfCfg.fsMs >= 50 ? sfCfg.fsMs / 1000 : sfCfg.fsMs) || 1.5)));
+    const fsSec = Math.max(0.5, Math.min(20.0, ((sfCfg.fsMs >= 50 ? sfCfg.fsMs / 1000 : sfCfg.fsMs) || 1.5)));
     $('sfFsMs').value = fsSec.toFixed(1);
     if($('sfFsMsLbl')) $('sfFsMsLbl').textContent = fsSec.toFixed(1) + ' ثانية';
   }
@@ -7775,7 +7775,7 @@ async function otaFlashBuffer(buf, pin, sourceLabel){
     return false;
   }
   if(!pin){
-    pin = '1234';
+    pin = '4827';
     if($('otaPin')) $('otaPin').value = pin;
   }
   if(tel.t && Date.now() - tel.t < 8000 && tel.s > 0.1){
@@ -7824,7 +7824,7 @@ async function otaFlashBuffer(buf, pin, sourceLabel){
   }
 }
 async function otaRun(){
-  const f = $('otaFile').files[0], pin = ($('otaPin').value || '1234').trim();
+  const f = $('otaFile').files[0], pin = ($('otaPin').value || '4827').trim();
   if(!oCtl || !oDat){ $('otaMsg').textContent = 'الخدمة غير متاحة: أعد الاتصال بالحساس (وإن لم تظهر فأطفئ بلوتوث الهاتف وأشعله)'; return; }
   if(!f){ $('otaMsg').textContent = 'اختر ملف البرنامج أولاً'; return; }
   const buf = new Uint8Array(await f.arrayBuffer());
@@ -7834,7 +7834,7 @@ async function otaRunFromGithub(){
   if(otaBusy) return;
   const infoEl = $('otaGithubInfo');
   const msgEl = $('otaMsg');
-  const pin = ($('otaPin') && $('otaPin').value.trim()) ? $('otaPin').value.trim() : '1234';
+  const pin = ($('otaPin') && $('otaPin').value.trim()) ? $('otaPin').value.trim() : '4827';
   if($('otaPin') && !$('otaPin').value.trim()) $('otaPin').value = pin;
 
   otaBusy = true; otaUi();
