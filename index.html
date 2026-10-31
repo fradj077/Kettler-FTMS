@@ -2124,7 +2124,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <body>
 <div id="gate" onclick="if(event.target===this)hideGate()"><div class="gbox" style="position:relative">
   <button type="button" onclick="hideGate()" style="position:absolute;top:12px;left:12px;width:34px;height:34px;min-height:34px;padding:0;background:rgba(255,255,255,0.12);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;">✕</button>
-  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v109.0 (إشعار تحديث اللوحة من GitHub + مهلة 20 ثانية)</div>
+  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v110.0 (أوامر صوتية بالفرنسية للسرعة و Stop + تشتت فوري)</div>
   <h1 style="margin:0 0 8px">الاتصال بحساس الحرارة</h1>
   <p style="margin:0 0 12px">لحماية المحرك، يرجى الاتصال بحساس الحرارة أو الضغط على تخطي للمتابعة فوراً.</p>
   <div id="gMsg"></div>
@@ -2139,7 +2139,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v109.0 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v110.0 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -2253,6 +2253,15 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
         <span>⚡ التحكم بالسرعة بقبضة النبض (±1.0 كم/س)</span>
       </label>
       <span class="grip-toggle-status" id="gripToggleStat">نشط</span>
+    </div>
+
+    <!-- مفتاح تفعيل الأوامر الصوتية بالفرنسية للسرعة والإيقاف -->
+    <div class="grip-toggle-row" id="voiceFrRow" style="border-color:rgba(56,189,248,0.35);">
+      <label class="grip-toggle-label">
+        <input type="checkbox" id="voiceFrEn" onchange="toggleFrenchVoiceControl()">
+        <span>🎙️ أوامر صوتية بالفرنسية (الرقم = السرعة | Stop = إيقاف)</span>
+      </label>
+      <span class="grip-toggle-status" id="voiceFrStat" style="color:var(--dim)">مغلق</span>
     </div>
 
     <!-- 🔬 اختبار حساس النبض (تسجيل الحزم الخام) -->
@@ -4468,8 +4477,8 @@ function onSafetyLine(line){
     if(type === 'RESCUE'){
       if(!sfCfg.rcEn) return;
       const curSpdNow = (tel && tel.s > 0) ? tel.s : (cur && cur.s > 0 ? cur.s : 0);
-      // لا يُفعل خفض السرعة إلا إذا كانت السرعة الفعلية >= 4.0 كم/س ومستقرة (لم يغيرها المستخدم خلال آخر 5 ثوانٍ) ومع مهلة 20 ثانية بين كل تدخل
-      if(curSpdNow < 4.0 || !WEB_SAFETY.rhythmEstablished || (now - (window.lastRescueTriggerMs || 0)) < 20000 || (now - (WEB_SAFETY.lastSpdChangeAtMs || 0)) < 5000){
+      // تدخل فوري عند تشتت الخطى بدون انتظار 20 ثانية
+      if(curSpdNow < 4.0 || !WEB_SAFETY.rhythmEstablished || (now - (WEB_SAFETY.lastSpdChangeAtMs || 0)) < 2000){
         return;
       }
       window.lastRescueTriggerMs = now;
@@ -8175,6 +8184,248 @@ window.dspCfgRead = dspCfgRead;
 window.dspCfgReset = dspCfgReset;
 window.quickSetSpeed = quickSetSpeed;
 window.quickSetIncline = quickSetIncline;
+
+// ============================================================================
+// نظام الأوامر الصوتية بالفرنسية للسرعة والإيقاف (French Voice Control v110.0)
+// - نطق الرقم وحده بالفرنسية (مثل: 3, 5, 8, 10, cinq et demi) ينتقل فوراً لتلك السرعة
+// - نطق كلمة "Stop" أو "Arrêt" يوقف المشاية فوراً
+// ============================================================================
+let voiceFrActive = false;
+let voiceFrRec = null;
+let voiceFrRestartTimer = null;
+let lastVoiceCmdKey = '';
+let lastVoiceCmdMs = 0;
+
+const FR_WORD_TO_NUM = {
+  'un': 1, 'une': 1, 'hein': 1,
+  'deux': 2, 'de': 2,
+  'trois': 3, 'troie': 3,
+  'quatre': 4,
+  'cinq': 5, 'saint': 5, 'sain': 5, 'sein': 5, 'ceint': 5,
+  'six': 6, 'sis': 6, 'scie': 6,
+  'sept': 7, 'cette': 7, 'cet': 7, 'set': 7, 'sete': 7, 'sète': 7,
+  'huit': 8, 'huitre': 8, 'huître': 8, 'uit': 8,
+  'neuf': 9, 'neuve': 9, 'oeuf': 9,
+  'dix': 10, 'dis': 10, 'dit': 10,
+  'onze': 11,
+  'douze': 12,
+  'treize': 13,
+  'quatorze': 14,
+  'quinze': 15,
+  'seize': 16,
+  'dix-sept': 17, 'dix sept': 17,
+  'dix-huit': 18, 'dix huit': 18,
+  'dix-neuf': 19, 'dix neuf': 19,
+  'vingt': 20, 'vin': 20, 'vain': 20, 'vint': 20
+};
+
+function parseFrenchVoiceCommand(rawText){
+  if(!rawText) return null;
+  let txt = String(rawText).toLowerCase().trim()
+    .replace(/[.,!?;:]+$/g, '')
+    .replace(/’/g, "'")
+    .replace(/\s+/g, ' ');
+
+  // 1. فحص أمر الإيقاف الفوري (Stop / Arrêt)
+  if(/\b(stop|stoper|stopper|arret|arrête|arrete|arrêter|arreter|halte)\b/i.test(txt)){
+    return { type: 'stop', raw: rawText.trim() };
+  }
+
+  // إزالة كلمة vitesse الاختيارية إن نطقها المستخدم قبل الرقم
+  txt = txt.replace(/^vitesse\s+/i, '').trim();
+
+  // 2. فحص الأرقام المكتوبة كأرقام (مثل "5", "5,5", "5.5", "12")
+  const numMatch = txt.match(/^(\d{1,2})(?:[.,](\d))?$/);
+  if(numMatch){
+    let val = parseInt(numMatch[1], 10);
+    if(numMatch[2] !== undefined){
+      val += parseInt(numMatch[2], 10) / 10.0;
+    }
+    if(val >= 1.0 && val <= 20.0){
+      return { type: 'speed', value: Math.round(val * 2) / 2, raw: rawText.trim() };
+    }
+  }
+
+  // 3. فحص صيغة "<رقم> و نصف" أو "<رقم> فاصلة خمسة" بالفرنسية (مثل cinq et demi / cinq virgule cinq)
+  for(const [w, n] of Object.entries(FR_WORD_TO_NUM)){
+    const halfRe = new RegExp('^' + w + '\\s+(et\\s+demi|et\\s+demie|virgule\\s+cinq|point\\s+cinq|virgule\\s+5|point\\s+5)$', 'i');
+    if(halfRe.test(txt)){
+      const v = n + 0.5;
+      if(v >= 1.0 && v <= 20.0) return { type: 'speed', value: v, raw: rawText.trim() };
+    }
+  }
+
+  const digitHalfMatch = txt.match(/^(\d{1,2})\s+(et\s+demi|et\s+demie|virgule\s+cinq|point\s+cinq)$/i);
+  if(digitHalfMatch){
+    const v = parseInt(digitHalfMatch[1], 10) + 0.5;
+    if(v >= 1.0 && v <= 20.0) return { type: 'speed', value: v, raw: rawText.trim() };
+  }
+
+  // 4. فحص الرقم المفرد بالحروف الفرنسية (مثل "trois", "cinq", "huit", "dix", "douze")
+  if(Object.prototype.hasOwnProperty.call(FR_WORD_TO_NUM, txt)){
+    const v = FR_WORD_TO_NUM[txt];
+    if(v >= 1.0 && v <= 20.0){
+      return { type: 'speed', value: v, raw: rawText.trim() };
+    }
+  }
+
+  return null;
+}
+
+function setVoiceFrStatus(text, color){
+  const el = document.getElementById('voiceFrStat');
+  if(!el) return;
+  el.textContent = text;
+  el.style.color = color || 'var(--dim)';
+}
+
+async function executeFrenchVoiceCommand(cmd, isFinal){
+  if(!cmd) return;
+  const now = Date.now();
+  const key = cmd.type === 'stop' ? 'STOP' : ('SPD_' + cmd.value.toFixed(1));
+
+  // منع تكرار تنفيذ نفس الجملة الصوتية مرتين (أثناء interim ثم final)
+  if(key === lastVoiceCmdKey && (now - lastVoiceCmdMs) < 1600){
+    return;
+  }
+  lastVoiceCmdKey = key;
+  lastVoiceCmdMs = now;
+
+  if(cmd.type === 'stop'){
+    setVoiceFrStatus('🛑 STOP (' + cmd.raw + ')', 'var(--red)');
+    try{ if(typeof playGripSuccessTone === 'function') playGripSuccessTone(false); }catch(_){}
+    try{ if(navigator.vibrate) navigator.vibrate([120, 60, 120]); }catch(_){}
+    stopTreadmillDirect();
+    try{ if(cp && !ready) send([0x08, 0x01]); }catch(_){}
+    toast('🎙️ أمر صوتي: STOP ← إيقاف المشاية فوراً');
+    return;
+  }
+
+  if(cmd.type === 'speed'){
+    const maxSpd = (typeof MAX_SPEED === 'number' && MAX_SPEED > 0) ? MAX_SPEED : 20;
+    const targetSpd = Math.min(maxSpd, Math.max(1.0, cmd.value));
+    setVoiceFrStatus('🎙️ ' + targetSpd.toFixed(1) + ' كم/س (' + cmd.raw + ')', 'var(--ok)');
+    try{ if(typeof playGripSuccessTone === 'function') playGripSuccessTone(true); }catch(_){}
+    try{ if(navigator.vibrate) navigator.vibrate(70); }catch(_){}
+    try{
+      await quickSetSpeed(targetSpd);
+      setTimeout(() => { try{ if(cp) send(speedCmd(targetSpd)); }catch(_){} }, 350);
+      toast('🎙️ أمر صوتي (' + cmd.raw + ') ← السرعة ' + targetSpd.toFixed(1) + ' كم/س');
+    }catch(e){
+      toast('🎙️ سُمع الرقم (' + targetSpd.toFixed(1) + ' كم/س) — اتصل بالمشاية أولاً لإرسال الأمر');
+    }
+  }
+}
+
+function initFrenchVoiceRecognition(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR) return null;
+  const rec = new SR();
+  rec.lang = 'fr-FR';
+  rec.continuous = true;
+  rec.interimResults = true;
+  rec.maxAlternatives = 4;
+
+  rec.onstart = () => {
+    if(voiceFrActive){
+      setVoiceFrStatus('🟢 يستمع (FR)...', 'var(--ok)');
+    }
+  };
+
+  rec.onresult = (event) => {
+    if(!voiceFrActive) return;
+    for(let i = event.resultIndex; i < event.results.length; i++){
+      const res = event.results[i];
+      const isFinal = !!res.isFinal;
+      // فحص جميع البدائل المحتملة (maxAlternatives) لالتقاط الرقم أو كلمة stop بأعلى دقة
+      let matchedCmd = null;
+      for(let a = 0; a < res.length; a++){
+        const altTranscript = (res[a] && res[a].transcript) ? res[a].transcript.trim() : '';
+        if(!altTranscript) continue;
+        const parsed = parseFrenchVoiceCommand(altTranscript);
+        if(parsed){
+          matchedCmd = parsed;
+          break;
+        }
+      }
+      if(matchedCmd){
+        // أمر STOP يُنفّذ فوراً حتى في النتائج الجزئية (interim)، والأرقام تُنفذ فور وضوحها
+        executeFrenchVoiceCommand(matchedCmd, isFinal);
+        break;
+      } else if(isFinal && res[0] && res[0].transcript){
+        const heard = res[0].transcript.trim();
+        if(heard.length > 0 && heard.length <= 20){
+          setVoiceFrStatus('🎙️ "' + heard + '"', '#38bdf8');
+        }
+      }
+    }
+  };
+
+  rec.onerror = (ev) => {
+    if(!voiceFrActive) return;
+    const err = ev && ev.error ? ev.error : '';
+    if(err === 'not-allowed' || err === 'service-not-allowed'){
+      voiceFrActive = false;
+      const chk = document.getElementById('voiceFrEn');
+      if(chk) chk.checked = false;
+      setVoiceFrStatus('🚫 إذن الميكروفون مرفوض', 'var(--red)');
+      toast('⚠️ يرجى السماح بإذن الميكروفون للمتصفح لتشغيل الأوامر الصوتية');
+    } else if(err !== 'no-speech' && err !== 'aborted'){
+      setVoiceFrStatus('⏳ إعادة تنشيط الميكروفون...', 'var(--amber)');
+    }
+  };
+
+  rec.onend = () => {
+    if(!voiceFrActive) {
+      setVoiceFrStatus('مغلق', 'var(--dim)');
+      return;
+    }
+    if(voiceFrRestartTimer) clearTimeout(voiceFrRestartTimer);
+    voiceFrRestartTimer = setTimeout(() => {
+      if(voiceFrActive && voiceFrRec){
+        try{ voiceFrRec.start(); }catch(_){}
+      }
+    }, 250);
+  };
+
+  return rec;
+}
+
+function toggleFrenchVoiceControl(){
+  const chk = document.getElementById('voiceFrEn');
+  const wantOn = !!(chk && chk.checked);
+  if(!wantOn){
+    voiceFrActive = false;
+    if(voiceFrRestartTimer) clearTimeout(voiceFrRestartTimer);
+    if(voiceFrRec){
+      try{ voiceFrRec.stop(); }catch(_){}
+    }
+    setVoiceFrStatus('مغلق', 'var(--dim)');
+    toast('🔇 تم إيقاف الأوامر الصوتية');
+    return;
+  }
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    if(chk) chk.checked = false;
+    setVoiceFrStatus('غير مدعوم', 'var(--red)');
+    toast('⚠️ متصفحك الحالي لا يدعم التعرف الصوتي (استخدم Chrome)');
+    return;
+  }
+
+  try{ unlockAudio(); }catch(_){}
+  if(!voiceFrRec) voiceFrRec = initFrenchVoiceRecognition();
+  voiceFrActive = true;
+  setVoiceFrStatus('⏳ جارٍ فتح الميكروفون...', 'var(--amber)');
+  try{
+    voiceFrRec.start();
+    toast('🎙️ الأوامر الصوتية بالفرنسية مفعّلة: انطق الرقم للسرعة أو Stop للإيقاف');
+  }catch(e){
+    setVoiceFrStatus('🟢 يستمع (FR)...', 'var(--ok)');
+  }
+}
+window.toggleFrenchVoiceControl = toggleFrenchVoiceControl;
+
 
 // ============================================================================
 // 1. نظام التحكم الذكي بالسرعة عبر قبضة حساس النبض (Grip Pulse Speed Engine v96)
