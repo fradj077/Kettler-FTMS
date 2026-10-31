@@ -2124,7 +2124,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <body>
 <div id="gate" onclick="if(event.target===this)hideGate()"><div class="gbox" style="position:relative">
   <button type="button" onclick="hideGate()" style="position:absolute;top:12px;left:12px;width:34px;height:34px;min-height:34px;padding:0;background:rgba(255,255,255,0.12);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;">✕</button>
-  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v106.0 (التحديث المباشر من GitHub + درع الأمان الذكي)</div>
+  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v107.0 (إصلاح حفظ درع الأمان + المهلة بالثواني + تحرير السرعة)</div>
   <h1 style="margin:0 0 8px">الاتصال بحساس الحرارة</h1>
   <p style="margin:0 0 12px">لحماية المحرك، يرجى الاتصال بحساس الحرارة أو الضغط على تخطي للمتابعة فوراً.</p>
   <div id="gMsg"></div>
@@ -2139,7 +2139,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v106.0 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v107.0 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -2708,9 +2708,9 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
           <div>
             <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
               <span>مهلة انعدام الخطوة:</span>
-              <b id="sfFsMsLbl" style="color:var(--accent)">600 ms</b>
+              <b id="sfFsMsLbl" style="color:var(--accent)">1.5 ثانية</b>
             </div>
-            <input type="range" id="sfFsMs" min="250" max="1500" step="25" value="600" oninput="$('sfFsMsLbl').textContent=this.value+' ms'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+            <input type="range" id="sfFsMs" min="0.5" max="5.0" step="0.5" value="1.5" oninput="$('sfFsMsLbl').textContent=(+this.value).toFixed(1)+' ثانية'" onchange="updateSafetyConfigFromUI()" style="width:100%">
           </div>
           <div>
             <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
@@ -2794,7 +2794,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
         ✓ الإعدادات متزامنة ومحفوظة في فلاش اللوحة (NVS)
       </div>
       <div style="display:flex;gap:8px">
-        <button type="button" onclick="bridgeCmd('SFQ')" style="min-height:28px;padding:3px 10px;font-size:11px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:#fff;cursor:pointer">🔄 قراءة اللوحة</button>
+        <button type="button" onclick="window.sfForceReadFromBoard=true; bridgeCmd('SFQ')" style="min-height:28px;padding:3px 10px;font-size:11px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:#fff;cursor:pointer">🔄 قراءة اللوحة</button>
         <button type="button" onclick="saveSafetyConfigToBoard()" style="min-height:28px;padding:3px 12px;font-size:11px;font-weight:bold;background:linear-gradient(135deg,#0284c7,#0369a1);border:1px solid #38bdf8;border-radius:6px;color:#fff;cursor:pointer">💾 حفظ في اللوحة</button>
       </div>
     </div>
@@ -3910,36 +3910,43 @@ tRx = null; tPush = null;
 let tRxQ = Promise.resolve();
 function tRxWrite(strOrBytes){
   const rx = tRx || window.tRx;
-  const data = typeof strOrBytes === 'string' ? new TextEncoder().encode(strOrBytes) : strOrBytes;
+  const fullData = typeof strOrBytes === 'string' ? new TextEncoder().encode(strOrBytes) : strOrBytes;
   const job = tRxQ.then(async () => {
     if(!rx) return false;
-    for(let attempt = 0; attempt < 3; attempt++){
-      try{
-        if(typeof rx.writeValueWithResponse === 'function'){
-          await rx.writeValueWithResponse(data);
-        }else if(typeof rx.writeValue === 'function'){
-          await rx.writeValue(data);
-        }else if(typeof rx.writeValueWithoutResponse === 'function'){
-          await rx.writeValueWithoutResponse(data);
-        }
-        await sleep(45);
-        return true;
-      }catch(e){
-        if(attempt < 2 && /in progress|busy/i.test(String(e && e.message))){
-          await sleep(140);
-          continue;
-        }
+    // تقسيم الأوامر الطويلة (مثل SFS:...) إلى أجزاء <= 18 بايت لضمان عدم اقتطاعها عند 20 بايت في بلوتوث أندرويد
+    for(let off = 0; off < fullData.length; off += 18){
+      const chunk = fullData.subarray(off, Math.min(fullData.length, off + 18));
+      let chunkOk = false;
+      for(let attempt = 0; attempt < 3; attempt++){
         try{
-          if(typeof rx.writeValueWithoutResponse === 'function'){
-            await rx.writeValueWithoutResponse(data);
-            await sleep(45);
-            return true;
+          if(typeof rx.writeValueWithResponse === 'function'){
+            await rx.writeValueWithResponse(chunk);
+          }else if(typeof rx.writeValue === 'function'){
+            await rx.writeValue(chunk);
+          }else if(typeof rx.writeValueWithoutResponse === 'function'){
+            await rx.writeValueWithoutResponse(chunk);
           }
-        }catch(_){}
-        return false;
+          chunkOk = true;
+          break;
+        }catch(e){
+          if(attempt < 2 && /in progress|busy/i.test(String(e && e.message))){
+            await sleep(120);
+            continue;
+          }
+          try{
+            if(typeof rx.writeValueWithoutResponse === 'function'){
+              await rx.writeValueWithoutResponse(chunk);
+              chunkOk = true;
+              break;
+            }
+          }catch(_){}
+        }
       }
+      if(!chunkOk) return false;
+      await sleep(30);
     }
-    return false;
+    await sleep(25);
+    return true;
   });
   tRxQ = job.catch(() => false);
   return job;
@@ -4237,11 +4244,19 @@ async function bridgeCmd(c){
 }
 
 // ---------- درع الأمان الذكي وكشف السقوط والنزول التلقائي (مفصول ومعاير بدقة) ----------
-let sfCfg = {fsEn:1, fsMs:600, fsVmin:3.0, drEn:1, drMs:250, drAmp:1.2, rcEn:1, rcDrop:2.5, rcVar:35, safeTest:0};
+let sfCfg = {fsEn:1, fsMs:1500, fsVmin:3.0, drEn:1, drMs:250, drAmp:1.2, rcEn:1, rcDrop:2.0, rcVar:35, safeTest:0};
+window.sfForceReadFromBoard = false;
+window.lastRescueTriggerMs = 0;
 try{
   const savedSf = JSON.parse(localStorage.getItem('kettler_sf_cfg'));
   if(savedSf && typeof savedSf === 'object'){
     sfCfg = Object.assign(sfCfg, savedSf);
+    if(sfCfg.fsMs < 50) sfCfg.fsMs = Math.round(sfCfg.fsMs * 1000);
+    // تصحيح القيم الفاسدة التي قد تكون علقت من نسخة قديمة (مثل fsVmin=8.0 أو drAmp=4.0)
+    if(sfCfg.fsVmin > 6.0 && sfCfg.drAmp >= 3.5){
+      sfCfg = {fsEn:1, fsMs:1500, fsVmin:3.0, drEn:1, drMs:250, drAmp:1.2, rcEn:1, rcDrop:2.0, rcVar:35, safeTest:0};
+      localStorage.setItem('kettler_sf_cfg', JSON.stringify(sfCfg));
+    }
   }
 }catch(_){}
 
@@ -4360,11 +4375,12 @@ async function safetyActOnPhone(kind, spd){
 function triggerSafetyEventAction(type, val, isTest){
   let msg = '';
   if(type === 'DISMOUNT'){
+    const secStr = (Math.max(0.5, (parseFloat(val) || 1500) / 1000)).toFixed(1) + ' ثانية';
     if(!isTest){
-      msg = '⏸️ درع الأمان: تم إيقاف المشاية مؤقتاً لنزولك عن السير (' + val + ' ms)';
+      msg = '⏸️ درع الأمان: تم إيقاف المشاية مؤقتاً لنزولك عن السير (' + secStr + ')';
       autoPauseWorkoutOnDismount();
     } else {
-      msg = '⚠️ [تجربة أمان] تم رصد النزول من السير خلال ' + val + ' ms!';
+      msg = '⚠️ [تجربة أمان] تم رصد النزول من السير خلال ' + secStr + '!';
     }
   } else if(type === 'DRAG'){
     msg = (isTest ? '⚠️ [تجربة أمان] تم رصد فرملة/احتكاك شاذ خلال ' : '🛑 درع الأمان: فرملة طوارئ لرصد انزلاق/كبح على السير خلال ') + val + ' ms!';
@@ -4395,28 +4411,33 @@ function triggerSafetyEventAction(type, val, isTest){
 
 function onSafetyLine(line){
   if(line.indexOf('C=') === 0){
+    // لا نسمح لرد اللوحة القديم أن يغير أرقام المستخدم في الواجهة إلا إذا ضغط المستخدم صراحةً على زر "🔄 قراءة اللوحة"
+    if(!window.sfForceReadFromBoard){
+      return;
+    }
+    window.sfForceReadFromBoard = false;
     const p = line.slice(2).split(',');
     if(p.length >= 10){
-      // قراءة القيم المحفوظة في اللوحة كما هي 100% بدون أي إجبار أو تغيير لـ drAmp أو غيره!
       sfCfg.fsEn = parseInt(p[0], 10) ? 1 : 0;
-      sfCfg.fsMs = parseInt(p[1], 10) || 600;
+      sfCfg.fsMs = parseInt(p[1], 10) || 1500;
       sfCfg.fsVmin = parseFloat(p[2]) || 3.0;
       sfCfg.drEn = parseInt(p[3], 10) ? 1 : 0;
       sfCfg.drMs = parseInt(p[4], 10) || 250;
       sfCfg.drAmp = parseFloat(p[5]) || 1.2;
       sfCfg.rcEn = parseInt(p[6], 10) ? 1 : 0;
-      sfCfg.rcDrop = parseFloat(p[7]) || 2.5;
+      sfCfg.rcDrop = parseFloat(p[7]) || 2.0;
       sfCfg.rcVar = parseInt(p[8], 10) || 35;
       sfCfg.safeTest = parseInt(p[9], 10) ? 1 : 0;
       try{ localStorage.setItem('kettler_sf_cfg', JSON.stringify(sfCfg)); }catch(_){}
       updateSafetyUIFromConfig();
+      toast('✓ تمت قراءة إعدادات درع الأمان من اللوحة');
     }
     return;
   }
   if(line.indexOf('OK') === 0){
     toast('✅ تم حفظ وتفعيل إعدادات درع الأمان في فلاش اللوحة (NVS) بنجاح!');
     if($('sfLiveStatus')){
-      $('sfLiveStatus').textContent = '✅ الإعدادات متزامنة ومحفوظة في فلاش اللوحة (NVS)';
+      $('sfLiveStatus').textContent = '✅ الإعدادات محفوظة في فلاش اللوحة: مهلة ' + (sfCfg.fsMs / 1000).toFixed(1) + 'ث / صدمة +' + sfCfg.drAmp.toFixed(1) + 'A';
       $('sfLiveStatus').style.color = 'var(--ok)';
     }
     return;
@@ -4429,11 +4450,6 @@ function onSafetyLine(line){
     const isTest = (mode === 'TEST');
     const now = Date.now();
 
-    // لماذا لم يتوقف السير عند فرملة الرجل في التجربة السابقة؟
-    // لأن فحص lastCurAmp < 5.2 في الهاتف كان يقرأ قيمة التيار القديمة (لأن CUR يصل كل 500ms بينما SF:EVT=DRAG يصل خلال 15ms!).
-    // الحل الذكي الدقيق هنا:
-    // - نقبل إشارة DRAG الفورية من اللوحة مباشرة عند فرملة السير بالرجل!
-    // - ونمنع فقط حالة واحدة محددة: لحظة انتقال الوزن الطبيعي عند بداية الصعود من السير الفارغ (خلال أول 1.5 ثانية من لمس السير عندما يكون التيار ضمن وزن المشي العادي < 3.6A).
     if(!isTest && type === 'DRAG'){
       const inFirstStepTransition = WEB_SAFETY.loadTransitionStartMs > 0 && (now - WEB_SAFETY.loadTransitionStartMs) < 1500 && !WEB_SAFETY.weightSettled;
       if(inFirstStepTransition && (lastCurAmp == null || lastCurAmp < 3.6)){
@@ -4442,12 +4458,15 @@ function onSafetyLine(line){
       }
     }
 
-    // في تشتت الخطوات (RESCUE): نتجاهل فقط أول خطوتين عند بدء الصعود من السير الفارغ ريثما ينتظم الإيقاع
-    if(!isTest && type === 'RESCUE'){
-      if(!WEB_SAFETY.rhythmEstablished){
-        updateSafetyEventBox('🛡️ بدء تأسيس إيقاع المشي — جاهز لمراقبة التشتت ✓', 'var(--ok)', 'rgba(16,185,129,0.25)', 'rgba(16,185,129,0.08)');
+    // حماية كاملة من إرجاع السرعة إلى <= 3 كم/س عند رفع السرعة أو المشي العادي:
+    if(type === 'RESCUE'){
+      if(!sfCfg.rcEn) return;
+      const curSpdNow = (tel && tel.s > 0) ? tel.s : (cur && cur.s > 0 ? cur.s : 0);
+      // لا يُفعل خفض السرعة إلا إذا كانت السرعة الفعلية >= 4.0 كم/س ومستقرة (لم يغيرها المستخدم خلال آخر 5 ثوانٍ) ومع مهلة 20 ثانية بين كل تدخل
+      if(curSpdNow < 4.0 || !WEB_SAFETY.rhythmEstablished || (now - (window.lastRescueTriggerMs || 0)) < 20000 || (now - (WEB_SAFETY.lastSpdChangeAtMs || 0)) < 5000){
         return;
       }
+      window.lastRescueTriggerMs = now;
     }
 
     WEB_SAFETY.lastTriggerMs = now;
@@ -4459,7 +4478,11 @@ function onSafetyLine(line){
 function updateSafetyUIFromConfig(){
   if($('sfTestToggle')) $('sfTestToggle').checked = (sfCfg.safeTest === 1);
   if($('sfFsEn')) $('sfFsEn').checked = (sfCfg.fsEn === 1);
-  if($('sfFsMs')){ $('sfFsMs').value = sfCfg.fsMs; if($('sfFsMsLbl')) $('sfFsMsLbl').textContent = sfCfg.fsMs + ' ms'; }
+  if($('sfFsMs')){
+    const fsSec = Math.max(0.5, Math.min(5.0, ((sfCfg.fsMs >= 50 ? sfCfg.fsMs / 1000 : sfCfg.fsMs) || 1.5)));
+    $('sfFsMs').value = fsSec.toFixed(1);
+    if($('sfFsMsLbl')) $('sfFsMsLbl').textContent = fsSec.toFixed(1) + ' ثانية';
+  }
   if($('sfFsVmin')){ $('sfFsVmin').value = sfCfg.fsVmin; if($('sfFsVminLbl')) $('sfFsVminLbl').textContent = sfCfg.fsVmin.toFixed(1) + ' كم/س'; }
   if($('sfDrEn')) $('sfDrEn').checked = (sfCfg.drEn === 1);
   if($('sfDrMs')){ $('sfDrMs').value = sfCfg.drMs; if($('sfDrMsLbl')) $('sfDrMsLbl').textContent = sfCfg.drMs + ' ms'; }
@@ -4472,17 +4495,21 @@ function updateSafetyUIFromConfig(){
 function updateSafetyConfigFromUI(){
   if($('sfTestToggle')) sfCfg.safeTest = $('sfTestToggle').checked ? 1 : 0;
   if($('sfFsEn')) sfCfg.fsEn = $('sfFsEn').checked ? 1 : 0;
-  if($('sfFsMs')) sfCfg.fsMs = parseInt($('sfFsMs').value, 10) || 600;
+  if($('sfFsMs')){
+    const rawFs = parseFloat($('sfFsMs').value) || 1.5;
+    sfCfg.fsMs = rawFs <= 20 ? Math.round(rawFs * 1000) : Math.round(rawFs);
+  }
   if($('sfFsVmin')) sfCfg.fsVmin = parseFloat($('sfFsVmin').value) || 3.0;
   if($('sfDrEn')) sfCfg.drEn = $('sfDrEn').checked ? 1 : 0;
   if($('sfDrMs')) sfCfg.drMs = parseInt($('sfDrMs').value, 10) || 250;
   if($('sfDrAmp')) sfCfg.drAmp = parseFloat($('sfDrAmp').value) || 1.2;
   if($('sfRcEn')) sfCfg.rcEn = $('sfRcEn').checked ? 1 : 0;
-  if($('sfRcDrop')) sfCfg.rcDrop = parseFloat($('sfRcDrop').value) || 2.5;
+  if($('sfRcDrop')) sfCfg.rcDrop = parseFloat($('sfRcDrop').value) || 2.0;
   if($('sfRcVar')) sfCfg.rcVar = parseInt($('sfRcVar').value, 10) || 35;
 
+  try{ localStorage.setItem('kettler_sf_cfg', JSON.stringify(sfCfg)); }catch(_){}
   if($('sfLiveStatus')){
-    $('sfLiveStatus').textContent = '⚠️ تم تعديل القيم محلياً — اضغط "حفظ في اللوحة" للمزامنة';
+    $('sfLiveStatus').textContent = '⚠️ تم تعديل القيم — اضغط "💾 حفظ في اللوحة" لتثبيتها في الفلاش';
     $('sfLiveStatus').style.color = 'var(--amber)';
   }
 }
@@ -4497,23 +4524,25 @@ function onSfTestToggleChanged(){
   }
 }
 
-async function saveSafetyConfigToBoard(){
-  updateSafetyConfigFromUI();
+async function saveSafetyConfigToBoard(quietSync){
+  if(!quietSync) updateSafetyConfigFromUI();
   try{ localStorage.setItem('kettler_sf_cfg', JSON.stringify(sfCfg)); }catch(_){}
-  const cmd = 'SFS:' + sfCfg.fsEn + ',' + sfCfg.fsMs + ',' + sfCfg.fsVmin.toFixed(1) + ',' +
+  const cmd = '\nSFS:' + sfCfg.fsEn + ',' + sfCfg.fsMs + ',' + sfCfg.fsVmin.toFixed(1) + ',' +
               sfCfg.drEn + ',' + sfCfg.drMs + ',' + sfCfg.drAmp.toFixed(1) + ',' +
               sfCfg.rcEn + ',' + sfCfg.rcDrop.toFixed(1) + ',' + sfCfg.rcVar + ',' + sfCfg.safeTest;
   const ok = await bridgeCmd(cmd);
   if(ok){
-    toast('✅ تم إرسال وحفظ إعدادات درع الأمان في اللوحة (NVS) بنجاح!');
+    if(!quietSync){
+      toast('✅ تم إرسال وحفظ إعدادات درع الأمان في اللوحة (NVS) بنجاح!');
+    }
     if($('sfLiveStatus')){
-      $('sfLiveStatus').textContent = '✅ تم الحفظ في فلاش اللوحة (NVS): فارق الصدمة +' + sfCfg.drAmp.toFixed(1) + 'A / ' + sfCfg.drMs + 'ms';
+      $('sfLiveStatus').textContent = '✅ تم الحفظ في اللوحة: مهلة ' + (sfCfg.fsMs / 1000).toFixed(1) + 'ث / صدمة +' + sfCfg.drAmp.toFixed(1) + 'A';
       $('sfLiveStatus').style.color = 'var(--ok)';
     }
-  } else {
+  } else if(!quietSync){
     toast('💾 تم حفظ إعدادات درع الأمان محلياً في الهاتف (اللوحة غير متصلة حالياً)');
     if($('sfLiveStatus')){
-      $('sfLiveStatus').textContent = '💾 محفوظ محلياً في الهاتف (+' + sfCfg.drAmp.toFixed(1) + 'A) — اتصل باللوحة للمزامنة';
+      $('sfLiveStatus').textContent = '💾 محفوظ في الهاتف (مهلة ' + (sfCfg.fsMs / 1000).toFixed(1) + 'ث / +' + sfCfg.drAmp.toFixed(1) + 'A) — اتصل باللوحة للمزامنة';
       $('sfLiveStatus').style.color = 'var(--amber)';
     }
   }
@@ -4698,7 +4727,7 @@ async function openTemp(){
 
   await sleep(150);
   try{ cfgForceRead = true; await bridgeCmd('KQ'); }catch(_){}
-  try{ await bridgeCmd('SFQ'); }catch(_){}
+  try{ await saveSafetyConfigToBoard(true); }catch(_){}
 
   $('mhBadge').className = 'mh-badge l0';
   $('mhLvl').textContent = 'جارٍ فحص اللوحة...';
@@ -8515,9 +8544,14 @@ function checkWebSideDismount(liveAmp, boardEmptyBeltA, livePeakA){
     }
     if(now - WEB_SAFETY.lastTriggerMs < 4500) return;
 
-    // تكييف قيمة السير الفارغ المكتسبة مع تغير السرعة
-    if(WEB_SAFETY.lastSpd > 0.5 && Math.abs(spd - WEB_SAFETY.lastSpd) >= 0.3 && WEB_SAFETY.dynEmptyA > 0.5){
-      WEB_SAFETY.dynEmptyA = Math.max(0.8, WEB_SAFETY.dynEmptyA + (spd - WEB_SAFETY.lastSpd) * 0.07);
+    // تكييف قيمة السير الفارغ المكتسبة مع تغير السرعة وإعادة تأسيس الإيقاع عند تغيير السرعة
+    if(WEB_SAFETY.lastSpd > 0.5 && Math.abs(spd - WEB_SAFETY.lastSpd) >= 0.25){
+      WEB_SAFETY.lastSpdChangeAtMs = now;
+      WEB_SAFETY.rhythmEstablished = false;
+      WEB_SAFETY.stepDts = [];
+      if(WEB_SAFETY.dynEmptyA > 0.5){
+        WEB_SAFETY.dynEmptyA = Math.max(0.8, WEB_SAFETY.dynEmptyA + (spd - WEB_SAFETY.lastSpd) * 0.07);
+      }
     }
     WEB_SAFETY.lastSpd = spd;
 
@@ -8625,7 +8659,7 @@ try {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initGripPulseEngine);
   } else {
-    initGripPulseEngine();
+    initGripPulseEngine(); try{ updateSafetyUIFromConfig(); }catch(_){}
   }
 } catch(_) {}
 
