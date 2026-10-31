@@ -2124,7 +2124,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <body>
 <div id="gate" onclick="if(event.target===this)hideGate()"><div class="gbox" style="position:relative">
   <button type="button" onclick="hideGate()" style="position:absolute;top:12px;left:12px;width:34px;height:34px;min-height:34px;padding:0;background:rgba(255,255,255,0.12);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;">✕</button>
-  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v110.0 (أوامر صوتية بالفرنسية للسرعة و Stop + تشتت فوري)</div>
+  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v111.0 (تدريب الميكروفون على صوتك الشخصي للأرقام الفرنسية + Stop)</div>
   <h1 style="margin:0 0 8px">الاتصال بحساس الحرارة</h1>
   <p style="margin:0 0 12px">لحماية المحرك، يرجى الاتصال بحساس الحرارة أو الضغط على تخطي للمتابعة فوراً.</p>
   <div id="gMsg"></div>
@@ -2139,7 +2139,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v110.0 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v111.0 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -2263,6 +2263,26 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
       </label>
       <span class="grip-toggle-status" id="voiceFrStat" style="color:var(--dim)">مغلق</span>
     </div>
+
+    <!-- 🎯 لوحة تدريب الميكروفون على صوتك الشخصي (Personal Voice Trainer) -->
+    <details class="grip-toggle-row" id="voiceTrainPanel" style="display:block;padding:10px 12px;border-color:rgba(16,185,129,0.35);">
+      <summary style="cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:space-between">
+        <span>🎯 تدريب الميكروفون على صوتي (تعليم الأرقام الصعبة)</span>
+        <span id="vtCountBadge" style="font-size:11px;color:var(--ok);font-weight:800">جاهز</span>
+      </summary>
+      <div style="font-size:12px;line-height:1.7;color:var(--dim);margin:8px 0">
+        اضغط على <b>الرقم الذي لا يفهمه الهاتف جيداً</b> (أو زر <b>STOP</b>)، ثم انطقه بصوتك بالفرنسية. سيحفظ التطبيق نطقك الخاص في ذاكرة الهاتف ليتعرف عليه فوراً في كل مرة!
+      </div>
+      <div id="vtPromptBox" style="padding:8px 10px;border-radius:8px;background:rgba(15,23,42,0.85);border:1px solid rgba(56,189,248,0.35);font-size:12.5px;font-weight:800;color:#38bdf8;text-align:center;margin-bottom:8px">
+        👆 اختر رقماً بالأسفل ثم انطقه بالفرنسية لتدريب التطبيق عليه
+      </div>
+      <div id="vtLastHeardBox" style="font-size:11.5px;color:#cbd5e1;text-align:center;margin-bottom:8px;min-height:18px;direction:ltr"></div>
+      <div id="vtGrid" style="display:grid;grid-template-columns:repeat(5, 1fr);gap:6px;margin-bottom:8px;direction:ltr"></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:space-between">
+        <button type="button" class="preset-chip" onclick="vtCancelTrain()" style="flex:1;min-height:34px;font-size:12px;background:#1e293b">⏹ إلغاء وضع التدريب</button>
+        <button type="button" class="preset-chip" onclick="vtClearAllTraining()" style="flex:1;min-height:34px;font-size:12px;background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.4);color:#fca5a5">🗑️ مسح التدريب المحفوظ</button>
+      </div>
+    </details>
 
     <!-- 🔬 اختبار حساس النبض (تسجيل الحزم الخام) -->
     <details class="grip-toggle-row" id="gtPanel" style="display:block;padding:10px 12px">
@@ -8186,56 +8206,218 @@ window.quickSetSpeed = quickSetSpeed;
 window.quickSetIncline = quickSetIncline;
 
 // ============================================================================
-// نظام الأوامر الصوتية بالفرنسية للسرعة والإيقاف (French Voice Control v110.0)
-// - نطق الرقم وحده بالفرنسية (مثل: 3, 5, 8, 10, cinq et demi) ينتقل فوراً لتلك السرعة
-// - نطق كلمة "Stop" أو "Arrêt" يوقف المشاية فوراً
+// نظام الأوامر الصوتية بالفرنسية + التدريب الشخصي على الصوت (French Voice Control & Personal Trainer v111.0)
+// - يحفظ نطقك الشخصي لكل رقم أو أمر Stop في localStorage (kettler_voice_fr_custom_v1)
+// - يدعم مطابقة نطقك الشخصي أولاً، ثم القاموس الصوتي الفرنسي الموسّع
 // ============================================================================
 let voiceFrActive = false;
 let voiceFrRec = null;
 let voiceFrRestartTimer = null;
 let lastVoiceCmdKey = '';
 let lastVoiceCmdMs = 0;
+let vtTrainingTarget = null; // null | 'STOP' | number (1..20)
+let vtCustomMap = {}; // { "STOP": ["..."], "6": ["si", "six", ...], ... }
 
+const VT_STORAGE_KEY = 'kettler_voice_fr_custom_v1';
+
+function vtLoadCustomMap(){
+  try{
+    const raw = localStorage.getItem(VT_STORAGE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(parsed && typeof parsed === 'object') vtCustomMap = parsed;
+    }
+  }catch(_){ vtCustomMap = {}; }
+}
+
+function vtSaveCustomMap(){
+  try{
+    localStorage.setItem(VT_STORAGE_KEY, JSON.stringify(vtCustomMap));
+  }catch(_){}
+  vtRenderGrid();
+}
+
+function vtNormalizePhrase(s){
+  if(!s) return '';
+  return String(s).toLowerCase().trim()
+    .replace(/[.,!?;:"«»()\[\]]+/g, '')
+    .replace(/’/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// القاموس الفرنسي الأساسي الموسّع (يشمل المتشابهات الصوتية الشائعة في الميكروفون أثناء الجري)
 const FR_WORD_TO_NUM = {
-  'un': 1, 'une': 1, 'hein': 1,
-  'deux': 2, 'de': 2,
-  'trois': 3, 'troie': 3,
-  'quatre': 4,
-  'cinq': 5, 'saint': 5, 'sain': 5, 'sein': 5, 'ceint': 5,
-  'six': 6, 'sis': 6, 'scie': 6,
-  'sept': 7, 'cette': 7, 'cet': 7, 'set': 7, 'sete': 7, 'sète': 7,
-  'huit': 8, 'huitre': 8, 'huître': 8, 'uit': 8,
-  'neuf': 9, 'neuve': 9, 'oeuf': 9,
-  'dix': 10, 'dis': 10, 'dit': 10,
-  'onze': 11,
-  'douze': 12,
-  'treize': 13,
-  'quatorze': 14,
-  'quinze': 15,
-  'seize': 16,
-  'dix-sept': 17, 'dix sept': 17,
-  'dix-huit': 18, 'dix huit': 18,
-  'dix-neuf': 19, 'dix neuf': 19,
-  'vingt': 20, 'vin': 20, 'vain': 20, 'vint': 20
+  'un': 1, 'une': 1, 'hein': 1, 'han': 1, 'an': 1, 'en': 1, 'a': 1,
+  'deux': 2, 'de': 2, 'du': 2, "d'eux": 2, 'doux': 2,
+  'trois': 3, 'troie': 3, 'toi': 3, 'droit': 3, 'froid': 3, 'roi': 3, 'bois': 3,
+  'quatre': 4, 'carte': 4, 'cadre': 4, 'cat': 4, 'quarts': 4, 'quart': 4,
+  'cinq': 5, 'saint': 5, 'sain': 5, 'sein': 5, 'ceint': 5, 'sac': 5, 'sans': 5, 'cent': 5, 'sang': 5, 'sens': 5,
+  'six': 6, 'sis': 6, 'scie': 6, 'si': 6, 'ci': 6, 'suis': 6, 'fils': 6, 'sisi': 6, 'cisse': 6,
+  'sept': 7, 'cette': 7, 'cet': 7, 'set': 7, 'sete': 7, 'sète': 7, "c'est": 7, 'sait': 7, 'sec': 7, 'chef': 7, 'tête': 7,
+  'huit': 8, 'huitre': 8, 'huître': 8, 'uit': 8, 'oui': 8, 'lui': 8, 'nuit': 8, 'suite': 8, 'vite': 8, 'huile': 8,
+  'neuf': 9, 'neuve': 9, 'oeuf': 9, 'boeuf': 9, 'meuf': 9, 'ne': 9, 'noeud': 9,
+  'dix': 10, 'dis': 10, 'dit': 10, 'disque': 10, 'danse': 10, 'lice': 10,
+  'onze': 11, 'once': 11, 'ange': 11, 'hanche': 11,
+  'douze': 12, 'douse': 12, 'douce': 12, 'blouse': 12, 'touche': 12,
+  'treize': 13, '13': 13, 'très': 13, 'treze': 13, 'fraise': 13, 'presse': 13,
+  'quatorze': 14, '14': 14,
+  'quinze': 15, '15': 15, 'caisse': 15, 'case': 15,
+  'seize': 16, '16': 16, 'chaise': 16, 'ces': 16, 'ses': 16,
+  'dix-sept': 17, 'dix sept': 17, '17': 17,
+  'dix-huit': 18, 'dix huit': 18, '18': 18,
+  'dix-neuf': 19, 'dix neuf': 19, '19': 19,
+  'vingt': 20, 'vin': 20, 'vain': 20, 'vint': 20, 'vent': 20, 'va': 20
 };
+
+function vtAddTrainedPhrases(targetKey, phrasesArray){
+  const key = String(targetKey);
+  if(!vtCustomMap[key]) vtCustomMap[key] = [];
+  const added = [];
+  for(const rawP of phrasesArray){
+    const norm = vtNormalizePhrase(rawP);
+    if(!norm || norm.length > 35) continue;
+    // إزالة هذه الكلمة من أي رقم آخر حتى لا يحدث تعارض مع تدريب سابق
+    for(const otherKey of Object.keys(vtCustomMap)){
+      if(otherKey !== key && Array.isArray(vtCustomMap[otherKey])){
+        vtCustomMap[otherKey] = vtCustomMap[otherKey].filter(x => x !== norm);
+      }
+    }
+    if(!vtCustomMap[key].includes(norm)){
+      vtCustomMap[key].push(norm);
+      added.push(norm);
+    }
+  }
+  vtSaveCustomMap();
+  return added;
+}
+
+function vtRenderGrid(){
+  const grid = document.getElementById('vtGrid');
+  if(!grid) return;
+  const badge = document.getElementById('vtCountBadge');
+  let totalCustom = 0;
+  for(const k of Object.keys(vtCustomMap)){
+    if(Array.isArray(vtCustomMap[k])) totalCustom += vtCustomMap[k].length;
+  }
+  if(badge){
+    badge.textContent = totalCustom > 0 ? ('مدرّب: ' + totalCustom + ' نطق') : 'جاهز للتدريب';
+  }
+
+  const items = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,18,20,'STOP'];
+  let html = '';
+  for(const item of items){
+    const k = String(item);
+    const list = vtCustomMap[k] || [];
+    const cnt = list.length;
+    const isSel = (String(vtTrainingTarget) === k);
+    const isStop = (k === 'STOP');
+    const bg = isSel
+      ? 'linear-gradient(135deg,#d97706,#f59e0b)'
+      : (cnt > 0 ? 'rgba(16,185,129,0.18)' : (isStop ? 'rgba(239,68,68,0.18)' : '#111a26'));
+    const brd = isSel
+      ? '2px solid #fde047'
+      : (cnt > 0 ? '1.5px solid rgba(16,185,129,0.6)' : (isStop ? '1px solid rgba(239,68,68,0.45)' : '1px solid rgba(56,189,248,0.25)'));
+    const spanCols = isStop ? 'grid-column: span 2;' : '';
+    const label = isStop ? '🛑 STOP' : (k + ' km/h');
+    const sub = cnt > 0 ? ('✓ ' + cnt) : '🎙️ درّب';
+    html += '<button type="button" onclick="vtStartTrainTarget(\'' + k + '\')" style="' + spanCols + 'min-height:42px;padding:4px 2px;border-radius:9px;background:' + bg + ';border:' + brd + ';color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px">'
+      + '<span style="font-size:13px;font-weight:900">' + label + '</span>'
+      + '<span style="font-size:9.5px;color:' + (cnt > 0 ? '#6ee7b7' : '#94a3b8') + '">' + sub + '</span>'
+      + '</button>';
+  }
+  grid.innerHTML = html;
+}
+
+function vtStartTrainTarget(targetKey){
+  vtTrainingTarget = String(targetKey);
+  vtRenderGrid();
+  const promptEl = document.getElementById('vtPromptBox');
+  const labelAr = (vtTrainingTarget === 'STOP') ? 'كلمة STOP للإيقاف' : ('الرقم ' + vtTrainingTarget + ' بالفرنسية');
+  if(promptEl){
+    promptEl.style.borderColor = '#fbbf24';
+    promptEl.style.color = '#fde047';
+    promptEl.innerHTML = '🎙️ <b>انطق الآن بصوتك: ' + labelAr + '</b> (سيتم التقاط نطقك وحفظه تلقائياً)...';
+  }
+  // تشغيل الميكروفون تلقائياً إن لم يكن مفعّلاً
+  const chk = document.getElementById('voiceFrEn');
+  if(chk && !chk.checked){
+    chk.checked = true;
+    toggleFrenchVoiceControl();
+  } else if(!voiceFrActive){
+    if(chk) chk.checked = true;
+    toggleFrenchVoiceControl();
+  }
+}
+
+function vtCancelTrain(){
+  vtTrainingTarget = null;
+  vtRenderGrid();
+  const promptEl = document.getElementById('vtPromptBox');
+  if(promptEl){
+    promptEl.style.borderColor = 'rgba(56,189,248,0.35)';
+    promptEl.style.color = '#38bdf8';
+    promptEl.textContent = '👆 اختر رقماً بالأسفل ثم انطقه بالفرنسية لتدريب التطبيق عليه';
+  }
+}
+
+function vtClearAllTraining(){
+  vtCustomMap = {};
+  vtTrainingTarget = null;
+  vtSaveCustomMap();
+  const promptEl = document.getElementById('vtPromptBox');
+  if(promptEl){
+    promptEl.style.borderColor = 'rgba(56,189,248,0.35)';
+    promptEl.style.color = '#38bdf8';
+    promptEl.textContent = '🗑️ تم مسح التدريبات السابقة — اختر أي رقم لتدريبه من جديد';
+  }
+  toast('🗑️ تم مسح بيانات التدريب الصوتي المحفوظة');
+}
+
+window.vtStartTrainTarget = vtStartTrainTarget;
+window.vtCancelTrain = vtCancelTrain;
+window.vtClearAllTraining = vtClearAllTraining;
 
 function parseFrenchVoiceCommand(rawText){
   if(!rawText) return null;
-  let txt = String(rawText).toLowerCase().trim()
-    .replace(/[.,!?;:]+$/g, '')
-    .replace(/’/g, "'")
-    .replace(/\s+/g, ' ');
+  let txt = vtNormalizePhrase(rawText);
+  if(!txt) return null;
+
+  // 0. فحص القاموس الشخصي المُدرَّب بصوت المستخدم أولاً (الأولوية القصوى #1)
+  if(Array.isArray(vtCustomMap['STOP']) && vtCustomMap['STOP'].includes(txt)){
+    return { type: 'stop', raw: rawText.trim(), trained: true };
+  }
+  for(const [k, list] of Object.entries(vtCustomMap)){
+    if(k === 'STOP' || !Array.isArray(list)) continue;
+    if(list.includes(txt)){
+      const numVal = parseFloat(k);
+      if(!isNaN(numVal) && numVal >= 1.0 && numVal <= 20.0){
+        return { type: 'speed', value: numVal, raw: rawText.trim(), trained: true };
+      }
+    }
+  }
 
   // 1. فحص أمر الإيقاف الفوري (Stop / Arrêt)
   if(/\b(stop|stoper|stopper|arret|arrête|arrete|arrêter|arreter|halte)\b/i.test(txt)){
     return { type: 'stop', raw: rawText.trim() };
   }
 
-  // إزالة كلمة vitesse الاختيارية إن نطقها المستخدم قبل الرقم
-  txt = txt.replace(/^vitesse\s+/i, '').trim();
+  // إزالة الكلمات البادئة الشائعة إن أضافها محرك التعرف الصوتي تلقائياً قبل الرقم
+  txt = txt.replace(/^(vitesse|numéro|numero|le|la|à|a|au|de|en)\s+/i, '').trim();
+
+  // إعادة فحص القاموس الشخصي بعد إزالة البادئة
+  for(const [k, list] of Object.entries(vtCustomMap)){
+    if(k === 'STOP' || !Array.isArray(list)) continue;
+    if(list.includes(txt)){
+      const numVal = parseFloat(k);
+      if(!isNaN(numVal) && numVal >= 1.0 && numVal <= 20.0){
+        return { type: 'speed', value: numVal, raw: rawText.trim(), trained: true };
+      }
+    }
+  }
 
   // 2. فحص الأرقام المكتوبة كأرقام (مثل "5", "5,5", "5.5", "12")
-  const numMatch = txt.match(/^(\d{1,2})(?:[.,](\d))?$/);
+  const numMatch = txt.match(/^(\d{1,2})(?:[.,](\d))?(\s*km\/h|\s*km)?$/i);
   if(numMatch){
     let val = parseInt(numMatch[1], 10);
     if(numMatch[2] !== undefined){
@@ -8246,7 +8428,7 @@ function parseFrenchVoiceCommand(rawText){
     }
   }
 
-  // 3. فحص صيغة "<رقم> و نصف" أو "<رقم> فاصلة خمسة" بالفرنسية (مثل cinq et demi / cinq virgule cinq)
+  // 3. فحص صيغة "<رقم> و نصف" أو "<رقم> فاصلة خمسة" بالفرنسية
   for(const [w, n] of Object.entries(FR_WORD_TO_NUM)){
     const halfRe = new RegExp('^' + w + '\\s+(et\\s+demi|et\\s+demie|virgule\\s+cinq|point\\s+cinq|virgule\\s+5|point\\s+5)$', 'i');
     if(halfRe.test(txt)){
@@ -8261,7 +8443,7 @@ function parseFrenchVoiceCommand(rawText){
     if(v >= 1.0 && v <= 20.0) return { type: 'speed', value: v, raw: rawText.trim() };
   }
 
-  // 4. فحص الرقم المفرد بالحروف الفرنسية (مثل "trois", "cinq", "huit", "dix", "douze")
+  // 4. فحص الرقم المفرد بالحروف الفرنسية في القاموس الموسّع
   if(Object.prototype.hasOwnProperty.call(FR_WORD_TO_NUM, txt)){
     const v = FR_WORD_TO_NUM[txt];
     if(v >= 1.0 && v <= 20.0){
@@ -8285,7 +8467,7 @@ async function executeFrenchVoiceCommand(cmd, isFinal){
   const key = cmd.type === 'stop' ? 'STOP' : ('SPD_' + cmd.value.toFixed(1));
 
   // منع تكرار تنفيذ نفس الجملة الصوتية مرتين (أثناء interim ثم final)
-  if(key === lastVoiceCmdKey && (now - lastVoiceCmdMs) < 1600){
+  if(key === lastVoiceCmdKey && (now - lastVoiceCmdMs) < 1500){
     return;
   }
   lastVoiceCmdKey = key;
@@ -8324,11 +8506,11 @@ function initFrenchVoiceRecognition(){
   rec.lang = 'fr-FR';
   rec.continuous = true;
   rec.interimResults = true;
-  rec.maxAlternatives = 4;
+  rec.maxAlternatives = 5;
 
   rec.onstart = () => {
     if(voiceFrActive){
-      setVoiceFrStatus('🟢 يستمع (FR)...', 'var(--ok)');
+      setVoiceFrStatus(vtTrainingTarget ? ('🎯 درّب (' + vtTrainingTarget + ')...') : '🟢 يستمع (FR)...', vtTrainingTarget ? '#fbbf24' : 'var(--ok)');
     }
   };
 
@@ -8337,25 +8519,59 @@ function initFrenchVoiceRecognition(){
     for(let i = event.resultIndex; i < event.results.length; i++){
       const res = event.results[i];
       const isFinal = !!res.isFinal;
-      // فحص جميع البدائل المحتملة (maxAlternatives) لالتقاط الرقم أو كلمة stop بأعلى دقة
-      let matchedCmd = null;
+
+      // جمع كل البدائل التي سمعها المحرك الصوتي لهذه الكلمة
+      const heardAlts = [];
       for(let a = 0; a < res.length; a++){
-        const altTranscript = (res[a] && res[a].transcript) ? res[a].transcript.trim() : '';
-        if(!altTranscript) continue;
-        const parsed = parseFrenchVoiceCommand(altTranscript);
-        if(parsed){
-          matchedCmd = parsed;
-          break;
+        const t = (res[a] && res[a].transcript) ? res[a].transcript.trim() : '';
+        if(t) heardAlts.push(t);
+      }
+
+      if(heardAlts.length > 0){
+        const heardBox = document.getElementById('vtLastHeardBox');
+        if(heardBox){
+          heardBox.textContent = '🎤 سمع الميكروفون: "' + heardAlts.slice(0, 3).join('" | "') + '"';
         }
       }
-      if(matchedCmd){
-        // أمر STOP يُنفّذ فوراً حتى في النتائج الجزئية (interim)، والأرقام تُنفذ فور وضوحها
-        executeFrenchVoiceCommand(matchedCmd, isFinal);
-        break;
-      } else if(isFinal && res[0] && res[0].transcript){
-        const heard = res[0].transcript.trim();
-        if(heard.length > 0 && heard.length <= 20){
-          setVoiceFrStatus('🎙️ "' + heard + '"', '#38bdf8');
+
+      // إذا كان المستخدم في وضع "تدريب رقم معين" وانتهى من نطق الكلمة (isFinal)
+      if(vtTrainingTarget && isFinal && heardAlts.length > 0){
+        const savedTarget = vtTrainingTarget;
+        vtAddTrainedPhrases(savedTarget, heardAlts);
+        vtTrainingTarget = null;
+        vtRenderGrid();
+        try{ if(typeof playGripSuccessTone === 'function') playGripSuccessTone(true); }catch(_){}
+        try{ if(navigator.vibrate) navigator.vibrate([60, 40, 80]); }catch(_){}
+        const promptEl = document.getElementById('vtPromptBox');
+        const allForTarget = (vtCustomMap[savedTarget] || []).join(' ، ');
+        if(promptEl){
+          promptEl.style.borderColor = 'var(--ok)';
+          promptEl.style.color = '#6ee7b7';
+          promptEl.innerHTML = '✅ <b>تم حفظ نطقك لـ (' + (savedTarget === 'STOP' ? 'STOP' : (savedTarget + ' كم/س')) + '):</b> <span dir="ltr">[' + allForTarget + ']</span> — جرّب نطقه الآن!';
+        }
+        setVoiceFrStatus('🟢 يستمع (FR)...', 'var(--ok)');
+        toast('✅ تم تدريب وحفظ نطقك لـ ' + (savedTarget === 'STOP' ? 'STOP' : ('السرعة ' + savedTarget + ' كم/س')));
+        return;
+      }
+
+      // في الوضع العادي (غير التدريب): فحص البدائل وتنفيذ الأمر فوراً
+      if(!vtTrainingTarget){
+        let matchedCmd = null;
+        for(const altTranscript of heardAlts){
+          const parsed = parseFrenchVoiceCommand(altTranscript);
+          if(parsed){
+            matchedCmd = parsed;
+            break;
+          }
+        }
+        if(matchedCmd){
+          executeFrenchVoiceCommand(matchedCmd, isFinal);
+          break;
+        } else if(isFinal && heardAlts[0]){
+          const heard = heardAlts[0];
+          if(heard.length > 0 && heard.length <= 20){
+            setVoiceFrStatus('🎙️ "' + heard + '"', '#38bdf8');
+          }
         }
       }
     }
@@ -8396,6 +8612,8 @@ function toggleFrenchVoiceControl(){
   const wantOn = !!(chk && chk.checked);
   if(!wantOn){
     voiceFrActive = false;
+    vtTrainingTarget = null;
+    vtRenderGrid();
     if(voiceFrRestartTimer) clearTimeout(voiceFrRestartTimer);
     if(voiceFrRec){
       try{ voiceFrRec.stop(); }catch(_){}
@@ -8425,6 +8643,7 @@ function toggleFrenchVoiceControl(){
   }
 }
 window.toggleFrenchVoiceControl = toggleFrenchVoiceControl;
+setTimeout(() => { vtLoadCustomMap(); vtRenderGrid(); }, 300);
 
 
 // ============================================================================
