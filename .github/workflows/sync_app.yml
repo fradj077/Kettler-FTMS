@@ -16,7 +16,7 @@ jobs:
         run: |
           pip install -q gdown
           mkdir -p gdrive_sync
-          gdown --folder "https://drive.google.com/drive/folders/1dStuBSKGbNHVmeOpNWnXSsv0J62vJy_C" -O gdrive_sync --remaining-ok
+          gdown --folder "https://drive.google.com/drive/folders/1dStuBSKGbNHVmeOpNWnXSsv0J62vJy_C" -O gdrive_sync
           LATEST_HTML=$(find gdrive_sync -type f -name "index.html" | head -1)
           LATEST_SW=$(find gdrive_sync -type f -name "sw.js" | head -1)
           if [ -n "$LATEST_HTML" ] && [ -s "$LATEST_HTML" ]; then cp "$LATEST_HTML" ./index.html; fi
