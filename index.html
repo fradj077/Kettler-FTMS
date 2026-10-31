@@ -2124,7 +2124,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <body>
 <div id="gate" onclick="if(event.target===this)hideGate()"><div class="gbox" style="position:relative">
   <button type="button" onclick="hideGate()" style="position:absolute;top:12px;left:12px;width:34px;height:34px;min-height:34px;padding:0;background:rgba(255,255,255,0.12);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;">✕</button>
-  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v107.0 (إصلاح حفظ درع الأمان + المهلة بالثواني + تحرير السرعة)</div>
+  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v108.0 (إشعار تحديث برنامج اللوحة من GitHub)</div>
   <h1 style="margin:0 0 8px">الاتصال بحساس الحرارة</h1>
   <p style="margin:0 0 12px">لحماية المحرك، يرجى الاتصال بحساس الحرارة أو الضغط على تخطي للمتابعة فوراً.</p>
   <div id="gMsg"></div>
@@ -2139,7 +2139,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v107.0 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v108.0 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -2147,6 +2147,12 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
     <span id="state">غير متصل</span>
   </div>
   <button type="button" id="navMenuBtn" onclick="document.getElementById('navSheet').classList.add('open')" aria-label="القائمة">☰</button>
+</div>
+
+<div id="fwBanner" role="status" style="display:none;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;background:#064e3b;border-bottom:1px solid rgba(16,185,129,0.5);color:#ecfdf5;font-size:12.5px;line-height:1.4">
+  <span id="fwBannerTxt" style="flex:1">يوجد برنامج جديد للوحة على GitHub</span>
+  <button type="button" onclick="fwGoUpdate()" style="min-height:32px;padding:4px 12px;background:#10b981;border:none;border-radius:8px;color:#fff;font-size:12.5px;font-weight:800;cursor:pointer">تحديث اللوحة</button>
+  <button type="button" onclick="fwDismiss()" aria-label="لاحقًا" style="min-height:32px;padding:4px 10px;background:rgba(255,255,255,0.12);border:none;border-radius:8px;color:#fff;font-size:12.5px;cursor:pointer">لاحقًا</button>
 </div>
 
 <div id="topbar" style="display:none!important"><div class="tb"><div><b id="tbS">--</b><span>كم/س</span></div><div><b id="tbI">--</b><span>الميل %</span></div><div><b id="tbD">--</b><span>كم</span></div><div><b id="tbT">--</b><span>حرارة · تيار</span></div></div>
@@ -7869,6 +7875,8 @@ async function otaRunFromGithub(){
     msgEl.textContent = '☁️ جارٍ تنزيل أحدث ملف kettler_temp_app.bin من GitHub...';
     $('otaBar').style.width = '35%';
 
+    let shaAtPull = null;
+    try{ const l = await fwFetchLatest(); shaAtPull = l && l.sha; }catch(_){}
     const candidateUrls = [
       'https://raw.githubusercontent.com/fradj077/kettler-temp/main/kettler_temp_app.bin?t=' + Date.now(),
       'https://raw.githubusercontent.com/fradj077/kettler-temp/main/merged/kettler_temp_app.bin?t=' + Date.now(),
@@ -7908,7 +7916,8 @@ async function otaRunFromGithub(){
     }
 
     otaBusy = false; otaUi();
-    await otaFlashBuffer(binBuf, pin, '☁️ التحديث المباشر من GitHub (' + kb + ' كيلوبايت' + stampTxt + ')');
+    const okFlash = await otaFlashBuffer(binBuf, pin, '☁️ التحديث المباشر من GitHub (' + kb + ' كيلوبايت' + stampTxt + ')');
+    if(okFlash && shaAtPull) fwMarkFlashed(shaAtPull);
   }catch(err){
     $('otaBar').style.width = '0';
     msgEl.style.color = 'var(--red)';
@@ -7916,6 +7925,55 @@ async function otaRunFromGithub(){
     otaBusy = false; otaUi();
   }
 }
+// ===== إشعار وجود برنامج جديد للوحة على GitHub =====
+const FW_REPO = 'fradj077/kettler-temp', FW_PATH = 'kettler_temp_app.bin';
+let fwLatest = null, fwLastCheck = 0;
+function fwGet(k){ try{ return localStorage.getItem(k) || ''; }catch(_){ return ''; } }
+function fwSet(k, v){ try{ localStorage.setItem(k, v); }catch(_){} }
+async function fwFetchLatest(){
+  const r = await fetch('https://api.github.com/repos/' + FW_REPO + '/commits?path=' + FW_PATH + '&sha=main&per_page=1&t=' + Date.now(), {cache: 'no-store'});
+  if(!r.ok) throw new Error('HTTP ' + r.status);
+  const j = await r.json(), c = j && j[0];
+  if(!c) return null;
+  return {sha: c.sha, date: c.commit && c.commit.committer && c.commit.committer.date};
+}
+function fwAgo(iso){
+  const m = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
+  return m < 1 ? 'الآن' : m < 60 ? ('منذ ' + m + ' دقيقة') : m < 1440 ? ('منذ ' + Math.round(m / 60) + ' ساعة') : ('منذ ' + Math.round(m / 1440) + ' يوم');
+}
+async function fwCheck(){
+  if(!navigator.onLine || otaBusy) return;
+  fwLastCheck = Date.now();
+  try{
+    const l = await fwFetchLatest();
+    if(!l) return;
+    fwLatest = l;
+    const b = $('fwBanner'); if(!b) return;
+    if(l.sha !== fwGet('kettler_fw_flashed') && l.sha !== fwGet('kettler_fw_seen')){
+      $('fwBannerTxt').textContent = 'يوجد برنامج جديد للوحة' + (l.date ? ' (' + fwAgo(l.date) + ')' : '');
+      b.style.display = 'flex';
+    }else{
+      b.style.display = 'none';
+    }
+  }catch(_){}
+}
+function fwDismiss(){
+  if(fwLatest) fwSet('kettler_fw_seen', fwLatest.sha);
+  const b = $('fwBanner'); if(b) b.style.display = 'none';
+}
+function fwMarkFlashed(sha){
+  fwSet('kettler_fw_flashed', sha); fwSet('kettler_fw_seen', sha);
+  const b = $('fwBanner'); if(b) b.style.display = 'none';
+}
+function fwGoUpdate(){
+  try{ showTab(2); switchTempSub(1); }catch(_){}
+  setTimeout(() => { const el = $('otaGithubBtn'); if(el) el.scrollIntoView({behavior: 'smooth', block: 'center'}); }, 150);
+}
+window.fwGoUpdate = fwGoUpdate; window.fwDismiss = fwDismiss; window.fwMarkFlashed = fwMarkFlashed;
+setTimeout(fwCheck, 3000);
+setInterval(fwCheck, 10 * 60 * 1000);
+document.addEventListener('visibilitychange', () => { if(!document.hidden && Date.now() - fwLastCheck > 5 * 60 * 1000) fwCheck(); });
+
 window.otaRunFromGithub = otaRunFromGithub;
 $('otaGo').onclick = otaRun;
 try{ $('otaPin').value = localStorage.getItem('otaPin') || ''; }catch(_){}
