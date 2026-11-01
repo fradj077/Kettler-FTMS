@@ -9996,10 +9996,10 @@ window.copyRawData = copyRawData;
 // ===== تحكم بالسرعة بتمرير اليد أمام الكاميرا الأمامية (مفتاح 👋 في الصفحة الرئيسية) =====
 (function(){
   const HAND_MAX = 12;        // أقصى سرعة تصل إليها التمريرة (كم/س)
-  const RIGHT_IS_UP = true;   // التمرير نحو يمينك = زيادة، ونحو يسارك = نقصان (false = العكس)
+  const RIGHT_IS_UP = false;  // عكس الاتجاه: التمرير من اليمين إلى اليسار = زيادة (true = العكس)
   const KEY = 'kettler_hand_on';
-  const W = 40, H = 30, DIFF_THR = 22, MIN_F = 0.06, MAX_F = 0.95;
-  const MIN_SPAN = 0.40, MIN_MS = 120, MAX_MS = 800, MIN_AVG_F = 0.10;
+  const W = 40, H = 30, DIFF_THR = 18, MIN_F = 0.05, MAX_F = 0.95; // تحسين الحساسية والتقاط الإشارة بدقة أعلى
+  const MIN_SPAN = 0.30, MIN_MS = 90, MAX_MS = 900, MIN_AVG_F = 0.07;
   const COOLDOWN = 1000, QUIET_MS = 350, QUIET_F = 0.03;
   const tg = document.getElementById('hdToggle'), stat = document.getElementById('hdStat');
   const setStat = on => { if(stat){ stat.textContent = on ? 'يعمل' : 'مغلق'; stat.style.color = on ? 'var(--ok)' : 'var(--dim)'; } };
