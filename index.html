@@ -2124,7 +2124,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <body>
 <div id="gate" onclick="if(event.target===this)hideGate()"><div class="gbox" style="position:relative">
   <button type="button" onclick="hideGate()" style="position:absolute;top:12px;left:12px;width:34px;height:34px;min-height:34px;padding:0;background:rgba(255,255,255,0.12);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;">✕</button>
-  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v113.0 (استماع مزدوج للفرنسية والعربية معاً + حل الأرقام الصعبة بالتكرار والبصمة)</div>
+  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v114.0 (زر الربط يشغّل الميكروفون فوراً ويتحول للأخضر عند تسجيل الكلمة ✅)</div>
   <h1 style="margin:0 0 8px">الاتصال بحساس الحرارة</h1>
   <p style="margin:0 0 12px">لحماية المحرك، يرجى الاتصال بحساس الحرارة أو الضغط على تخطي للمتابعة فوراً.</p>
   <div id="gMsg"></div>
@@ -2139,7 +2139,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v113.0 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.0 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -2285,15 +2285,29 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
         </div>
       </div>
 
-      <div id="vtPromptBox" style="padding:8px 10px;border-radius:8px;background:rgba(15,23,42,0.85);border:1px solid rgba(56,189,248,0.35);font-size:12.5px;font-weight:800;color:#38bdf8;text-align:center;margin-bottom:8px">
-        👆 اضغط على الرقم بالأسفل ثم انطقه بصوتك (أو انطق آخر كلمة سمعها الهاتف لربطها به)
+      <style>
+        @keyframes pulseMicGlow {
+          0%, 100% { box-shadow: 0 0 8px rgba(245,158,11,0.45); transform: scale(1); }
+          50% { box-shadow: 0 0 22px rgba(239,68,68,0.85); transform: scale(1.015); }
+        }
+        .vt-mic-listening {
+          animation: pulseMicGlow 1.0s infinite ease-in-out !important;
+        }
+      </style>
+      <div id="vtPromptBox" style="padding:10px 12px;border-radius:10px;background:rgba(15,23,42,0.9);border:1.5px solid rgba(56,189,248,0.35);font-size:13px;font-weight:800;color:#38bdf8;text-align:center;margin-bottom:8px;transition:all 0.25s ease">
+        👆 اختر الرقم من الشبكة ثم اضغط زر الربط بالأسفل وانطق الكلمة
       </div>
-      <div id="vtLastHeardBox" style="font-size:11.5px;color:#cbd5e1;text-align:center;margin-bottom:8px;min-height:18px;direction:ltr"></div>
-      <div id="vtGrid" style="display:grid;grid-template-columns:repeat(5, 1fr);gap:6px;margin-bottom:8px;direction:ltr"></div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:space-between">
-        <button type="button" class="preset-chip" onclick="vtBindLastHeardToSelected()" style="flex:1.3;min-height:34px;font-size:11.5px;background:rgba(16,185,129,0.2);border-color:rgba(16,185,129,0.5);color:#6ee7b7">🔗 ربط آخر كلمة مسموعة بالرقم المختار</button>
-        <button type="button" class="preset-chip" onclick="vtCancelTrain()" style="flex:0.8;min-height:34px;font-size:11.5px;background:#1e293b">⏹ إلغاء</button>
-        <button type="button" class="preset-chip" onclick="vtClearAllTraining()" style="flex:0.9;min-height:34px;font-size:11.5px;background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.4);color:#fca5a5">🗑️ مسح التدريب</button>
+      <div id="vtLastHeardBox" style="font-size:12px;color:#cbd5e1;text-align:center;margin-bottom:8px;min-height:18px;direction:ltr;font-weight:700"></div>
+      <div id="vtGrid" style="display:grid;grid-template-columns:repeat(5, 1fr);gap:6px;margin-bottom:10px;direction:ltr"></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button type="button" id="vtBindBtn" onclick="vtBindLastHeardToSelected()" style="width:100%;min-height:50px;padding:10px 14px;border-radius:10px;font-size:13.5px;font-weight:900;background:linear-gradient(135deg,#0284c7,#0ea5e9);border:2px solid #38bdf8;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.25s ease">
+          <span id="vtBindBtnIcon" style="font-size:19px">🎙️</span>
+          <span id="vtBindBtnTxt">اضغط هنا لربط وتسجيل الكلمة بالميكروفون</span>
+        </button>
+        <div style="display:flex;gap:6px;justify-content:space-between">
+          <button type="button" class="preset-chip" onclick="vtCancelTrain()" style="flex:1;min-height:34px;font-size:11.5px;background:#1e293b">⏹ إلغاء</button>
+          <button type="button" class="preset-chip" onclick="vtClearAllTraining()" style="flex:1;min-height:34px;font-size:11.5px;background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.4);color:#fca5a5">🗑️ مسح التدريب</button>
+        </div>
       </div>
     </details>
 
@@ -8219,7 +8233,7 @@ window.quickSetSpeed = quickSetSpeed;
 window.quickSetIncline = quickSetIncline;
 
 // ============================================================================
-// نظام الأوامر الصوتية المزدوج الذكي (فرنسي + عربي معاً بدون سويتش خارجي) v113.0
+// نظام الأوامر الصوتية المزدوج الذكي (فرنسي + عربي معاً بدون سويتش خارجي) v114.0
 // الحلول الذكية للأرقام الصعبة:
 // 1. دعم تكرار الرقم مرتين ("Six Six"->"66"->6، "Huit Huit"->"88"->8، "ستة ستة"->6) لتجاوز بوابة الضجيج
 // 2. التقاط النتائج المؤقتة والنهائية (Interim + Final Buffer) أثناء التدريب حتى لا تضيع الكلمات القصيرة
@@ -8468,6 +8482,38 @@ function vtAddTrainedPhrases(targetKey, phrasesArray){
   return added;
 }
 
+let vtSelectedKey = '5'; // الرقم المختار حالياً في الشبكة (افتراضياً 5)
+let vtJustSavedKey = null; // الرقم الذي تم تسجيله للتو ليظهر باللون الأخضر الساطع
+
+function vtSetBindBtnState(mode, targetKey, extraText){
+  const btn = document.getElementById('vtBindBtn');
+  const ico = document.getElementById('vtBindBtnIcon');
+  const txt = document.getElementById('vtBindBtnTxt');
+  if(!btn || !ico || !txt) return;
+  const tLbl = (targetKey === 'STOP') ? 'STOP' : ((targetKey || vtSelectedKey) + ' كم/س');
+
+  btn.classList.remove('vt-mic-listening');
+  if(mode === 'listening'){
+    btn.classList.add('vt-mic-listening');
+    btn.style.background = 'linear-gradient(135deg,#b45309,#ef4444)';
+    btn.style.borderColor = '#fde047';
+    ico.textContent = '🔴🎙️';
+    txt.textContent = extraText || ('الميكروفون شغّال... انطق الكلمة الآن لـ (' + tLbl + ')');
+  } else if(mode === 'saved'){
+    btn.style.background = 'linear-gradient(135deg,#047857,#10b981)';
+    btn.style.borderColor = '#6ee7b7';
+    btn.style.boxShadow = '0 0 18px rgba(16,185,129,0.75)';
+    ico.textContent = '✅';
+    txt.textContent = extraText || ('تم تسجيل وحفظ الكلمة بنجاح لـ (' + tLbl + ')!');
+  } else {
+    btn.style.background = 'linear-gradient(135deg,#0284c7,#0ea5e9)';
+    btn.style.borderColor = '#38bdf8';
+    btn.style.boxShadow = 'none';
+    ico.textContent = '🎙️';
+    txt.textContent = 'اضغط هنا لتشغيل الميكروفون ونطق كلمة لـ (' + tLbl + ')';
+  }
+}
+
 function vtRenderGrid(){
   const grid = document.getElementById('vtGrid');
   if(!grid) return;
@@ -8494,27 +8540,65 @@ function vtRenderGrid(){
     const cntFr = (frMap[k] || []).length;
     const cntAr = (arMap[k] || []).length;
     const cntTotal = cntFr + cntAr;
-    const isSel = (String(vtTrainingTarget) === k);
+    const isListeningThis = (String(vtTrainingTarget) === k);
+    const isJustSavedThis = (String(vtJustSavedKey) === k);
+    const isSelectedThis = (String(vtSelectedKey) === k);
     const isStop = (k === 'STOP');
-    const bg = isSel
-      ? 'linear-gradient(135deg,#d97706,#f59e0b)'
-      : (cntTotal > 0 ? 'rgba(16,185,129,0.18)' : (isStop ? 'rgba(239,68,68,0.18)' : '#111a26'));
-    const brd = isSel
-      ? '2px solid #fde047'
-      : (cntTotal > 0 ? '1.5px solid rgba(16,185,129,0.6)' : (isStop ? '1px solid rgba(239,68,68,0.45)' : '1px solid rgba(56,189,248,0.25)'));
+
+    let bg = '#111a26';
+    let brd = '1px solid rgba(56,189,248,0.25)';
+    if(isJustSavedThis){
+      bg = 'linear-gradient(135deg,#047857,#10b981)';
+      brd = '2px solid #6ee7b7';
+    } else if(isListeningThis){
+      bg = 'linear-gradient(135deg,#d97706,#ef4444)';
+      brd = '2px solid #fde047';
+    } else if(cntTotal > 0){
+      bg = 'rgba(16,185,129,0.22)';
+      brd = isSelectedThis ? '2px solid #38bdf8' : '1.5px solid rgba(16,185,129,0.65)';
+    } else if(isSelectedThis){
+      bg = 'rgba(2,132,199,0.28)';
+      brd = '2px solid #38bdf8';
+    } else if(isStop){
+      bg = 'rgba(239,68,68,0.18)';
+      brd = '1px solid rgba(239,68,68,0.45)';
+    }
+
     const spanCols = isStop ? 'grid-column: span 2;' : '';
     const label = isStop ? '🛑 STOP / توقف' : (k + ' km/h');
-    let sub = '🎙️ درّب';
-    if(cntFr > 0 && cntAr > 0) sub = '🇫🇷' + cntFr + ' 🇩🇿' + cntAr;
+    let sub = '🎙️ اختر';
+    if(isJustSavedThis) sub = '✅ سُجّلت!';
+    else if(isListeningThis) sub = '🔴 انطق الآن...';
+    else if(cntFr > 0 && cntAr > 0) sub = '🇫🇷' + cntFr + ' 🇩🇿' + cntAr + ' ✓';
     else if(cntFr > 0) sub = '🇫🇷 ✓ ' + cntFr;
     else if(cntAr > 0) sub = '🇩🇿 ✓ ' + cntAr;
 
-    html += '<button type="button" onclick="vtStartTrainTarget(\'' + k + '\')" style="' + spanCols + 'min-height:42px;padding:4px 2px;border-radius:9px;background:' + bg + ';border:' + brd + ';color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px">'
+    html += '<button type="button" onclick="vtStartTrainTarget(\'' + k + '\')" style="' + spanCols + 'min-height:42px;padding:4px 2px;border-radius:9px;background:' + bg + ';border:' + brd + ';color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;transition:all 0.2s ease">'
       + '<span style="font-size:13px;font-weight:900">' + label + '</span>'
-      + '<span style="font-size:9.5px;color:' + (cntTotal > 0 ? '#6ee7b7' : '#94a3b8') + '">' + sub + '</span>'
+      + '<span style="font-size:9.5px;color:' + (cntTotal > 0 || isJustSavedThis ? '#ecfdf5' : '#94a3b8') + '">' + sub + '</span>'
       + '</button>';
   }
   grid.innerHTML = html;
+}
+
+function vtEnsureMicRunningForTraining(){
+  try{ unlockAudio(); }catch(_){}
+  const chk = document.getElementById('voiceFrEn');
+  if(chk && !chk.checked){
+    chk.checked = true;
+  }
+  if(!voiceFrRec) voiceFrRec = initFrenchVoiceRecognition();
+  if(voiceFrRec){
+    voiceFrRec.lang = voiceCurLang;
+    if(!voiceFrActive){
+      voiceFrActive = true;
+      try{ voiceFrRec.start(); }catch(_){}
+    } else {
+      // تأكيد تنشيط الميكروفون فوراً
+      try{ voiceFrRec.start(); }catch(_){}
+    }
+  }
+  setVoiceFrStatus('🎯 يستمع للتسجيل...', '#fbbf24');
 }
 
 function vtCommitPendingTrain(){
@@ -8524,81 +8608,91 @@ function vtCommitPendingTrain(){
   const toSave = vtPendingTrainAlts.slice();
   vtPendingTrainAlts = [];
   vtTrainingTarget = null;
+  vtJustSavedKey = savedTarget;
   vtAddTrainedPhrases(savedTarget, toSave);
   vtRenderGrid();
+
   try{ if(typeof playGripSuccessTone === 'function') playGripSuccessTone(true); }catch(_){}
-  try{ if(navigator.vibrate) navigator.vibrate([60, 40, 80]); }catch(_){}
-  const promptEl = document.getElementById('vtPromptBox');
+  try{ if(navigator.vibrate) navigator.vibrate([80, 40, 100]); }catch(_){}
+
   const curMap = getActiveCustomMap();
   const allForTarget = (curMap[savedTarget] || []).join(' ، ');
   const langBadge = (voiceCurLang === 'fr-FR') ? '🇫🇷' : '🇩🇿';
+  const tLbl = (savedTarget === 'STOP') ? 'STOP' : (savedTarget + ' كم/س');
+
+  // تحويل زر الربط وصندوق الحالة والبطاقة إلى اللون الأخضر الساطع تأكيداً للتسجيل!
+  vtSetBindBtnState('saved', savedTarget, '✅ تم التسجيل والحفظ بنجاح لـ (' + tLbl + '): "' + (toSave[0] || '') + '"');
+
+  const promptEl = document.getElementById('vtPromptBox');
   if(promptEl){
-    promptEl.style.borderColor = 'var(--ok)';
-    promptEl.style.color = '#6ee7b7';
-    promptEl.innerHTML = '✅ <b>تم حفظ نطقك ' + langBadge + ' لـ (' + (savedTarget === 'STOP' ? 'STOP' : (savedTarget + ' كم/س')) + '):</b> <span dir="ltr">[' + allForTarget + ']</span>';
+    promptEl.style.background = 'rgba(6, 95, 70, 0.9)';
+    promptEl.style.borderColor = '#34d399';
+    promptEl.style.color = '#ecfdf5';
+    promptEl.innerHTML = '✅ <b>تم تسجيل وحفظ الكلمة ' + langBadge + ' لـ (' + tLbl + ') بنجاح!</b><br><span dir="ltr" style="font-size:11.5px;color:#a7f3d0">[' + allForTarget + ']</span>';
   }
-  setVoiceFrStatus('🟢 يستمع (FR+AR)...', 'var(--ok)');
-  toast('✅ تم حفظ نطقك لـ ' + (savedTarget === 'STOP' ? 'STOP' : ('السرعة ' + savedTarget + ' كم/س')));
+  setVoiceFrStatus('🟢 مسجّل وجاهز (FR+AR)', 'var(--ok)');
+  toast('✅ تم تسجيل الكلمة لـ (' + tLbl + ') بنجاح!');
 }
 
 function vtBindLastHeardToSelected(){
-  if(!vtTrainingTarget){
-    toast('👆 اضغط أولاً على الرقم الذي تريد ربط الكلمة به في الشبكة، ثم اضغط هذا الزر');
-    return;
-  }
-  if(!vtLastHeardAlts || vtLastHeardAlts.length === 0){
-    toast('⚠️ لم يسمع الميكروفون أي كلمة بعد — انطق الكلمة أولاً');
-    return;
-  }
-  vtPendingTrainAlts = vtLastHeardAlts.slice();
-  vtCommitPendingTrain();
+  // عند الضغط على زر الربط: نشغّل الميكروفون فوراً بوضع التسجيل الحي للرقم المختار، وبمجرد نطق الكلمة يتحول للأخضر!
+  const target = vtTrainingTarget || vtSelectedKey || '5';
+  vtStartTrainTarget(target);
 }
 window.vtBindLastHeardToSelected = vtBindLastHeardToSelected;
 
 function vtStartTrainTarget(targetKey){
+  vtSelectedKey = String(targetKey);
   vtTrainingTarget = String(targetKey);
+  vtJustSavedKey = null;
   vtPendingTrainAlts = [];
   if(vtTrainCommitTimer){ clearTimeout(vtTrainCommitTimer); vtTrainCommitTimer = null; }
   vtRenderGrid();
-  const promptEl = document.getElementById('vtPromptBox');
+
   const langName = (voiceCurLang === 'fr-FR') ? 'بالفرنسية 🇫🇷' : 'بالعربية 🇩🇿';
-  const labelAr = (vtTrainingTarget === 'STOP') ? 'كلمة الإيقاف (Stop أو توقف)' : ('الرقم ' + vtTrainingTarget + ' (أو انطقه مرتين مثل "' + vtTrainingTarget + ' ' + vtTrainingTarget + '")');
+  const tLbl = (vtTrainingTarget === 'STOP') ? 'كلمة الإيقاف (Stop أو توقف)' : ('السرعة ' + vtTrainingTarget + ' كم/س');
+
+  // إظهار الميكروفون الحي باللون المتوهج وتشغيله فوراً بانتظار نطق الكلمة
+  vtSetBindBtnState('listening', vtTrainingTarget, '🔴🎙️ الميكروفون يستمع الآن... انطق الكلمة لـ (' + tLbl + ')');
+
+  const promptEl = document.getElementById('vtPromptBox');
   if(promptEl){
+    promptEl.style.background = 'rgba(120, 53, 15, 0.55)';
     promptEl.style.borderColor = '#fbbf24';
     promptEl.style.color = '#fde047';
-    promptEl.innerHTML = '🎙️ <b>انطق الآن ' + langName + ': ' + labelAr + '</b>...';
+    promptEl.innerHTML = '🔴🎙️ <b>الميكروفون مفتوح ويستمع ' + langName + ' — انطق الكلمة الآن لـ (' + tLbl + ')...</b>';
   }
-  const chk = document.getElementById('voiceFrEn');
-  if(chk && !chk.checked){
-    chk.checked = true;
-    toggleFrenchVoiceControl();
-  } else if(!voiceFrActive){
-    if(chk) chk.checked = true;
-    toggleFrenchVoiceControl();
-  }
+
+  vtEnsureMicRunningForTraining();
 }
 
 function vtCancelTrain(){
   vtTrainingTarget = null;
+  vtJustSavedKey = null;
   vtPendingTrainAlts = [];
   if(vtTrainCommitTimer){ clearTimeout(vtTrainCommitTimer); vtTrainCommitTimer = null; }
   vtRenderGrid();
+  vtSetBindBtnState('idle', vtSelectedKey);
   const promptEl = document.getElementById('vtPromptBox');
   if(promptEl){
+    promptEl.style.background = 'rgba(15,23,42,0.9)';
     promptEl.style.borderColor = 'rgba(56,189,248,0.35)';
     promptEl.style.color = '#38bdf8';
-    promptEl.textContent = '👆 اضغط على الرقم بالأسفل ثم انطقه بصوتك لتدريب التطبيق عليه';
+    promptEl.textContent = '👆 اختر الرقم من الشبكة ثم اضغط زر الربط وانطق الكلمة';
   }
 }
 
 function vtClearAllTraining(){
   vtCustomMapByLang[voiceCurLang] = {};
   vtTrainingTarget = null;
+  vtJustSavedKey = null;
   vtPendingTrainAlts = [];
   vtSaveCustomMap();
+  vtSetBindBtnState('idle', vtSelectedKey);
   const langName = (voiceCurLang === 'fr-FR') ? 'الفرنسية 🇫🇷' : 'العربية 🇩🇿';
   const promptEl = document.getElementById('vtPromptBox');
   if(promptEl){
+    promptEl.style.background = 'rgba(15,23,42,0.9)';
     promptEl.style.borderColor = 'rgba(56,189,248,0.35)';
     promptEl.style.color = '#38bdf8';
     promptEl.textContent = '🗑️ تم مسح تدريبات ' + langName + ' — اختر أي رقم لتدريبه من جديد';
@@ -8834,11 +8928,12 @@ function initFrenchVoiceRecognition(){
         }
       }
 
-      // في وضع التدريب: نجمع كلاً من النتائج المؤقتة (interim) والنهائية (final) حتى لا تضيع الأرقام القصيرة أبداً!
+      // في وضع التدريب: نجمع كلاً من النتائج المؤقتة (interim) والنهائية (final) ونتحول للأخضر فور التقاط الكلمة!
       if(vtTrainingTarget && heardAlts.length > 0){
         for(const h of heardAlts){
           if(!vtPendingTrainAlts.includes(h)) vtPendingTrainAlts.push(h);
         }
+        vtSetBindBtnState('listening', vtTrainingTarget, '🎙️ جاري تسجيل: "' + heardAlts[0] + '"...');
         if(isFinal){
           vtCommitPendingTrain();
           return;
@@ -8846,7 +8941,7 @@ function initFrenchVoiceRecognition(){
           if(vtTrainCommitTimer) clearTimeout(vtTrainCommitTimer);
           vtTrainCommitTimer = setTimeout(() => {
             vtCommitPendingTrain();
-          }, 950);
+          }, 800);
         }
         return;
       }
