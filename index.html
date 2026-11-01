@@ -2124,7 +2124,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <body>
 <div id="gate" onclick="if(event.target===this)hideGate()"><div class="gbox" style="position:relative">
   <button type="button" onclick="hideGate()" style="position:absolute;top:12px;left:12px;width:34px;height:34px;min-height:34px;padding:0;background:rgba(255,255,255,0.12);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;">✕</button>
-  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v111.0 (تدريب الميكروفون على صوتك الشخصي للأرقام الفرنسية + Stop)</div>
+  <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v112.0 (أوامر وتدريب صوتي بالفرنسية والعربية 🇫🇷/🇩🇿 + Stop)</div>
   <h1 style="margin:0 0 8px">الاتصال بحساس الحرارة</h1>
   <p style="margin:0 0 12px">لحماية المحرك، يرجى الاتصال بحساس الحرارة أو الضغط على تخطي للمتابعة فوراً.</p>
   <div id="gMsg"></div>
@@ -2139,7 +2139,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v111.0 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v112.0 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -2255,32 +2255,46 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
       <span class="grip-toggle-status" id="gripToggleStat">نشط</span>
     </div>
 
-    <!-- مفتاح تفعيل الأوامر الصوتية بالفرنسية للسرعة والإيقاف -->
-    <div class="grip-toggle-row" id="voiceFrRow" style="border-color:rgba(56,189,248,0.35);">
-      <label class="grip-toggle-label">
+    <!-- مفتاح تفعيل الأوامر الصوتية (فرنسي / عربي) للسرعة والإيقاف -->
+    <div class="grip-toggle-row" id="voiceFrRow" style="border-color:rgba(56,189,248,0.35);gap:8px;flex-wrap:wrap">
+      <label class="grip-toggle-label" style="flex:1;min-width:170px">
         <input type="checkbox" id="voiceFrEn" onchange="toggleFrenchVoiceControl()">
-        <span>🎙️ أوامر صوتية بالفرنسية (الرقم = السرعة | Stop = إيقاف)</span>
+        <span>🎙️ الأوامر الصوتية (الرقم = السرعة | Stop = إيقاف)</span>
       </label>
+      <div style="display:inline-flex;background:#0b1220;border:1px solid rgba(56,189,248,0.35);border-radius:8px;padding:2px;gap:2px">
+        <button type="button" id="btnLangFrMain" onclick="setVoiceLang('fr-FR')" style="min-height:26px;padding:2px 8px;border-radius:6px;border:none;font-size:11px;font-weight:800;cursor:pointer;background:#0284c7;color:#fff">🇫🇷 FR</button>
+        <button type="button" id="btnLangArMain" onclick="setVoiceLang('ar-DZ')" style="min-height:26px;padding:2px 8px;border-radius:6px;border:none;font-size:11px;font-weight:800;cursor:pointer;background:transparent;color:#94a3b8">🇩🇿 عربي</button>
+      </div>
       <span class="grip-toggle-status" id="voiceFrStat" style="color:var(--dim)">مغلق</span>
     </div>
 
-    <!-- 🎯 لوحة تدريب الميكروفون على صوتك الشخصي (Personal Voice Trainer) -->
+    <!-- 🎯 لوحة تدريب الميكروفون على صوتك الشخصي بالفرنسية والعربية -->
     <details class="grip-toggle-row" id="voiceTrainPanel" style="display:block;padding:10px 12px;border-color:rgba(16,185,129,0.35);">
       <summary style="cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:space-between">
-        <span>🎯 تدريب الميكروفون على صوتي (تعليم الأرقام الصعبة)</span>
+        <span>🎯 تدريب الميكروفون على صوتي (فرنسي 🇫🇷 + عربي 🇩🇿)</span>
         <span id="vtCountBadge" style="font-size:11px;color:var(--ok);font-weight:800">جاهز</span>
       </summary>
       <div style="font-size:12px;line-height:1.7;color:var(--dim);margin:8px 0">
-        اضغط على <b>الرقم الذي لا يفهمه الهاتف جيداً</b> (أو زر <b>STOP</b>)، ثم انطقه بصوتك بالفرنسية. سيحفظ التطبيق نطقك الخاص في ذاكرة الهاتف ليتعرف عليه فوراً في كل مرة!
+        اختر اللغة من السويتش بالأسفل (<b>فرنسي</b> أو <b>عربي</b>)، ثم اضغط على الرقم وانطقه بصوتك لحفظه في ذاكرة الهاتف لكلتا اللغتين!
       </div>
+
+      <!-- سويتش اختيار لغة التدريب والاستماع قبل الأرقام -->
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;padding:6px 8px;background:#0b1220;border:1px solid rgba(56,189,248,0.28);border-radius:10px">
+        <span style="font-size:12px;font-weight:800;color:#e2e8f0">🌐 لغة التدريب والاستماع:</span>
+        <div style="display:flex;gap:6px;flex:1;max-width:230px">
+          <button type="button" id="btnLangFrTrain" onclick="setVoiceLang('fr-FR')" style="flex:1;min-height:32px;padding:4px 10px;border-radius:8px;border:1.5px solid #38bdf8;font-size:12px;font-weight:900;cursor:pointer;background:#0284c7;color:#fff">🇫🇷 فرنسي (FR)</button>
+          <button type="button" id="btnLangArTrain" onclick="setVoiceLang('ar-DZ')" style="flex:1;min-height:32px;padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);font-size:12px;font-weight:900;cursor:pointer;background:#16202c;color:#94a3b8">🇩🇿 عربي (AR)</button>
+        </div>
+      </div>
+
       <div id="vtPromptBox" style="padding:8px 10px;border-radius:8px;background:rgba(15,23,42,0.85);border:1px solid rgba(56,189,248,0.35);font-size:12.5px;font-weight:800;color:#38bdf8;text-align:center;margin-bottom:8px">
-        👆 اختر رقماً بالأسفل ثم انطقه بالفرنسية لتدريب التطبيق عليه
+        👆 اختر اللغة ثم اضغط على الرقم بالأسفل وانطقه بصوتك لتدريب التطبيق عليه
       </div>
       <div id="vtLastHeardBox" style="font-size:11.5px;color:#cbd5e1;text-align:center;margin-bottom:8px;min-height:18px;direction:ltr"></div>
       <div id="vtGrid" style="display:grid;grid-template-columns:repeat(5, 1fr);gap:6px;margin-bottom:8px;direction:ltr"></div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:space-between">
         <button type="button" class="preset-chip" onclick="vtCancelTrain()" style="flex:1;min-height:34px;font-size:12px;background:#1e293b">⏹ إلغاء وضع التدريب</button>
-        <button type="button" class="preset-chip" onclick="vtClearAllTraining()" style="flex:1;min-height:34px;font-size:12px;background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.4);color:#fca5a5">🗑️ مسح التدريب المحفوظ</button>
+        <button type="button" class="preset-chip" onclick="vtClearAllTraining()" style="flex:1;min-height:34px;font-size:12px;background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.4);color:#fca5a5">🗑️ مسح تدريب اللغة الحالية</button>
       </div>
     </details>
 
@@ -8206,9 +8220,9 @@ window.quickSetSpeed = quickSetSpeed;
 window.quickSetIncline = quickSetIncline;
 
 // ============================================================================
-// نظام الأوامر الصوتية بالفرنسية + التدريب الشخصي على الصوت (French Voice Control & Personal Trainer v111.0)
-// - يحفظ نطقك الشخصي لكل رقم أو أمر Stop في localStorage (kettler_voice_fr_custom_v1)
-// - يدعم مطابقة نطقك الشخصي أولاً، ثم القاموس الصوتي الفرنسي الموسّع
+// نظام الأوامر الصوتية المزدوج (فرنسي 🇫🇷 + عربي 🇩🇿) + التدريب الشخصي على الصوت (v112.0)
+// - سويتش فوري للتبديل بين الفرنسية (fr-FR) والعربية (ar-DZ) في التدريب والاستماع
+// - يحفظ نطقك الشخصي لكل لغة بشكل مستقل في localStorage ويفحص القاموسين معاً
 // ============================================================================
 let voiceFrActive = false;
 let voiceFrRec = null;
@@ -8216,37 +8230,129 @@ let voiceFrRestartTimer = null;
 let lastVoiceCmdKey = '';
 let lastVoiceCmdMs = 0;
 let vtTrainingTarget = null; // null | 'STOP' | number (1..20)
-let vtCustomMap = {}; // { "STOP": ["..."], "6": ["si", "six", ...], ... }
+let voiceCurLang = localStorage.getItem('kettler_voice_lang') || 'fr-FR'; // 'fr-FR' | 'ar-DZ'
+let vtCustomMapByLang = { 'fr-FR': {}, 'ar-DZ': {} };
 
-const VT_STORAGE_KEY = 'kettler_voice_fr_custom_v1';
+const VT_STORAGE_KEY_V2 = 'kettler_voice_bilingual_v2';
+const VT_STORAGE_KEY_OLD = 'kettler_voice_fr_custom_v1';
 
 function vtLoadCustomMap(){
   try{
-    const raw = localStorage.getItem(VT_STORAGE_KEY);
-    if(raw){
-      const parsed = JSON.parse(raw);
-      if(parsed && typeof parsed === 'object') vtCustomMap = parsed;
+    const savedLang = localStorage.getItem('kettler_voice_lang');
+    if(savedLang === 'ar-DZ' || savedLang === 'fr-FR') voiceCurLang = savedLang;
+    const rawV2 = localStorage.getItem(VT_STORAGE_KEY_V2);
+    if(rawV2){
+      const parsed = JSON.parse(rawV2);
+      if(parsed && typeof parsed === 'object'){
+        vtCustomMapByLang['fr-FR'] = parsed['fr-FR'] || {};
+        vtCustomMapByLang['ar-DZ'] = parsed['ar-DZ'] || {};
+      }
+    } else {
+      // ترحيل أي تدريب فرنسي سابق من الإصدار v111 تلقائياً
+      const rawOld = localStorage.getItem(VT_STORAGE_KEY_OLD);
+      if(rawOld){
+        const pOld = JSON.parse(rawOld);
+        if(pOld && typeof pOld === 'object'){
+          vtCustomMapByLang['fr-FR'] = pOld;
+        }
+      }
     }
-  }catch(_){ vtCustomMap = {}; }
+  }catch(_){
+    vtCustomMapByLang = { 'fr-FR': {}, 'ar-DZ': {} };
+  }
+  updateVoiceLangButtonsUI();
 }
 
 function vtSaveCustomMap(){
   try{
-    localStorage.setItem(VT_STORAGE_KEY, JSON.stringify(vtCustomMap));
+    localStorage.setItem(VT_STORAGE_KEY_V2, JSON.stringify(vtCustomMapByLang));
   }catch(_){}
   vtRenderGrid();
 }
 
+function getActiveCustomMap(){
+  if(!vtCustomMapByLang[voiceCurLang]) vtCustomMapByLang[voiceCurLang] = {};
+  return vtCustomMapByLang[voiceCurLang];
+}
+
+function updateVoiceLangButtonsUI(){
+  const isFr = (voiceCurLang === 'fr-FR');
+  const bFrM = document.getElementById('btnLangFrMain');
+  const bArM = document.getElementById('btnLangArMain');
+  const bFrT = document.getElementById('btnLangFrTrain');
+  const bArT = document.getElementById('btnLangArTrain');
+
+  if(bFrM){
+    bFrM.style.background = isFr ? '#0284c7' : 'transparent';
+    bFrM.style.color = isFr ? '#fff' : '#94a3b8';
+  }
+  if(bArM){
+    bArM.style.background = !isFr ? '#059669' : 'transparent';
+    bArM.style.color = !isFr ? '#fff' : '#94a3b8';
+  }
+  if(bFrT){
+    bFrT.style.background = isFr ? '#0284c7' : '#16202c';
+    bFrT.style.color = isFr ? '#fff' : '#94a3b8';
+    bFrT.style.border = isFr ? '1.5px solid #38bdf8' : '1px solid rgba(255,255,255,0.15)';
+  }
+  if(bArT){
+    bArT.style.background = !isFr ? '#059669' : '#16202c';
+    bArT.style.color = !isFr ? '#fff' : '#94a3b8';
+    bArT.style.border = !isFr ? '1.5px solid #34d399' : '1px solid rgba(255,255,255,0.15)';
+  }
+}
+
+function setVoiceLang(lang){
+  if(lang !== 'fr-FR' && lang !== 'ar-DZ') return;
+  voiceCurLang = lang;
+  try{ localStorage.setItem('kettler_voice_lang', lang); }catch(_){}
+  updateVoiceLangButtonsUI();
+  vtRenderGrid();
+
+  const langLabel = (lang === 'fr-FR') ? 'الفرنسية 🇫🇷' : 'العربية 🇩🇿';
+  const promptEl = document.getElementById('vtPromptBox');
+  if(promptEl){
+    if(vtTrainingTarget){
+      const tLbl = (vtTrainingTarget === 'STOP') ? 'كلمة الإيقاف (STOP / توقف)' : ('الرقم ' + vtTrainingTarget);
+      promptEl.innerHTML = '🎙️ <b>انطق الآن بـ' + langLabel + ': ' + tLbl + '</b>...';
+    } else {
+      promptEl.style.borderColor = 'rgba(56,189,248,0.35)';
+      promptEl.style.color = '#38bdf8';
+      promptEl.textContent = '🌐 اللغة الحالية: ' + langLabel + ' — اضغط على أي رقم بالأسفل لتدريبه بصوتك';
+    }
+  }
+
+  // إذا كان الميكروفون شغالاً، نعيد تشغيله فوراً باللغة الجديدة
+  if(voiceFrActive && voiceFrRec){
+    try{
+      voiceFrRec.lang = voiceCurLang;
+      voiceFrRec.stop(); // سيقوم onend بإعادة تشغيله تلقائياً بعد 250ms باللغة الجديدة
+    }catch(_){}
+    setVoiceFrStatus('🟢 يستمع (' + (voiceCurLang === 'fr-FR' ? 'FR' : 'AR') + ')...', 'var(--ok)');
+  }
+  toast('🌐 تم تحويل لغة الميكروفون والتدريب إلى ' + langLabel);
+}
+window.setVoiceLang = setVoiceLang;
+
+// تحويل الأرقام العربية الشرقية (٠-٩) إلى أرقام قياسية (0-9) وتوحيد الهمزات
 function vtNormalizePhrase(s){
   if(!s) return '';
-  return String(s).toLowerCase().trim()
-    .replace(/[.,!?;:"«»()\[\]]+/g, '')
+  const easternDigits = '٠١٢٣٤٥٦٧٨٩';
+  let out = String(s).toLowerCase().trim();
+  for(let i = 0; i < 10; i++){
+    out = out.replace(new RegExp(easternDigits[i], 'g'), String(i));
+  }
+  return out
+    .replace(/[.,!?;:،؛"«»()\[\]ـ]+/g, '')
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/ى/g, 'ي')
     .replace(/’/g, "'")
     .replace(/\s+/g, ' ')
     .trim();
 }
 
-// القاموس الفرنسي الأساسي الموسّع (يشمل المتشابهات الصوتية الشائعة في الميكروفون أثناء الجري)
+// 1. القاموس الفرنسي الموسّع
 const FR_WORD_TO_NUM = {
   'un': 1, 'une': 1, 'hein': 1, 'han': 1, 'an': 1, 'en': 1, 'a': 1,
   'deux': 2, 'de': 2, 'du': 2, "d'eux": 2, 'doux': 2,
@@ -8260,31 +8366,56 @@ const FR_WORD_TO_NUM = {
   'dix': 10, 'dis': 10, 'dit': 10, 'disque': 10, 'danse': 10, 'lice': 10,
   'onze': 11, 'once': 11, 'ange': 11, 'hanche': 11,
   'douze': 12, 'douse': 12, 'douce': 12, 'blouse': 12, 'touche': 12,
-  'treize': 13, '13': 13, 'très': 13, 'treze': 13, 'fraise': 13, 'presse': 13,
-  'quatorze': 14, '14': 14,
-  'quinze': 15, '15': 15, 'caisse': 15, 'case': 15,
-  'seize': 16, '16': 16, 'chaise': 16, 'ces': 16, 'ses': 16,
-  'dix-sept': 17, 'dix sept': 17, '17': 17,
-  'dix-huit': 18, 'dix huit': 18, '18': 18,
-  'dix-neuf': 19, 'dix neuf': 19, '19': 19,
+  'treize': 13, 'très': 13, 'treze': 13, 'fraise': 13, 'presse': 13,
+  'quatorze': 14,
+  'quinze': 15, 'caisse': 15, 'case': 15,
+  'seize': 16, 'chaise': 16, 'ces': 16, 'ses': 16,
+  'dix-sept': 17, 'dix sept': 17,
+  'dix-huit': 18, 'dix huit': 18,
+  'dix-neuf': 19, 'dix neuf': 19,
   'vingt': 20, 'vin': 20, 'vain': 20, 'vint': 20, 'vent': 20, 'va': 20
+};
+
+// 2. القاموس العربي والدارجة الجزائرية الموسّع (بعد التطبيع vtNormalizePhrase: أ/إ->ا، ة->ه)
+const AR_RAW_TO_NUM = {
+  'واحد': 1, 'واحده': 1, 'وحد': 1,
+  'اثنان': 2, 'اثنين': 2, 'زوج': 2, 'زوز': 2, 'تنين': 2, 'ثنين': 2, 'ثنتين': 2,
+  'ثلاثه': 3, 'ثلاث': 3, 'تلاته': 3, 'تلات': 3, 'تلاثه': 3,
+  'اربعه': 4, 'اربع': 4, 'ربعه': 4, 'ربع': 4,
+  'خمسه': 5, 'خمس': 5, 'خمسا': 5,
+  'سته': 6, 'ست': 6, 'ستت': 6, 'ستا': 6,
+  'سبعه': 7, 'سبع': 7, 'سبعا': 7,
+  'ثمانيه': 8, 'ثمان': 8, 'تمنيه': 8, 'تمانيه': 8, 'تمن': 8, 'تمان': 8, 'ثماني': 8,
+  'تسعه': 9, 'تسع': 9, 'تسعا': 9,
+  'عشره': 10, 'عشر': 10, 'عشرا': 10,
+  'احد عشر': 11, 'احدي عشر': 11, 'حداش': 11, 'احداش': 11,
+  'اثنا عشر': 12, 'اثني عشر': 12, 'طنعش': 12, 'طناش': 12, 'اتناش': 12, 'ثنعش': 12, 'دوز': 12,
+  'ثلاثه عشر': 13, 'تلطاش': 13, 'ثلطاش': 13, 'تلاتاش': 13, 'ثلثطاش': 13,
+  'اربعه عشر': 14, 'اربعطاش': 14, 'ربعطاش': 14,
+  'خمسه عشر': 15, 'خمسطاش': 15, 'خمستاش': 15,
+  'سته عشر': 16, 'سطاش': 16, 'ستاش': 16,
+  'سبعه عشر': 17, 'سبعطاش': 17,
+  'ثمانيه عشر': 18, 'تمنطاش': 18, 'ثمنطاش': 18,
+  'تسعه عشر': 19, 'تسعطاش': 19,
+  'عشرين': 20, 'عشرون': 20
 };
 
 function vtAddTrainedPhrases(targetKey, phrasesArray){
   const key = String(targetKey);
-  if(!vtCustomMap[key]) vtCustomMap[key] = [];
+  const curMap = getActiveCustomMap();
+  if(!curMap[key]) curMap[key] = [];
   const added = [];
   for(const rawP of phrasesArray){
     const norm = vtNormalizePhrase(rawP);
     if(!norm || norm.length > 35) continue;
-    // إزالة هذه الكلمة من أي رقم آخر حتى لا يحدث تعارض مع تدريب سابق
-    for(const otherKey of Object.keys(vtCustomMap)){
-      if(otherKey !== key && Array.isArray(vtCustomMap[otherKey])){
-        vtCustomMap[otherKey] = vtCustomMap[otherKey].filter(x => x !== norm);
+    // إزالة الكلمة من أي رقم آخر في نفس اللغة حتى لا يحدث تعارض
+    for(const otherKey of Object.keys(curMap)){
+      if(otherKey !== key && Array.isArray(curMap[otherKey])){
+        curMap[otherKey] = curMap[otherKey].filter(x => x !== norm);
       }
     }
-    if(!vtCustomMap[key].includes(norm)){
-      vtCustomMap[key].push(norm);
+    if(!curMap[key].includes(norm)){
+      curMap[key].push(norm);
       added.push(norm);
     }
   }
@@ -8296,19 +8427,26 @@ function vtRenderGrid(){
   const grid = document.getElementById('vtGrid');
   if(!grid) return;
   const badge = document.getElementById('vtCountBadge');
-  let totalCustom = 0;
-  for(const k of Object.keys(vtCustomMap)){
-    if(Array.isArray(vtCustomMap[k])) totalCustom += vtCustomMap[k].length;
+  let frTotal = 0, arTotal = 0;
+  for(const k of Object.keys(vtCustomMapByLang['fr-FR'] || {})){
+    if(Array.isArray(vtCustomMapByLang['fr-FR'][k])) frTotal += vtCustomMapByLang['fr-FR'][k].length;
+  }
+  for(const k of Object.keys(vtCustomMapByLang['ar-DZ'] || {})){
+    if(Array.isArray(vtCustomMapByLang['ar-DZ'][k])) arTotal += vtCustomMapByLang['ar-DZ'][k].length;
   }
   if(badge){
-    badge.textContent = totalCustom > 0 ? ('مدرّب: ' + totalCustom + ' نطق') : 'جاهز للتدريب';
+    badge.textContent = (frTotal + arTotal > 0)
+      ? ('🇫🇷 ' + frTotal + ' | 🇩🇿 ' + arTotal)
+      : 'جاهز للتدريب';
   }
 
+  const curMap = getActiveCustomMap();
+  const langFlag = (voiceCurLang === 'fr-FR') ? '🇫🇷' : '🇩🇿';
   const items = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,18,20,'STOP'];
   let html = '';
   for(const item of items){
     const k = String(item);
-    const list = vtCustomMap[k] || [];
+    const list = curMap[k] || [];
     const cnt = list.length;
     const isSel = (String(vtTrainingTarget) === k);
     const isStop = (k === 'STOP');
@@ -8319,8 +8457,8 @@ function vtRenderGrid(){
       ? '2px solid #fde047'
       : (cnt > 0 ? '1.5px solid rgba(16,185,129,0.6)' : (isStop ? '1px solid rgba(239,68,68,0.45)' : '1px solid rgba(56,189,248,0.25)'));
     const spanCols = isStop ? 'grid-column: span 2;' : '';
-    const label = isStop ? '🛑 STOP' : (k + ' km/h');
-    const sub = cnt > 0 ? ('✓ ' + cnt) : '🎙️ درّب';
+    const label = isStop ? '🛑 STOP / توقف' : (k + ' km/h');
+    const sub = cnt > 0 ? (langFlag + ' ✓ ' + cnt) : (langFlag + ' درّب');
     html += '<button type="button" onclick="vtStartTrainTarget(\'' + k + '\')" style="' + spanCols + 'min-height:42px;padding:4px 2px;border-radius:9px;background:' + bg + ';border:' + brd + ';color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px">'
       + '<span style="font-size:13px;font-weight:900">' + label + '</span>'
       + '<span style="font-size:9.5px;color:' + (cnt > 0 ? '#6ee7b7' : '#94a3b8') + '">' + sub + '</span>'
@@ -8333,13 +8471,13 @@ function vtStartTrainTarget(targetKey){
   vtTrainingTarget = String(targetKey);
   vtRenderGrid();
   const promptEl = document.getElementById('vtPromptBox');
-  const labelAr = (vtTrainingTarget === 'STOP') ? 'كلمة STOP للإيقاف' : ('الرقم ' + vtTrainingTarget + ' بالفرنسية');
+  const langName = (voiceCurLang === 'fr-FR') ? 'بالفرنسية 🇫🇷' : 'بالعربية 🇩🇿';
+  const labelAr = (vtTrainingTarget === 'STOP') ? 'كلمة الإيقاف (Stop أو توقف)' : ('الرقم ' + vtTrainingTarget);
   if(promptEl){
     promptEl.style.borderColor = '#fbbf24';
     promptEl.style.color = '#fde047';
-    promptEl.innerHTML = '🎙️ <b>انطق الآن بصوتك: ' + labelAr + '</b> (سيتم التقاط نطقك وحفظه تلقائياً)...';
+    promptEl.innerHTML = '🎙️ <b>انطق الآن ' + langName + ': ' + labelAr + '</b> (سيتم التقاط نطقك وحفظه تلقائياً)...';
   }
-  // تشغيل الميكروفون تلقائياً إن لم يكن مفعّلاً
   const chk = document.getElementById('voiceFrEn');
   if(chk && !chk.checked){
     chk.checked = true;
@@ -8357,67 +8495,75 @@ function vtCancelTrain(){
   if(promptEl){
     promptEl.style.borderColor = 'rgba(56,189,248,0.35)';
     promptEl.style.color = '#38bdf8';
-    promptEl.textContent = '👆 اختر رقماً بالأسفل ثم انطقه بالفرنسية لتدريب التطبيق عليه';
+    promptEl.textContent = '👆 اختر اللغة ثم اضغط على الرقم بالأسفل وانطقه بصوتك لتدريب التطبيق عليه';
   }
 }
 
 function vtClearAllTraining(){
-  vtCustomMap = {};
+  vtCustomMapByLang[voiceCurLang] = {};
   vtTrainingTarget = null;
   vtSaveCustomMap();
+  const langName = (voiceCurLang === 'fr-FR') ? 'الفرنسية 🇫🇷' : 'العربية 🇩🇿';
   const promptEl = document.getElementById('vtPromptBox');
   if(promptEl){
     promptEl.style.borderColor = 'rgba(56,189,248,0.35)';
     promptEl.style.color = '#38bdf8';
-    promptEl.textContent = '🗑️ تم مسح التدريبات السابقة — اختر أي رقم لتدريبه من جديد';
+    promptEl.textContent = '🗑️ تم مسح تدريبات ' + langName + ' — اختر أي رقم لتدريبه من جديد';
   }
-  toast('🗑️ تم مسح بيانات التدريب الصوتي المحفوظة');
+  toast('🗑️ تم مسح بيانات التدريب الصوتي للغة ' + langName);
 }
 
 window.vtStartTrainTarget = vtStartTrainTarget;
 window.vtCancelTrain = vtCancelTrain;
 window.vtClearAllTraining = vtClearAllTraining;
 
+function checkCustomMapMatch(txt, mapObj){
+  if(!mapObj) return null;
+  if(Array.isArray(mapObj['STOP']) && mapObj['STOP'].includes(txt)){
+    return { type: 'stop', trained: true };
+  }
+  for(const [k, list] of Object.entries(mapObj)){
+    if(k === 'STOP' || !Array.isArray(list)) continue;
+    if(list.includes(txt)){
+      const numVal = parseFloat(k);
+      if(!isNaN(numVal) && numVal >= 1.0 && numVal <= 20.0){
+        return { type: 'speed', value: numVal, trained: true };
+      }
+    }
+  }
+  return null;
+}
+
 function parseFrenchVoiceCommand(rawText){
   if(!rawText) return null;
   let txt = vtNormalizePhrase(rawText);
   if(!txt) return null;
 
-  // 0. فحص القاموس الشخصي المُدرَّب بصوت المستخدم أولاً (الأولوية القصوى #1)
-  if(Array.isArray(vtCustomMap['STOP']) && vtCustomMap['STOP'].includes(txt)){
-    return { type: 'stop', raw: rawText.trim(), trained: true };
-  }
-  for(const [k, list] of Object.entries(vtCustomMap)){
-    if(k === 'STOP' || !Array.isArray(list)) continue;
-    if(list.includes(txt)){
-      const numVal = parseFloat(k);
-      if(!isNaN(numVal) && numVal >= 1.0 && numVal <= 20.0){
-        return { type: 'speed', value: numVal, raw: rawText.trim(), trained: true };
-      }
-    }
+  // 0. فحص القاموس الشخصي المُدرَّب بصوت المستخدم أولاً (اللغة الحالية ثم اللغة الأخرى)
+  const otherLang = (voiceCurLang === 'fr-FR') ? 'ar-DZ' : 'fr-FR';
+  let customHit = checkCustomMapMatch(txt, vtCustomMapByLang[voiceCurLang]) || checkCustomMapMatch(txt, vtCustomMapByLang[otherLang]);
+  if(customHit){
+    customHit.raw = rawText.trim();
+    return customHit;
   }
 
-  // 1. فحص أمر الإيقاف الفوري (Stop / Arrêt)
-  if(/\b(stop|stoper|stopper|arret|arrête|arrete|arrêter|arreter|halte)\b/i.test(txt)){
+  // 1. فحص أمر الإيقاف الفوري بالفرنسية والعربية (Stop / Arrêt / توقف / ستوب / حبس / قف)
+  if(/\b(stop|stoper|stopper|arret|arrête|arrete|arrêter|arreter|halte)\b/i.test(txt) || /(^|\s)(ستوب|توقف|قف|ايقاف|اوقف|حبس|بلاص)(\s|$)/.test(txt)){
     return { type: 'stop', raw: rawText.trim() };
   }
 
-  // إزالة الكلمات البادئة الشائعة إن أضافها محرك التعرف الصوتي تلقائياً قبل الرقم
-  txt = txt.replace(/^(vitesse|numéro|numero|le|la|à|a|au|de|en)\s+/i, '').trim();
+  // إزالة الكلمات البادئة الشائعة بالفرنسية أو العربية إن نطقها المستخدم قبل الرقم
+  txt = txt.replace(/^(vitesse|numéro|numero|le|la|à|a|au|de|en|سرعه|سرعة|رقم|السرعه|الرقم)\s+/i, '').trim();
 
   // إعادة فحص القاموس الشخصي بعد إزالة البادئة
-  for(const [k, list] of Object.entries(vtCustomMap)){
-    if(k === 'STOP' || !Array.isArray(list)) continue;
-    if(list.includes(txt)){
-      const numVal = parseFloat(k);
-      if(!isNaN(numVal) && numVal >= 1.0 && numVal <= 20.0){
-        return { type: 'speed', value: numVal, raw: rawText.trim(), trained: true };
-      }
-    }
+  customHit = checkCustomMapMatch(txt, vtCustomMapByLang[voiceCurLang]) || checkCustomMapMatch(txt, vtCustomMapByLang[otherLang]);
+  if(customHit){
+    customHit.raw = rawText.trim();
+    return customHit;
   }
 
   // 2. فحص الأرقام المكتوبة كأرقام (مثل "5", "5,5", "5.5", "12")
-  const numMatch = txt.match(/^(\d{1,2})(?:[.,](\d))?(\s*km\/h|\s*km)?$/i);
+  const numMatch = txt.match(/^(\d{1,2})(?:[.,](\d))?(\s*km\/h|\s*km|\s*كم)?$/i);
   if(numMatch){
     let val = parseInt(numMatch[1], 10);
     if(numMatch[2] !== undefined){
@@ -8428,7 +8574,21 @@ function parseFrenchVoiceCommand(rawText){
     }
   }
 
-  // 3. فحص صيغة "<رقم> و نصف" أو "<رقم> فاصلة خمسة" بالفرنسية
+  // 3. فحص صيغة "<رقم> ونصف" بالعربية (مثل "خمسه ونص" أو "5 ونص")
+  for(const [w, n] of Object.entries(AR_RAW_TO_NUM)){
+    const arHalfRe = new RegExp('^' + w + '\\s+(ونص|ونصف|و نص|و نصف|فاصل خمسه|فاصله خمسه)$');
+    if(arHalfRe.test(txt)){
+      const v = n + 0.5;
+      if(v >= 1.0 && v <= 20.0) return { type: 'speed', value: v, raw: rawText.trim() };
+    }
+  }
+  const arDigitHalf = txt.match(/^(\d{1,2})\s+(ونص|ونصف|و نص|و نصف|فاصل خمسه|فاصله خمسه)$/);
+  if(arDigitHalf){
+    const v = parseInt(arDigitHalf[1], 10) + 0.5;
+    if(v >= 1.0 && v <= 20.0) return { type: 'speed', value: v, raw: rawText.trim() };
+  }
+
+  // 4. فحص صيغة "<رقم> ونصف" بالفرنسية
   for(const [w, n] of Object.entries(FR_WORD_TO_NUM)){
     const halfRe = new RegExp('^' + w + '\\s+(et\\s+demi|et\\s+demie|virgule\\s+cinq|point\\s+cinq|virgule\\s+5|point\\s+5)$', 'i');
     if(halfRe.test(txt)){
@@ -8436,14 +8596,21 @@ function parseFrenchVoiceCommand(rawText){
       if(v >= 1.0 && v <= 20.0) return { type: 'speed', value: v, raw: rawText.trim() };
     }
   }
-
   const digitHalfMatch = txt.match(/^(\d{1,2})\s+(et\s+demi|et\s+demie|virgule\s+cinq|point\s+cinq)$/i);
   if(digitHalfMatch){
     const v = parseInt(digitHalfMatch[1], 10) + 0.5;
     if(v >= 1.0 && v <= 20.0) return { type: 'speed', value: v, raw: rawText.trim() };
   }
 
-  // 4. فحص الرقم المفرد بالحروف الفرنسية في القاموس الموسّع
+  // 5. فحص الرقم المفرد في القاموس العربي والجزائري
+  if(Object.prototype.hasOwnProperty.call(AR_RAW_TO_NUM, txt)){
+    const v = AR_RAW_TO_NUM[txt];
+    if(v >= 1.0 && v <= 20.0){
+      return { type: 'speed', value: v, raw: rawText.trim() };
+    }
+  }
+
+  // 6. فحص الرقم المفرد في القاموس الفرنسي الموسّع
   if(Object.prototype.hasOwnProperty.call(FR_WORD_TO_NUM, txt)){
     const v = FR_WORD_TO_NUM[txt];
     if(v >= 1.0 && v <= 20.0){
@@ -8466,7 +8633,6 @@ async function executeFrenchVoiceCommand(cmd, isFinal){
   const now = Date.now();
   const key = cmd.type === 'stop' ? 'STOP' : ('SPD_' + cmd.value.toFixed(1));
 
-  // منع تكرار تنفيذ نفس الجملة الصوتية مرتين (أثناء interim ثم final)
   if(key === lastVoiceCmdKey && (now - lastVoiceCmdMs) < 1500){
     return;
   }
@@ -8503,14 +8669,15 @@ function initFrenchVoiceRecognition(){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR) return null;
   const rec = new SR();
-  rec.lang = 'fr-FR';
+  rec.lang = voiceCurLang;
   rec.continuous = true;
   rec.interimResults = true;
   rec.maxAlternatives = 5;
 
   rec.onstart = () => {
     if(voiceFrActive){
-      setVoiceFrStatus(vtTrainingTarget ? ('🎯 درّب (' + vtTrainingTarget + ')...') : '🟢 يستمع (FR)...', vtTrainingTarget ? '#fbbf24' : 'var(--ok)');
+      const shortLang = (voiceCurLang === 'fr-FR') ? 'FR' : 'AR';
+      setVoiceFrStatus(vtTrainingTarget ? ('🎯 درّب (' + vtTrainingTarget + ' ' + shortLang + ')...') : ('🟢 يستمع (' + shortLang + ')...'), vtTrainingTarget ? '#fbbf24' : 'var(--ok)');
     }
   };
 
@@ -8520,7 +8687,6 @@ function initFrenchVoiceRecognition(){
       const res = event.results[i];
       const isFinal = !!res.isFinal;
 
-      // جمع كل البدائل التي سمعها المحرك الصوتي لهذه الكلمة
       const heardAlts = [];
       for(let a = 0; a < res.length; a++){
         const t = (res[a] && res[a].transcript) ? res[a].transcript.trim() : '';
@@ -8530,11 +8696,10 @@ function initFrenchVoiceRecognition(){
       if(heardAlts.length > 0){
         const heardBox = document.getElementById('vtLastHeardBox');
         if(heardBox){
-          heardBox.textContent = '🎤 سمع الميكروفون: "' + heardAlts.slice(0, 3).join('" | "') + '"';
+          heardBox.textContent = '🎤 سمع الميكروفون (' + (voiceCurLang === 'fr-FR' ? 'FR' : 'AR') + '): "' + heardAlts.slice(0, 3).join('" | "') + '"';
         }
       }
 
-      // إذا كان المستخدم في وضع "تدريب رقم معين" وانتهى من نطق الكلمة (isFinal)
       if(vtTrainingTarget && isFinal && heardAlts.length > 0){
         const savedTarget = vtTrainingTarget;
         vtAddTrainedPhrases(savedTarget, heardAlts);
@@ -8543,18 +8708,20 @@ function initFrenchVoiceRecognition(){
         try{ if(typeof playGripSuccessTone === 'function') playGripSuccessTone(true); }catch(_){}
         try{ if(navigator.vibrate) navigator.vibrate([60, 40, 80]); }catch(_){}
         const promptEl = document.getElementById('vtPromptBox');
-        const allForTarget = (vtCustomMap[savedTarget] || []).join(' ، ');
+        const curMap = getActiveCustomMap();
+        const allForTarget = (curMap[savedTarget] || []).join(' ، ');
+        const langBadge = (voiceCurLang === 'fr-FR') ? '🇫🇷' : '🇩🇿';
         if(promptEl){
           promptEl.style.borderColor = 'var(--ok)';
           promptEl.style.color = '#6ee7b7';
-          promptEl.innerHTML = '✅ <b>تم حفظ نطقك لـ (' + (savedTarget === 'STOP' ? 'STOP' : (savedTarget + ' كم/س')) + '):</b> <span dir="ltr">[' + allForTarget + ']</span> — جرّب نطقه الآن!';
+          promptEl.innerHTML = '✅ <b>تم حفظ نطقك ' + langBadge + ' لـ (' + (savedTarget === 'STOP' ? 'STOP' : (savedTarget + ' كم/س')) + '):</b> <span dir="ltr">[' + allForTarget + ']</span>';
         }
-        setVoiceFrStatus('🟢 يستمع (FR)...', 'var(--ok)');
-        toast('✅ تم تدريب وحفظ نطقك لـ ' + (savedTarget === 'STOP' ? 'STOP' : ('السرعة ' + savedTarget + ' كم/س')));
+        const shortLang = (voiceCurLang === 'fr-FR') ? 'FR' : 'AR';
+        setVoiceFrStatus('🟢 يستمع (' + shortLang + ')...', 'var(--ok)');
+        toast('✅ تم حفظ نطقك ' + langBadge + ' لـ ' + (savedTarget === 'STOP' ? 'STOP' : ('السرعة ' + savedTarget + ' كم/س')));
         return;
       }
 
-      // في الوضع العادي (غير التدريب): فحص البدائل وتنفيذ الأمر فوراً
       if(!vtTrainingTarget){
         let matchedCmd = null;
         for(const altTranscript of heardAlts){
@@ -8599,7 +8766,10 @@ function initFrenchVoiceRecognition(){
     if(voiceFrRestartTimer) clearTimeout(voiceFrRestartTimer);
     voiceFrRestartTimer = setTimeout(() => {
       if(voiceFrActive && voiceFrRec){
-        try{ voiceFrRec.start(); }catch(_){}
+        try{
+          voiceFrRec.lang = voiceCurLang;
+          voiceFrRec.start();
+        }catch(_){}
       }
     }, 250);
   };
@@ -8633,13 +8803,15 @@ function toggleFrenchVoiceControl(){
 
   try{ unlockAudio(); }catch(_){}
   if(!voiceFrRec) voiceFrRec = initFrenchVoiceRecognition();
+  voiceFrRec.lang = voiceCurLang;
   voiceFrActive = true;
-  setVoiceFrStatus('⏳ جارٍ فتح الميكروفون...', 'var(--amber)');
+  const shortLang = (voiceCurLang === 'fr-FR') ? 'FR' : 'AR';
+  setVoiceFrStatus('⏳ جارٍ فتح الميكروفون (' + shortLang + ')...', 'var(--amber)');
   try{
     voiceFrRec.start();
-    toast('🎙️ الأوامر الصوتية بالفرنسية مفعّلة: انطق الرقم للسرعة أو Stop للإيقاف');
+    toast('🎙️ الأوامر الصوتية مفعّلة (' + (voiceCurLang === 'fr-FR' ? 'فرنسي 🇫🇷' : 'عربي 🇩🇿') + ')');
   }catch(e){
-    setVoiceFrStatus('🟢 يستمع (FR)...', 'var(--ok)');
+    setVoiceFrStatus('🟢 يستمع (' + shortLang + ')...', 'var(--ok)');
   }
 }
 window.toggleFrenchVoiceControl = toggleFrenchVoiceControl;
