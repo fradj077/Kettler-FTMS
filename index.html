@@ -2326,7 +2326,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI6 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI7 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -6861,6 +6861,29 @@ booted = true; fillSel(); preview();
       const li=linkedItem(); if(li) play(li);
     });
     render();
+    handleShared();
+  }
+  // استقبال رابط مشاركة من تطبيق YouTube (Web Share Target): ?title=..&text=..&url=..
+  function handleShared(){
+    try{
+      const q=new URLSearchParams(location.search);
+      const raw=[q.get('url'),q.get('text'),q.get('title')].filter(Boolean).join(' ');
+      if(!raw) return;
+      const m=raw.match(/https?:\/\/[^\s]+/);
+      const it=parse(m?m[0]:raw);
+      try{ history.replaceState(null,'',location.pathname); }catch(_){}
+      if(!it){ try{ toast('❌ الرابط المشارَك ليس رابط YouTube صالحاً'); }catch(_){} return; }
+      let t=(q.get('title')||'').trim();
+      if(!t){ t=(q.get('text')||'').replace(/https?:\/\/[^\s]+/g,'').trim(); }
+      it.title=t.slice(0,80)||('فيديو '+(lib.length+1));
+      const dup=lib.some(x=>x.t===it.t&&x.id===it.id);
+      if(!dup) lib.push(it);
+      save(); render();
+      try{ if(window.showTab) window.showTab(1); }catch(_){}
+      const d=$e('ytLib'); if(d) d.open=true;
+      try{ toast(dup ? '📺 الفيديو موجود مسبقاً في المكتبة' : '✅ أُضيف إلى مكتبة الفيديو: '+it.title); }catch(_){}
+      setTimeout(()=>{ try{ d && d.scrollIntoView({behavior:'smooth',block:'start'}); }catch(_){} },300);
+    }catch(_){}
   }
   init();
 })();
