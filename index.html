@@ -2294,6 +2294,12 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 #ytFloat .yt-box{position:relative;width:100%;aspect-ratio:16/9;background:#000}
 #ytFloat .yt-box iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 #ytFloat.min .yt-box{display:none}
+#ytFloat .yt-bar{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+#ytFloat .yt-grip{font-size:16px;color:#9aa6d6;padding:0 4px;line-height:1}
+#ytFloat.dragging{opacity:.92}
+#ytFloat.fs{position:fixed;top:0!important;bottom:0!important;left:0!important;right:0!important;width:100vw!important;height:100vh;height:100dvh;border-radius:0;border:0;display:flex;flex-direction:column}
+#ytFloat.fs .yt-box{display:block!important;flex:1;aspect-ratio:auto;height:auto}
+#ytFloat.fs .yt-bar{padding-top:calc(env(safe-area-inset-top,0px) + 4px)}
 #ytLib .yt-item{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--line,#2a3352)}
 #ytLib .yt-item .yt-name{flex:1;font-size:13px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #ytLib .yt-item button{min-width:40px;min-height:38px;padding:0 6px}
@@ -2301,7 +2307,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 </style>
 </head>
 <body>
-<div id="ytFloat"><div class="yt-bar"><div class="yt-ttl" id="ytFTitle">YouTube</div><button type="button" id="ytFMin" title="تصغير">▁</button><button type="button" id="ytFPos" title="أعلى/أسفل">⇅</button><button type="button" id="ytFSize" title="الحجم">⤢</button><button type="button" id="ytFClose" title="إغلاق">✕</button></div><div class="yt-box" id="ytFBox"></div></div>
+<div id="ytFloat"><div class="yt-bar" id="ytFBar"><span class="yt-grip" title="اسحب للتحريك">⠿</span><div class="yt-ttl" id="ytFTitle">YouTube</div><button type="button" id="ytFFull" title="ملء الشاشة كلياً">⛶</button><button type="button" id="ytFMin" title="تصغير">▁</button><button type="button" id="ytFPos" title="أعلى/أسفل">⇅</button><button type="button" id="ytFSize" title="الحجم">⤢</button><button type="button" id="ytFClose" title="إغلاق">✕</button></div><div class="yt-box" id="ytFBox"></div></div>
 <div id="stopReasonBar" role="alert" aria-live="assertive"><div class="srb-row"><div class="srb-txt"><div id="srbTxt"></div><div class="srb-time" id="srbTime"></div></div><button type="button" id="srbClose" aria-label="إغلاق" onclick="hideStopReason()">✕</button></div></div>
 <div id="gate" onclick="if(event.target===this)hideGate()"><div class="gbox" style="position:relative">
   <button type="button" onclick="hideGate()" style="position:absolute;top:12px;left:12px;width:34px;height:34px;min-height:34px;padding:0;background:rgba(255,255,255,0.12);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;">✕</button>
@@ -6738,7 +6744,61 @@ booted = true; fillSel(); preview();
     $e('ytFTitle').textContent='📺 '+(it.title||'YouTube');
     f.classList.remove('min'); f.classList.add('show');
   }
-  function closeP(){ const f=$e('ytFloat'); f.classList.remove('show'); $e('ytFBox').innerHTML=''; }
+  function closeP(){ setFs(false); const f=$e('ytFloat'); f.classList.remove('show'); $e('ytFBox').innerHTML=''; }
+  let fsApi=false;
+  function setFs(on){
+    const f=$e('ytFloat'); if(!f) return;
+    if(on){
+      f.classList.remove('min'); f.classList.add('fs');
+      fsApi=false;
+      try{
+        const r=f.requestFullscreen||f.webkitRequestFullscreen;
+        if(r){ const p=r.call(f); fsApi=true; if(p&&p.catch) p.catch(()=>{ fsApi=false; }); }
+      }catch(_){ fsApi=false; }
+      const b=$e('ytFFull'); if(b) b.textContent='🗗';
+    }else{
+      f.classList.remove('fs');
+      try{
+        if(document.fullscreenElement && document.exitFullscreen) document.exitFullscreen();
+        else if(document.webkitFullscreenElement && document.webkitExitFullscreen) document.webkitExitFullscreen();
+      }catch(_){}
+      fsApi=false;
+      const b=$e('ytFFull'); if(b) b.textContent='⛶';
+    }
+  }
+  function onFsChange(){
+    const f=$e('ytFloat'); if(!f) return;
+    if(!document.fullscreenElement && !document.webkitFullscreenElement && fsApi && f.classList.contains('fs')) setFs(false);
+  }
+  document.addEventListener('fullscreenchange',onFsChange);
+  document.addEventListener('webkitfullscreenchange',onFsChange);
+  function initDrag(){
+    const f=$e('ytFloat'), bar=$e('ytFBar'); if(!f||!bar) return;
+    let sy=0, st=0, drag=false, pid=null;
+    bar.addEventListener('pointerdown',e=>{
+      if(e.target.closest('button') || f.classList.contains('fs')) return;
+      const r=f.getBoundingClientRect();
+      drag=true; pid=e.pointerId; sy=e.clientY; st=r.top;
+      f.classList.add('dragging');
+      try{ bar.setPointerCapture(pid); }catch(_){}
+      e.preventDefault();
+    });
+    bar.addEventListener('pointermove',e=>{
+      if(!drag || e.pointerId!==pid) return;
+      const h=bar.offsetHeight||44;
+      let t=st+(e.clientY-sy);
+      t=Math.max(0, Math.min(window.innerHeight-h, t));
+      f.style.bottom='auto'; f.style.top=t+'px';
+      e.preventDefault();
+    });
+    const end=e=>{
+      if(!drag) return;
+      drag=false; f.classList.remove('dragging');
+      try{ bar.releasePointerCapture(pid); }catch(_){}
+    };
+    bar.addEventListener('pointerup',end);
+    bar.addEventListener('pointercancel',end);
+  }
   function curProg(){ const s=$e('progSel'); return s ? s.value : ''; }
   function linkedItem(){ const k=map[curProg()]; return k ? lib.find(x=>x.t+':'+x.id===k) : null; }
   function render(){
@@ -6783,7 +6843,9 @@ booted = true; fillSel(); preview();
     };
     $e('ytFClose').onclick=closeP;
     $e('ytFMin').onclick=()=>$e('ytFloat').classList.toggle('min');
-    $e('ytFPos').onclick=()=>$e('ytFloat').classList.toggle('top');
+    $e('ytFPos').onclick=()=>{ const f=$e('ytFloat'); f.style.top=''; f.style.bottom=''; f.classList.toggle('top'); };
+    $e('ytFFull').onclick=()=>setFs(!$e('ytFloat').classList.contains('fs'));
+    initDrag();
     $e('ytFSize').onclick=()=>{
       const f=$e('ytFloat');
       if(f.classList.contains('sz2')){ f.classList.remove('sz2'); }
