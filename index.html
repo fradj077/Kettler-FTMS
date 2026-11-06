@@ -2295,7 +2295,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI3 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI4 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -4098,7 +4098,25 @@ function tRxWrite(strOrBytes){
 
 async function pushLimits(){
   if(!tRx) return;
+  window.limVerify = {w:T_WARN, h:T_HOT, last:null};
   await tRxWrite('W' + T_WARN + '\nH' + T_HOT + '\n');
+  clearTimeout(window.limVerifyT);
+  window.limVerifyT = setTimeout(() => {
+    const v = window.limVerify; if(!v) return;
+    window.limVerify = null;
+    if(v.last) toast('⚠ اللوحة أعادت حدوداً مختلفة: ' + v.last.w + ' / ' + v.last.h);
+    else toast('ℹ️ أُرسلت حدود الحرارة — لا تأكيد من اللوحة (يتطلب الفيرموير المحدّث)');
+  }, 3000);
+}
+function onLimitsLine(t){
+  const p = t.split(',').map(parseFloat);
+  if(p.length < 2 || isNaN(p[0]) || isNaN(p[1])) return;
+  const v = window.limVerify; if(!v) return;
+  v.last = {w:p[0], h:p[1]};
+  if(Math.abs(p[0] - v.w) <= 0.06 && Math.abs(p[1] - v.h) <= 0.06){
+    window.limVerify = null; clearTimeout(window.limVerifyT);
+    toast('✅ تأكدت اللوحة: حدود الحرارة محفوظة (' + p[0].toFixed(1) + ' / ' + p[1].toFixed(1) + ')');
+  }
 }
 let T_WARN = 60, T_HOT = 80, lastAlarm = 0, actx = null;
 try{ const o = JSON.parse(localStorage.getItem('kettler_tlimits')); if(o && o.w < o.h){ T_WARN = o.w; T_HOT = o.h; } }catch(_){}
@@ -4554,6 +4572,21 @@ function triggerSafetyEventAction(type, val, isTest){
 }
 
 function onSafetyLine(line){
+  if(line.indexOf('C=') === 0 && window.sfVerify){
+    const ex = window.sfVerify.exp, p = line.slice(2).split(',').map(parseFloat);
+    window.sfVerify = null; clearTimeout(window.sfVerifyT);
+    const names = ['إيقاف انعدام الخطوة','مهلة انعدام الخطوة','أدنى سرعة','كشف الانحشار','زمن الانحشار','قفزة التيار','إنقاذ تشتت الخطى','خفض السرعة','تشتت الخطى %','وضع الاختبار'];
+    const bad = [];
+    ex.forEach((v, i) => { if(isNaN(p[i]) || Math.abs(p[i] - v) > 0.06 + 1e-9) bad.push(names[i] + ' (أُرسل ' + v + ' / اللوحة ' + p[i] + ')'); });
+    if(!bad.length){
+      toast('✅ تأكدت اللوحة: إعدادات درع الأمان محفوظة بالقيم المرسلة');
+      if($('sfLiveStatus')){ $('sfLiveStatus').textContent = '✅ تأكدت اللوحة: مهلة ' + (ex[1] / 1000).toFixed(1) + 'ث / صدمة +' + ex[5].toFixed(1) + 'A'; $('sfLiveStatus').style.color = 'var(--ok)'; }
+      return;
+    }
+    toast('⚠ اللوحة عدّلت بعض القيم (خارج المجال المسموح) — عُرضت قيمها');
+    if($('sfLiveStatus')){ $('sfLiveStatus').textContent = '⚠ ' + bad.join(' ، '); $('sfLiveStatus').style.color = 'var(--red)'; }
+    window.sfForceReadFromBoard = true; // تعرض الواجهة ما اعتمدته اللوحة فعلاً
+  }
   if(line.indexOf('C=') === 0){
     // لا نسمح لرد اللوحة القديم أن يغير أرقام المستخدم في الواجهة إلا إذا ضغط المستخدم صراحةً على زر "🔄 قراءة اللوحة"
     if(!window.sfForceReadFromBoard){
@@ -4674,16 +4707,27 @@ async function saveSafetyConfigToBoard(quietSync){
   const cmd = '\nSFS:' + sfCfg.fsEn + ',' + sfCfg.fsMs + ',' + sfCfg.fsVmin.toFixed(1) + ',' +
               sfCfg.drEn + ',' + sfCfg.drMs + ',' + sfCfg.drAmp.toFixed(1) + ',' +
               sfCfg.rcEn + ',' + sfCfg.rcDrop.toFixed(1) + ',' + sfCfg.rcVar + ',' + sfCfg.safeTest;
+  if(!quietSync){
+    window.sfVerify = {exp:[sfCfg.fsEn, sfCfg.fsMs, +sfCfg.fsVmin.toFixed(1), sfCfg.drEn, sfCfg.drMs, +sfCfg.drAmp.toFixed(1), sfCfg.rcEn, +sfCfg.rcDrop.toFixed(1), sfCfg.rcVar, sfCfg.safeTest]};
+  }
   const ok = await bridgeCmd(cmd);
   if(ok){
     if(!quietSync){
-      toast('✅ تم إرسال وحفظ إعدادات درع الأمان في اللوحة (NVS) بنجاح!');
-    }
-    if($('sfLiveStatus')){
-      $('sfLiveStatus').textContent = '✅ تم الحفظ في اللوحة: مهلة ' + (sfCfg.fsMs / 1000).toFixed(1) + 'ث / صدمة +' + sfCfg.drAmp.toFixed(1) + 'A';
-      $('sfLiveStatus').style.color = 'var(--ok)';
+      if($('sfLiveStatus')){
+        $('sfLiveStatus').textContent = '⏳ أُرسلت — بانتظار تأكيد اللوحة بالقيم المحفوظة...';
+        $('sfLiveStatus').style.color = 'var(--amber)';
+      }
+      clearTimeout(window.sfVerifyT);
+      window.sfVerifyT = setTimeout(() => {
+        if(window.sfVerify){
+          window.sfVerify = null;
+          toast('⚠ لم تؤكد اللوحة حفظ درع الأمان — أعد المحاولة');
+          if($('sfLiveStatus')){ $('sfLiveStatus').textContent = '⚠ لم تؤكد اللوحة الحفظ'; $('sfLiveStatus').style.color = 'var(--red)'; }
+        }
+      }, 4000);
     }
   } else if(!quietSync){
+    window.sfVerify = null;
     toast('💾 تم حفظ إعدادات درع الأمان محلياً في الهاتف (اللوحة غير متصلة حالياً)');
     if($('sfLiveStatus')){
       $('sfLiveStatus').textContent = '💾 محفوظ في الهاتف (مهلة ' + (sfCfg.fsMs / 1000).toFixed(1) + 'ث / +' + sfCfg.drAmp.toFixed(1) + 'A) — اتصل باللوحة للمزامنة';
@@ -4707,6 +4751,7 @@ function onTempData(chunk){
     if(ln.indexOf('LK:') === 0){ setBridgeLock(ln.slice(3) === '1'); continue; }
     if(ln.indexOf('WF:') === 0){ try{ onWifiNtpLine(ln.slice(3)); }catch(_){} continue; }
     if(ln.indexOf('SF:') === 0){ try{ onSafetyLine(ln.slice(3)); }catch(_){} continue; }
+    if(ln.indexOf('LM:') === 0 && /\d/.test(ln.charAt(3))){ try{ onLimitsLine(ln.slice(3)); }catch(_){} continue; }
     if(ln.indexOf('MH:') === 0){ try{ mhLine(ln.slice(3)); }catch(_){} continue; }
     if(ln.indexOf('CUR:') === 0){ try{ curOnLine(ln.slice(4)); }catch(_){} continue; }
     if(ln.indexOf('DIAG:') === 0){ try{ onDiagLine(ln.slice(5)); }catch(_){} continue; }
@@ -7783,7 +7828,14 @@ function cfgOnLine(t, force){
   if(!isNaN(o.T) && (force || document.activeElement !== $('cfT'))){
     $('cfT').checked = o.T >= 1;
   }
-  if(force) showCfgStatus('✓ القيم معروضة ومؤكدة من اللوحة', false);
+  if(force){
+    if(window.cfgVerify){
+      const bad = cfgVerifyCompare(o);
+      window.cfgVerify = null; clearTimeout(window.cfgVerifyT);
+      if(bad.length) showCfgStatus('⚠ اللوحة أعادت قيماً مختلفة: ' + bad.join(' ، '), true);
+      else showCfgStatus('✓ تأكدت اللوحة: الإعدادات محفوظة بالقيم المرسلة', false);
+    } else showCfgStatus('✓ القيم معروضة ومؤكدة من اللوحة', false);
+  }
 }
 const sleepMs = ms => new Promise(r => setTimeout(r, ms));
 async function cfgSave(){
@@ -7819,9 +7871,14 @@ async function cfgSave(){
     await sleepMs(180);
     cfgSaving = false;
     cfgForceRead = true;
+    window.cfgVerify = {S:s,I:i,A:a,D:d,C:c,T:t};
     await bridgeCmd('KQ');
-    showCfgStatus('✓ تم حفظ الإعدادات في ذاكرة اللوحة بنجاح', false);
-    log('حُفظت إعدادات اللوحة');
+    showCfgStatus('⏳ أُرسلت الإعدادات — بانتظار تأكيد اللوحة...', false);
+    clearTimeout(window.cfgVerifyT);
+    window.cfgVerifyT = setTimeout(() => {
+      if(window.cfgVerify){ window.cfgVerify = null; showCfgStatus('⚠ لم تؤكد اللوحة القيم — اضغط «قراءة» للتأكد', true); }
+    }, 5000);
+    log('أُرسلت إعدادات الحركة إلى اللوحة (بانتظار التأكيد)');
   }catch(e){
     cfgSaving = false;
     showCfgStatus('تعذر حفظ الإعدادات: ' + (e && e.message ? e.message : e), true);
@@ -8179,6 +8236,31 @@ if('serviceWorker' in navigator){
   }
 }
 
+
+// ===== v114.1-UI4: التحقق بعد الحفظ (مقارنة ما أرسلناه بما أعادته اللوحة فعلياً) =====
+const DSP_VERIFY_LABELS = {F:'التيار الاسمي',L:'حد الإعاقة',D:'زمن الإعاقة',K:'عتبة التفرطح',W:'تحذير CUSUM',C:'خطر CUSUM',B:'تحذير جفاف السير',T:'عتبة الخطوة',S:'حساسية mV/A',V:'جهد الباص',BL:'خط أساس التزييت',AE:'حساسية تلقائية',IJ:'تأخير القصور',NC:'تعويض الميل',ZT:'تتبع الصفر'};
+function dspVerifyCompare(o){
+  const ex = window.dspVerify.exp, bad = [];
+  const tol = {F:0.06,L:0.06,D:1,K:0.06,W:0.06,C:0.06,B:0.06,T:0.006,S:0.06,V:1,BL:0.006,AE:0,IJ:0.06,NC:0.006,ZT:0};
+  Object.keys(ex).forEach(k => {
+    if(k === 'S' && ex.AE === 1) return; // الحساسية تتبدل تلقائياً عند تفعيل الضبط الذاتي
+    const got = o[k];
+    if(got == null || isNaN(got)){ bad.push(DSP_VERIFY_LABELS[k] + ' (لا قيمة)'); return; }
+    if(Math.abs(got - ex[k]) > tol[k] + 1e-9) bad.push(DSP_VERIFY_LABELS[k] + ' (أُرسل ' + ex[k] + ' / اللوحة ' + got + ')');
+  });
+  return bad;
+}
+function cfgVerifyCompare(o){
+  const ex = window.cfgVerify, bad = [];
+  const lbl = {S:'أقصى سرعة',I:'أقصى ميل',A:'التسارع',D:'التباطؤ',C:'المشي الختامي',T:'التخفيض الحراري'};
+  const tol = {S:0.06,I:0.06,A:0.006,D:0.006,C:0,T:0};
+  Object.keys(ex).forEach(k => {
+    const got = o[k];
+    if(got == null || isNaN(got)){ bad.push(lbl[k] + ' (لا قيمة)'); return; }
+    if(Math.abs(got - ex[k]) > tol[k] + 1e-9) bad.push(lbl[k] + ' (أُرسل ' + ex[k] + ' / اللوحة ' + got + ')');
+  });
+  return bad;
+}
 let dspCfgSaving = false;
 function dspCfgOnLine(t){
   if(dspCfgSaving) return;
@@ -8228,6 +8310,15 @@ function dspCfgOnLine(t){
   if(o.ZT != null){ document.querySelectorAll('#dspZeroTrack').forEach(el => { el.value = String(Math.round(o.ZT)); }); }
 
   const st = document.getElementById('dspCfgStatus');
+  if(window.dspVerify){
+    const bad = dspVerifyCompare(o);
+    window.dspVerify = null; clearTimeout(window.dspVerifyT);
+    if(st){
+      if(bad.length){ st.style.color = 'var(--red)'; st.textContent = '⚠ اللوحة أعادت قيماً مختلفة: ' + bad.join(' ، '); }
+      else { st.style.color = 'var(--ok)'; st.textContent = '✓ تأكدت اللوحة: كل الهوامش محفوظة بالقيم المرسلة'; }
+    }
+    return;
+  }
   if(st){ st.style.color = 'var(--ok)'; st.textContent = '✓ عُرضت الهوامش المحفوظة في اللوحة'; }
 }
 
@@ -8267,16 +8358,25 @@ async function dspCfgSave(){
   if(bZ) bZ.disabled = true;
 
   try {
-    const cmds = ['PF' + f, 'PL' + l, 'PD' + d, 'PK' + k, 'PW' + w, 'PC' + c, 'PB' + b, 'PT' + t, 'PS' + s, 'PV' + v, 'PE' + ae, 'PJ' + ij, 'PN' + nc, 'PZ' + zt, 'BKR:BL=' + bl.toFixed(2)]; window.lastCalibratedBL = bl; if($('dspBLDisplay')) $('dspBLDisplay').textContent = bl.toFixed(2) + 'A';
+    const cmds = ['BKR:BL=' + bl.toFixed(2), 'PF' + f, 'PL' + l, 'PD' + d, 'PK' + k, 'PW' + w, 'PC' + c, 'PB' + b, 'PT' + t, 'PS' + s, 'PV' + v, 'PE' + ae, 'PJ' + ij, 'PN' + nc, 'PZ' + zt]; window.lastCalibratedBL = bl; if($('dspBLDisplay')) $('dspBLDisplay').textContent = bl.toFixed(2) + 'A';
     for(const cmd of cmds){
       await bridgeCmd(cmd);
       await sleepMs(100);
     }
     await sleepMs(150);
     dspCfgSaving = false;
+    window.dspVerify = {exp:{F:f,L:l,D:d,K:k,W:w,C:c,B:b,T:t,S:s,V:v,BL:bl,AE:ae,IJ:ij,NC:nc,ZT:zt}};
     await bridgeCmd('PQ');
-    if(st){ st.style.color = 'var(--ok)'; st.textContent = '✓ حُفظت الهوامش في ذاكرة اللوحة بنجاح!'; }
-    log('حُفظت هوامش الـ DSP في ذاكرة اللوحة');
+    if(st){ st.style.color = 'var(--amber)'; st.textContent = '⏳ أُرسلت الهوامش — بانتظار تأكيد اللوحة بالقيم المحفوظة...'; }
+    clearTimeout(window.dspVerifyT);
+    window.dspVerifyT = setTimeout(() => {
+      if(window.dspVerify){
+        window.dspVerify = null;
+        const st2 = document.getElementById('dspCfgStatus');
+        if(st2){ st2.style.color = 'var(--red)'; st2.textContent = '⚠ لم تؤكد اللوحة القيم — اضغط «قراءة من اللوحة» للتأكد قبل الاعتماد'; }
+      }
+    }, 5000);
+    log('أُرسلت هوامش الـ DSP إلى اللوحة (بانتظار التأكيد)');
   } catch(e) {
     dspCfgSaving = false;
     if(st){ st.style.color = 'var(--red)'; st.textContent = 'تعذر الحفظ: ' + (e && e.message ? e.message : e); }
@@ -9685,6 +9785,15 @@ async function handleBackupFileSelected(e){
 
       const cmd = 'BKR:H=' + h + ',M=' + m + ',E=' + e_kwh.toFixed(2) + ',S=' + s + ',BL=' + bl.toFixed(2);
       await bridgeCmd(cmd);
+      const tw = +data.temp_warn_c, th = +data.temp_hot_c;
+      if(tw >= 20 && th <= 120 && th > tw){
+        T_WARN = tw; T_HOT = th;
+        try{ localStorage.setItem('kettler_tlimits', JSON.stringify({w:tw, h:th})); }catch(_){}
+        if($('tWarn')) $('tWarn').value = tw;
+        if($('tHot')) $('tHot').value = th;
+        await sleepMs(250);
+        await pushLimits();
+      }
     } catch(err) {
       const st = document.getElementById('backupStatus');
       if(st){ st.style.color = 'var(--red)'; st.textContent = 'ملف غير صالح: ' + err.message; }
