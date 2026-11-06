@@ -2119,6 +2119,162 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
   color:var(--ok);
 }
 
+
+/* ===== v114.1-UI2: semantic button + utility classes (appended) ===== */
+.btn-save{background:var(--ok);color:#04140c;border:0;font-weight:800}
+.btn-danger{background:rgba(239,68,68,0.18);border:1px solid rgba(239,68,68,0.45);color:#fca5a5}
+.u-dim12{font-size:12px;color:var(--dim)}.u-dim11{font-size:11px;color:var(--dim)}.u-dim{color:var(--dim)}
+.u-ok{color:var(--ok)}.u-accent{color:var(--accent)}.u-amber-b{color:var(--amber);font-weight:700}.u-ok-b{color:var(--ok);font-weight:700}
+.u-row-dim{display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px}
+.u-row-between{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.u-mt8{margin-top:8px}.u-mb8{margin-bottom:8px}.u-w100{width:100%}.u-flex1{flex:1}
+.u-btn-xl{min-height:50px;font-size:18px;font-weight:900}.u-btn-xl2{min-height:50px;font-size:17px;font-weight:900}
+
+/* =====================================================================
+   v114.1-UI3 — «حبر وفجر»: ديكور جديد كامل (طبقة CSS فقط، بلا مساس بالكود)
+   أساس حبري عميق + طيف واحد (سماوي→بنفسجي→وردي) للبطل والتفعيل فقط
+   الألوان الدلالية (أخضر/كهرماني/أحمر) محجوزة للحالات فقط
+   ===================================================================== */
+:root{
+  --bg:#0a0e1c; --panel:#111631; --panel-card:#171d3d; --panel-card-hover:#1d2450;
+  --line:rgba(150,165,255,.13); --line-light:rgba(150,165,255,.22); --border:rgba(150,165,255,.13);
+  --text:#eef1ff; --txt:#eef1ff; --dim:#8f9ac6;
+  --amber:#fbbf24; --amber-glow:rgba(251,191,36,.20);
+  --red:#fb5b6b; --red-glow:rgba(251,91,107,.24);
+  --ok:#34d399; --ok-glow:rgba(52,211,153,.20); --blue:#38e1f5;
+  --radius:20px;
+  --sp-a:#38e1f5; --sp-b:#7c6bff; --sp-c:#ff5fa2;
+  --spectrum:linear-gradient(110deg,#38e1f5 0%,#7c6bff 52%,#ff5fa2 100%);
+  --c-speed:#38e1f5; --c-speed-glow:rgba(56,225,245,.30); --c-speed-bg:rgba(56,225,245,.07);
+  --c-incline:#a99bff; --c-incline-glow:rgba(124,107,255,.28); --c-incline-bg:rgba(124,107,255,.07);
+  --c-time:#e9ecff; --c-time-glow:rgba(150,165,255,.2); --c-time-bg:rgba(150,165,255,.06);
+  --c-dist:#e9ecff; --c-dist-glow:rgba(150,165,255,.2); --c-dist-bg:rgba(150,165,255,.06);
+  --c-pulse:#ff5fa2; --c-kcal:#fbbf24; --c-motor:#38e1f5;
+  --shadow-1:0 10px 30px rgba(3,6,22,.5), inset 0 1px 0 rgba(255,255,255,.045);
+}
+html,body{background:#0a0e1c !important}
+body{background:
+   radial-gradient(90% 38% at 85% -6%, rgba(124,107,255,.22), transparent 60%),
+   radial-gradient(70% 30% at 0% 4%, rgba(56,225,245,.13), transparent 60%),
+   linear-gradient(180deg,#0b1020 0%,#090c19 100%) fixed !important;
+  color:var(--text);
+  font-feature-settings:"tnum" 1,"lnum" 1; font-variant-numeric:tabular-nums;
+  letter-spacing:0;
+}
+
+/* ---------- الأسطح ---------- */
+html body .panel{background:linear-gradient(180deg,#151b3a 0%,#111631 100%) !important;border:1px solid var(--line) !important;border-radius:22px !important;box-shadow:var(--shadow-1) !important;padding:16px !important}
+html body .panel h2{font-size:16px;font-weight:800;margin:0 0 12px;color:var(--text);letter-spacing:0}
+html body .card{border-radius:18px}
+html body .m-tile,html body .clean-accordion{background:rgba(255,255,255,.035) !important;border:1px solid var(--line) !important;border-radius:16px !important}
+html body .clean-accordion>summary{color:var(--text) !important}
+html body hr{border:0 !important;border-top:1px solid var(--line) !important}
+html body .subpage-header{background:rgba(14,19,42,.92) !important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line) !important}
+html body .subpage-overlay{background:#0a0e1c !important}
+html body .chip{background:rgba(255,255,255,.05) !important;border:1px solid var(--line) !important;color:var(--dim) !important;font-weight:700}
+
+/* ---------- الشريط العلوي ---------- */
+html body .compact-cockpit-bar{background:rgba(12,16,36,.78) !important;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line) !important;flex-wrap:nowrap !important;gap:8px !important;padding-block:8px !important}
+html body .ccb-brand{white-space:nowrap !important;font-size:15px !important;font-weight:900 !important;gap:8px !important;flex:0 0 auto}
+html body .ccb-ver{white-space:nowrap !important;font-size:10px !important;font-weight:700 !important;padding:3px 8px !important;border-radius:99px !important;background:rgba(124,107,255,.16) !important;border:1px solid rgba(124,107,255,.35) !important;color:#c9c2ff !important}
+html body .ccb-status{white-space:nowrap !important;font-size:12px !important}
+html body #navMenuBtn{background:rgba(255,255,255,.06) !important;border:1px solid var(--line) !important;border-radius:14px !important;min-height:40px !important;width:44px;padding:0 !important}
+html body .bclk{border-radius:12px !important;background:rgba(0,0,0,.32) !important;border:1px solid var(--line) !important}
+
+/* ---------- البطل: السرعة ---------- */
+html body .sport-gauge{background:rgba(255,255,255,.04) !important;border:1px solid var(--line) !important;border-radius:20px !important;box-shadow:none !important}
+html body .sport-gauge .sg-lbl{font-size:12px !important;font-weight:700 !important;color:var(--dim) !important;letter-spacing:0 !important;gap:6px}
+html body .sport-gauge .sg-lbl::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--dim);flex:0 0 auto}
+html body .gauge-incline .sg-lbl::before{background:var(--c-incline)}
+html body .gauge-time .sg-lbl::before{background:var(--ok)}
+html body .gauge-dist .sg-lbl::before{background:var(--sp-c)}
+html body .sport-gauge .sg-val{color:var(--text) !important;text-shadow:none !important;font-weight:800 !important}
+html body .gauge-incline .sg-val,html body .gauge-time .sg-val,html body .gauge-dist .sg-val{font-size:clamp(24px,7.4vw,34px) !important}
+html body .gauge-speed{min-height:188px !important;border-radius:26px !important;border:1px solid rgba(124,107,255,.35) !important;
+  background:
+    radial-gradient(80% 90% at 50% 0%, rgba(124,107,255,.30), transparent 62%),
+    radial-gradient(60% 70% at 100% 100%, rgba(255,95,162,.16), transparent 60%),
+    radial-gradient(60% 70% at 0% 100%, rgba(56,225,245,.16), transparent 60%),
+    #0f1430 !important;
+  box-shadow:0 18px 44px rgba(10,8,40,.6), inset 0 1px 0 rgba(255,255,255,.07) !important}
+html body .gauge-speed .sg-lbl{font-size:13px !important;color:#c9d0ff !important}
+html body .gauge-speed .sg-lbl::before{background:var(--spectrum);width:9px;height:9px}
+html body .gauge-speed .sg-val{font-size:clamp(78px,26vw,112px) !important;line-height:1 !important;letter-spacing:-2px;
+  background:var(--spectrum) !important;-webkit-background-clip:text !important;background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;color:transparent !important;
+  filter:drop-shadow(0 6px 22px rgba(124,107,255,.45))}
+html body .gauge-speed .sg-hint{color:rgba(238,241,255,.55) !important}
+html body .eh-bar-fill{background:var(--spectrum) !important}
+html body .eh-bar-track,html body .bar,html body .gpb-progress-wrap{background:rgba(255,255,255,.07) !important;border:0 !important;border-radius:99px !important}
+html body .effort-hud-card{background:rgba(255,255,255,.035) !important;border:1px solid var(--line) !important;border-radius:18px !important}
+
+/* ---------- شريط المحرك والمؤشرات الحيوية ---------- */
+html body .motor-live-strip{background:rgba(255,255,255,.04) !important;border:1px solid var(--line) !important;border-radius:20px !important;box-shadow:none !important}
+html body .mls-icon{background:rgba(56,225,245,.12) !important;color:var(--sp-a) !important;border-radius:14px !important}
+html body .mls-btn-link{border-radius:99px !important}
+html body .vitals-pill-bar{background:rgba(255,255,255,.035) !important;border:1px solid var(--line) !important;border-radius:18px !important}
+
+/* ---------- الأزرار ---------- */
+html body button{border-radius:16px;border:1px solid var(--line-light);background:rgba(255,255,255,.06);color:var(--text);font-weight:700;box-shadow:none;transition:transform .12s ease,filter .12s ease}
+html body button:active{transform:scale(.97);filter:brightness(1.12)}
+html body button.primary{background:var(--spectrum) !important;color:#fff !important;border:0 !important;font-weight:800 !important;box-shadow:0 8px 24px rgba(124,107,255,.38) !important}
+html body button.primary.connected{background:rgba(52,211,153,.14) !important;color:var(--ok) !important;border:1px solid rgba(52,211,153,.5) !important;box-shadow:none !important}
+html body button.go,html body .btn-core-start{background:linear-gradient(135deg,#34d399,#10b981) !important;color:#032014 !important;border:0 !important;font-weight:900 !important;box-shadow:0 8px 24px rgba(52,211,153,.32) !important;border-radius:18px !important}
+html body button.stop,html body .btn-core-stop{background:linear-gradient(135deg,#fb5b6b,#e11d48) !important;color:#fff !important;border:0 !important;font-weight:900 !important;box-shadow:0 8px 24px rgba(251,91,107,.34) !important;border-radius:18px !important}
+html body .btn-core-pause{background:rgba(255,255,255,.07) !important;color:var(--text) !important;border:1px solid var(--line-light) !important;border-radius:18px !important}
+html body .btn-save{background:linear-gradient(135deg,#34d399,#10b981) !important;color:#032014 !important;border:0 !important;font-weight:800 !important}
+html body .btn-danger{background:rgba(251,91,107,.14) !important;color:#ff9aa5 !important;border:1px solid rgba(251,91,107,.45) !important}
+html body .preset-chip{background:rgba(255,255,255,.05) !important;border:1px solid var(--line-light) !important;color:var(--text) !important;border-radius:14px !important;font-weight:800 !important}
+html body button:disabled{opacity:.38 !important;background:rgba(255,255,255,.03) !important;color:#6c76a3 !important;border-color:var(--line) !important;box-shadow:none !important}
+html body button:focus-visible,html body .tab-btn:focus-visible{outline:2px solid var(--sp-a) !important;outline-offset:2px}
+
+/* ---------- حقول الإدخال ---------- */
+html body input:not([type=checkbox]):not([type=radio]):not([type=range]),html body select,html body textarea{background:rgba(0,0,0,.28) !important;border:1px solid var(--line-light) !important;border-radius:14px !important;color:var(--text) !important}
+html body input:not([type=checkbox]):not([type=radio]):not([type=range]):focus,html body select:focus,html body textarea:focus{outline:0 !important;border-color:var(--sp-a) !important;box-shadow:0 0 0 3px rgba(56,225,245,.18) !important}
+html body input[type=range]{accent-color:var(--sp-b)}
+
+/* ---------- مفاتيح التبديل (بدل مربعات الاختيار) ---------- */
+html body .grip-toggle-row{background:rgba(255,255,255,.04) !important;border:1px solid var(--line) !important;border-radius:18px !important;padding:12px 14px !important}
+html body .grip-toggle-label{gap:12px;font-weight:700;line-height:1.55}
+html body .grip-toggle-label input[type=checkbox]{-webkit-appearance:none !important;appearance:none !important;transform:none !important;width:46px !important;height:27px !important;min-height:27px !important;flex:0 0 46px;border-radius:99px !important;background:#262d5a !important;border:1px solid var(--line-light) !important;position:relative;cursor:pointer;transition:background .18s}
+html body .grip-toggle-label input[type=checkbox]::after{content:"";position:absolute;top:2px;inset-inline-start:2px;width:21px;height:21px;border-radius:50%;background:#c9d0ff;transition:inset-inline-start .18s,background .18s}
+html body .grip-toggle-label input[type=checkbox]:checked{background:var(--spectrum) !important;border-color:transparent !important}
+html body .grip-toggle-label input[type=checkbox]:checked::after{inset-inline-start:21px;background:#fff}
+html body .grip-toggle-status{font-size:11px;font-weight:800;color:var(--dim);white-space:nowrap}
+
+/* ---------- شريط التبويبات السفلي ---------- */
+html body #tabs{background:rgba(12,16,36,.86) !important;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--line) !important;box-shadow:0 -10px 30px rgba(3,6,22,.5) !important}
+html body #tabs button,html body #tabs .tab-btn{color:var(--dim) !important;background:none !important;border:0 !important;border-radius:0 !important;box-shadow:none !important;font-weight:700 !important;position:relative}
+html body #tabs button.on,html body #tabs .tab-btn.on{color:var(--text) !important;background:none !important;box-shadow:none !important}
+html body #tabs button.on::before,html body #tabs .tab-btn.on::before{content:"";position:absolute;top:0;left:22%;right:22%;height:3px;border-radius:0 0 4px 4px;background:var(--spectrum)}
+html body #tabs button.on .tab-ic,html body #tabs .tab-btn.on .tab-ic{filter:drop-shadow(0 0 8px rgba(124,107,255,.7))}
+
+/* ---------- لمسات أخيرة ---------- */
+html body .dot.on{background:var(--ok) !important;box-shadow:0 0 12px var(--ok-glow) !important}
+html body ::-webkit-scrollbar{width:6px;height:6px}html body ::-webkit-scrollbar-thumb{background:rgba(150,165,255,.25);border-radius:6px}
+@media (prefers-reduced-motion:reduce){html body *{transition:none !important;animation:none !important}}
+
+/* ---------- تصحيحات الشريط العلوي والمسافات ---------- */
+html body .compact-cockpit-bar{padding-inline:10px !important;gap:6px !important;overflow:hidden}
+html body .compact-cockpit-bar>*{min-width:0}
+html body .ccb-brand{font-size:14px !important;gap:6px !important}
+html body .ccb-brand>span:first-child{overflow:hidden;text-overflow:ellipsis}
+html body .ccb-ver{font-size:9.5px !important;padding:2px 7px !important}
+html body .bclk{flex:0 1 auto !important;max-width:104px;overflow:hidden;padding:4px 8px !important}
+html body .bclk svg.dg{height:15px !important}
+html body #navMenuBtn{width:40px !important;min-width:40px !important;flex:0 0 40px}
+html body .ccb-status{flex:0 0 auto;gap:5px !important;font-size:11.5px !important}
+html body .grip-toggle-row{gap:12px;margin-bottom:10px !important}
+html body .grip-toggle-row>label{flex:1;min-width:0}
+html body .bclk{max-width:none !important}
+html body .bclk svg.dg{height:13px !important}
+html body .ccb-ver{font-size:9px !important}
+html body .bclk{flex:0 0 auto !important;overflow:visible !important;padding:4px 6px !important}
+html body #navMenuBtn{width:36px !important;min-width:36px !important;flex:0 0 36px !important;min-height:36px !important}
+html body .ccb-brand{font-size:13px !important}
+html body .ccb-status{font-size:11px !important}
+html body #tempSubTabs button{border-radius:14px !important;background:rgba(255,255,255,.05) !important;border:1px solid var(--line) !important;color:var(--dim) !important;box-shadow:none !important}
+html body #tempSubTabs button.on,html body #tempSubTabs button.active{background:var(--spectrum) !important;color:#fff !important;border:0 !important;box-shadow:0 6px 18px rgba(124,107,255,.35) !important}
 </style>
 </head>
 <body>
@@ -2139,7 +2295,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI3 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -2224,7 +2380,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 
     <!-- 4. شريط المؤشرات الحيوية والمحرك الملون (Vitals Pill) -->
     <div class="vitals-pill-bar">
-      <div class="v-item v-pulse" id="cHr" title="معدل نبضات القلب"><span>❤️</span><b id="lvHr">--</b><span class="v-unit">bpm</span></div>
+      <div class="v-item v-pulse" id="cHrItem" title="معدل نبضات القلب"><span>❤️</span><b id="lvHr">--</b><span class="v-unit">bpm</span></div>
       <div class="v-item v-kcal"><span>🔥</span><b id="lvKcal">--</b><span class="v-unit">kcal</span></div>
       <div class="v-item v-motor tmini" id="tmLive"><span>⚡</span><b class="tmv">--°C</b></div>
     </div>
@@ -2302,7 +2458,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
       <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:space-between">
         <button type="button" class="preset-chip" onclick="vtBindLastHeardToSelected()" style="flex:1.3;min-height:34px;font-size:11.5px;background:rgba(16,185,129,0.2);border-color:rgba(16,185,129,0.5);color:#6ee7b7">🔗 ربط آخر كلمة مسموعة بالرقم المختار</button>
         <button type="button" class="preset-chip" onclick="vtCancelTrain()" style="flex:0.8;min-height:34px;font-size:11.5px;background:#1e293b">⏹ إلغاء</button>
-        <button type="button" class="preset-chip" onclick="vtClearAllTraining()" style="flex:0.9;min-height:34px;font-size:11.5px;background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.4);color:#fca5a5">🗑️ مسح التدريب</button>
+        <button type="button" class="preset-chip btn-danger" onclick="vtClearAllTraining()" style="flex:0.9;min-height:34px;font-size:11.5px">🗑️ مسح التدريب</button>
       </div>
     </details>
 
@@ -2375,7 +2531,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 </div>
 <div class="panel" id="rtPanel" style="display:none!important">
   <h2>طريق GPX (السرعة والميل يتبعان الطريق)</h2>
-  <div class="row r2" style="margin-bottom:8px"><select id="rtLib"></select><button id="rtDel">حذف المسار</button></div>
+  <div class="row r2 u-mb8"><select id="rtLib"></select><button id="rtDel">حذف المسار</button></div>
   <button id="rtPick" style="width:100%">إضافة ملف GPX (يمكن اختيار عدة ملفات)</button>
   <input type="file" id="rtFile" accept=".gpx,application/gpx+xml,text/xml,application/xml" multiple hidden>
   <div id="rtInfo" style="font-size:13px;color:var(--dim);margin:8px 0;line-height:1.8">لم يُختر ملف بعد.</div>
@@ -2383,37 +2539,37 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
   <canvas id="rtCv" height="400" style="width:100%;height:400px;display:none;margin-bottom:6px"></canvas>
   <div id="rtLeg" style="font-size:12px;color:var(--dim);margin-bottom:8px;line-height:1.8;display:none"><span style="color:#94a3b8">━ الارتفاع (م)</span> &nbsp; <span style="color:#3fb8c9">▮ الميل المنتظر (%)</span> &nbsp; <span style="color:#ffb020">▮ السرعة المنتظرة (كم/س)</span><br>كل مدرج هو متوسط مقطع من الطريق، والخط البرتقالي فوق مدرج الميل يدل على أشد ميل داخل المقطع. الجزء الذي قطعته يظهر أسطع. اضغط على المخطط لتحديد نقطة البداية.</div>
   <div id="rtPlan" style="font-size:13px;line-height:1.8;margin-bottom:6px"></div>
-  <details style="margin-bottom:8px"><summary>جدول السرعة والميل لكل كيلومتر</summary><div id="rtTbl" style="overflow-x:auto"></div></details>
+  <details class="u-mb8"><summary>جدول السرعة والميل لكل كيلومتر</summary><div id="rtTbl" style="overflow-x:auto"></div></details>
   <label style="display:block;font-size:13px;margin-bottom:6px"><input type="checkbox" id="rtSpdOn" checked style="width:auto;min-height:0"> التحكم بالسرعة تلقائياً (إن كان في الملف أوقات)</label>
   <label style="display:block;font-size:13px;margin-bottom:10px"><input type="checkbox" id="rtIncOn" checked style="width:auto;min-height:0"> التحكم بالميل تلقائياً</label>
   <details><summary>خيارات متقدمة (الميل، السرعة، الإحماء)</summary>
   <div class="row r2">
-    <label style="font-size:12px;color:var(--dim)">نسبة الميل (%)<input id="rtScale" type="number" value="100" min="10" max="200" step="5" inputmode="numeric"></label>
-    <label style="font-size:12px;color:var(--dim)">أقصى ميل<input id="rtCap" type="number" value="12" min="1" max="40" step="1" inputmode="numeric"></label>
+    <label class="u-dim12">نسبة الميل (%)<input id="rtScale" type="number" value="100" min="10" max="200" step="5" inputmode="numeric"></label>
+    <label class="u-dim12">أقصى ميل<input id="rtCap" type="number" value="12" min="1" max="40" step="1" inputmode="numeric"></label>
   </div>
   <div class="row r2">
-    <label style="font-size:12px;color:var(--dim)">نسبة السرعة (%)<input id="rtSScale" type="number" value="100" min="30" max="150" step="5" inputmode="numeric"></label>
-    <label style="font-size:12px;color:var(--dim)">أقصى سرعة (كم/س)<input id="rtSMax" type="number" value="12" min="2" max="30" step="0.5" inputmode="decimal"></label>
+    <label class="u-dim12">نسبة السرعة (%)<input id="rtSScale" type="number" value="100" min="30" max="150" step="5" inputmode="numeric"></label>
+    <label class="u-dim12">أقصى سرعة (كم/س)<input id="rtSMax" type="number" value="12" min="2" max="30" step="0.5" inputmode="decimal"></label>
   </div>
   <div class="row r2">
-    <label style="font-size:12px;color:var(--dim)">أقل سرعة (كم/س)<input id="rtSMin" type="number" value="3" min="1" max="20" step="0.5" inputmode="decimal"></label>
-    <label style="font-size:12px;color:var(--dim)">التنبيه قبل (ثوانٍ)<input id="rtWarn" type="number" value="10" min="3" max="60" step="1" inputmode="numeric"></label>
+    <label class="u-dim12">أقل سرعة (كم/س)<input id="rtSMin" type="number" value="3" min="1" max="20" step="0.5" inputmode="decimal"></label>
+    <label class="u-dim12">التنبيه قبل (ثوانٍ)<input id="rtWarn" type="number" value="10" min="3" max="60" step="1" inputmode="numeric"></label>
   </div>
   <div class="row r2">
-    <label style="font-size:12px;color:var(--dim)">إحماء (دقائق، 0 = بلا)<input id="rtWarm" type="number" value="3" min="0" max="15" step="1" inputmode="numeric"></label>
-    <label style="font-size:12px;color:var(--dim)">سرعة بداية الإحماء (كم/س)<input id="rtW0" type="number" value="5" min="1" max="20" step="0.5" inputmode="decimal"></label>
+    <label class="u-dim12">إحماء (دقائق، 0 = بلا)<input id="rtWarm" type="number" value="3" min="0" max="15" step="1" inputmode="numeric"></label>
+    <label class="u-dim12">سرعة بداية الإحماء (كم/س)<input id="rtW0" type="number" value="5" min="1" max="20" step="0.5" inputmode="decimal"></label>
   </div>
   <div class="row r2">
-    <label style="font-size:12px;color:var(--dim)">أقل تغيير للسرعة (كم/س)<input id="rtSDb" type="number" value="1" min="0" max="5" step="0.5" inputmode="decimal"></label>
-    <label style="font-size:12px;color:var(--dim)">أقل تغيير للميل (%)<input id="rtIDb" type="number" value="2" min="0" max="10" step="1" inputmode="numeric"></label>
+    <label class="u-dim12">أقل تغيير للسرعة (كم/س)<input id="rtSDb" type="number" value="1" min="0" max="5" step="0.5" inputmode="decimal"></label>
+    <label class="u-dim12">أقل تغيير للميل (%)<input id="rtIDb" type="number" value="2" min="0" max="10" step="1" inputmode="numeric"></label>
   </div>
   <div class="row r2">
-    <label style="font-size:12px;color:var(--dim)">أقل فاصل بين تغييرين (ثوانٍ)<input id="rtGap" type="number" value="20" min="2" max="300" step="1" inputmode="numeric"></label>
+    <label class="u-dim12">أقل فاصل بين تغييرين (ثوانٍ)<input id="rtGap" type="number" value="20" min="2" max="300" step="1" inputmode="numeric"></label>
   </div>
   <div style="font-size:12px;color:var(--dim);margin-bottom:8px;line-height:1.7">رفع هذه القيم يقلّل تغييرات السرعة والميل فتخفّ الحركة على المشاية، لكن الخطة المنفذة تبتعد قليلًا عن الدقيقة.</div>
 </details>
   <div class="row r2">
-    <label style="font-size:12px;color:var(--dim)">الزمن الهدف (دقائق، 0 = بلا)<input id="rtTarget" type="number" value="0" min="0" max="600" step="1" inputmode="decimal"></label>
+    <label class="u-dim12">الزمن الهدف (دقائق، 0 = بلا)<input id="rtTarget" type="number" value="0" min="0" max="600" step="1" inputmode="decimal"></label>
   </div>
   <div id="rtMsg" style="color:#eab308;font-size:13px;line-height:1.7;margin-bottom:6px"></div>
   <div id="rtStat" style="text-align:center;margin:8px 0;font-weight:700;line-height:1.8"></div>
@@ -2458,14 +2614,14 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
       <input id="wfSsidInput" type="text" placeholder="اسم شبكة الواي فاي (SSID)" autocomplete="off" style="min-height:36px;font-size:12.5px;padding:4px 10px">
       <input id="wfPassInput" type="password" placeholder="كلمة مرور الواي فاي" autocomplete="off" style="min-height:36px;font-size:12.5px;padding:4px 10px">
     </div>
-    <button type="button" id="btnSaveWifiNtp" onclick="saveWifiNtpConfig()" style="width:100%;min-height:36px;font-size:12.5px;font-weight:700;background:#0284c7;color:#fff;border:none;border-radius:8px;cursor:pointer">💾 حفظ الواي فاي في اللوحة ومزامنة الساعة آلياً</button>
+    <button type="button" id="btnSaveWifiNtp" onclick="saveWifiNtpConfig()" style="width:100%;min-height:36px;font-size:12.5px;font-weight:700;border-radius:8px;cursor:pointer" class="btn-save">💾 حفظ الواي فاي في اللوحة ومزامنة الساعة آلياً</button>
   </div>
 
-  <div class="row r2" style="margin-top:8px">
+  <div class="row r2 u-mt8">
     <button id="mhRef">🔄 تحديث السجل</button>
     <button id="mhTime">🕒 مزامنة يدوية من الهاتف</button>
   </div>
-  <div class="row r2" style="margin-top:8px">
+  <div class="row r2 u-mt8">
     <button id="mhReset">إعادة تعلّم الأساس</button>
     <button id="mhClear">مسح سجل المحرك</button>
   </div>
@@ -2577,7 +2733,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
     <div class="tmini" id="tmRun"><b class="tmv">--</b><span class="tml">حرارة المحرك والتيار</span></div>
   </div>
   <div id="rNext" style="font-size:13px;font-weight:700;color:#38bdf8;margin:6px 0;text-align:center"></div>
-  <details open style="margin-top:8px">
+  <details open class="u-mt8">
     <summary>مخطط وجدول مراحل البرنامج</summary>
     <div id="chart"></div>
     <div class="pl" id="pl"></div>
@@ -2647,7 +2803,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
 
       <div id="rawExportRow" style="display:none;gap:8px">
-        <button type="button" id="btnDownloadCsv" style="flex:1.2;min-height:40px;font-weight:800;font-size:12.5px;background:var(--ok);color:#000;border-radius:8px" onclick="downloadRawCSV()">
+        <button type="button" id="btnDownloadCsv" onclick="downloadRawCSV()" style="flex:1.2;min-height:40px;font-weight:800;font-size:12.5px;border-radius:8px" class="btn-save">
           💾 حفظ ملف البيانات (.csv)
         </button>
         <button type="button" id="btnCopyData" style="flex:1;min-height:40px;font-weight:800;font-size:12.5px;background:#1e293b;color:#fff;border-radius:8px;border:1px solid rgba(255,255,255,0.2)" onclick="copyRawData()">
@@ -2677,7 +2833,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 
   <!-- بطاقة تشخيص الأمان وسبب التوقف البارزة -->
   <div class="card" id="diagBox" style="background:linear-gradient(135deg, rgba(15,23,42,0.85), rgba(30,41,59,0.95));border:1.5px solid rgba(56,189,248,0.25);border-radius:12px;padding:12px 14px;margin:10px 0 14px 0;box-shadow:0 4px 14px rgba(0,0,0,0.3)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <div class="u-row-between">
       <div style="font-weight:bold;font-size:13.5px;display:flex;align-items:center;gap:6px;color:var(--text)">
         <span>🛡️ خانة تشخيص الأمان وسبب التوقف</span>
       </div>
@@ -2703,13 +2859,13 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
   </div>
   <!-- بطاقة سجل آخر 5 أخطاء للأمان المحفوظة في فلاش اللوحة NVS (v91) -->
   <div class="card" id="flogBox" style="background:linear-gradient(135deg, rgba(15,23,42,0.85), rgba(30,41,59,0.95));border:1.5px solid rgba(148,163,184,0.25);border-radius:12px;padding:12px 14px;margin:10px 0 14px 0;box-shadow:0 4px 14px rgba(0,0,0,0.3)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <div class="u-row-between">
       <div style="font-weight:bold;font-size:13.5px;display:flex;align-items:center;gap:6px;color:var(--text)">
         <span>📋 سجل آخر 5 أخطاء أمان محفوظة في اللوحة (NVS Flash)</span>
       </div>
       <div style="display:flex;gap:6px">
         <button type="button" onclick="bridgeCmd('FQ')" style="min-height:28px;padding:2px 8px;font-size:11px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:6px;color:#fff;cursor:pointer">🔄 تحديث</button>
-        <button type="button" onclick="if(confirm('هل تريد مسح سجل الأخطاء من ذاكرة اللوحة NVS نهائياً؟')) bridgeCmd('FC')" style="min-height:28px;padding:2px 8px;font-size:11px;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);border-radius:6px;color:var(--red);cursor:pointer">🗑️ مسح</button>
+        <button type="button" onclick="if(confirm('هل تريد مسح سجل الأخطاء من ذاكرة اللوحة NVS نهائياً؟')) bridgeCmd('FC')" style="min-height:28px;padding:2px 8px;font-size:11px;border-radius:6px;cursor:pointer" class="btn-danger">🗑️ مسح</button>
       </div>
     </div>
     <div id="flogList" style="display:flex;flex-direction:column;gap:6px;font-size:12px">
@@ -2719,143 +2875,6 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
     </div>
   </div>
 
-  <!-- بطاقة درع الأمان الذكي المستقلة تماماً عن مربع الأخطاء (Smart Fall & Safety Guard) -->
-  <div class="card" id="safetyCard" style="background:linear-gradient(135deg, rgba(15,23,42,0.92), rgba(30,41,59,0.98));border:1.5px solid rgba(56,189,248,0.3);border-radius:14px;padding:14px 16px;margin:12px 0 16px 0;box-shadow:0 6px 20px rgba(0,0,0,0.4)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <div style="font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px;color:var(--text)">
-        <span>🛡️ درع الأمان وكشف السقوط والنزول التلقائي (DSP Guard)</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span id="sfBadge" style="font-size:11px;padding:3px 9px;border-radius:6px;background:rgba(16,185,129,0.15);color:var(--ok);font-weight:bold;border:1px solid rgba(16,185,129,0.3)">
-          🟢 المراقبة جاهزة
-        </span>
-      </div>
-    </div>
-
-    <!-- مفتاح وضع الاختبار الآمن (Dry-Run Test Mode) -->
-    <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
-      <div>
-        <div style="font-weight:bold;font-size:12.5px;color:var(--amber);display:flex;align-items:center;gap:5px">
-          <span>🧪 وضع الاختبار الآمن (بدون إيقاف المحرك)</span>
-        </div>
-        <div style="font-size:10.5px;color:var(--dim);margin-top:2px">
-          تنبيه صوتي ومرئي فقط لتجربة الحساسية وقياس الأوقات بأمان تام قبل تفعيل الإيقاف الحقيقي
-        </div>
-      </div>
-      <label style="position:relative;display:inline-flex;align-items:center;cursor:pointer">
-        <input type="checkbox" id="sfTestToggle" onchange="onSfTestToggleChanged()" style="transform:scale(1.4);accent-color:var(--amber);cursor:pointer">
-      </label>
-    </div>
-
-    <!-- الآليات الثلاث المجمعة مع بارامتراتها القابلة للتعديل -->
-    <div style="display:flex;flex-direction:column;gap:12px">
-
-      <!-- 1. آلية كاشف النزول والسقوط السريع (Dismount) -->
-      <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:10px 12px;border:1px solid rgba(255,255,255,0.06)">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <div style="font-weight:bold;font-size:12.5px;color:var(--text);display:flex;align-items:center;gap:6px">
-            <span>⚡ 1. كاشف النزول أو الخروج من السير (Dismount)</span>
-          </div>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
-            <span style="font-size:11px;color:var(--dim)">تفعيل:</span>
-            <input type="checkbox" id="sfFsEn" checked onchange="updateSafetyConfigFromUI()" style="transform:scale(1.2);accent-color:var(--accent);cursor:pointer">
-          </label>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11.5px">
-          <div>
-            <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
-              <span>مهلة انعدام الخطوة:</span>
-              <b id="sfFsMsLbl" style="color:var(--accent)">1.5 ثانية</b>
-            </div>
-            <input type="range" id="sfFsMs" min="0.5" max="20.0" step="0.5" value="1.5" oninput="$('sfFsMsLbl').textContent=(+this.value).toFixed(1)+' ثانية'" onchange="updateSafetyConfigFromUI()" style="width:100%">
-          </div>
-          <div>
-            <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
-              <span>أدنى سرعة للتفعيل:</span>
-              <b id="sfFsVminLbl" style="color:var(--accent)">3.0 كم/س</b>
-            </div>
-            <input type="range" id="sfFsVmin" min="1.5" max="6.0" step="0.5" value="3.0" oninput="$('sfFsVminLbl').textContent=(+this.value).toFixed(1)+' كم/س'" onchange="updateSafetyConfigFromUI()" style="width:100%">
-          </div>
-        </div>
-      </div>
-
-      <!-- 2. آلية كاشف الانزلاق والصدمة الشاذة (Sustained Drag) -->
-      <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:10px 12px;border:1px solid rgba(255,255,255,0.06)">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <div style="font-weight:bold;font-size:12.5px;color:var(--text);display:flex;align-items:center;gap:6px">
-            <span>🛑 2. كاشف الانزلاق والاحتكاك الشاذ (Sustained Drag)</span>
-          </div>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
-            <span style="font-size:11px;color:var(--dim)">تفعيل:</span>
-            <input type="checkbox" id="sfDrEn" checked onchange="updateSafetyConfigFromUI()" style="transform:scale(1.2);accent-color:var(--accent);cursor:pointer">
-          </label>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11.5px">
-          <div>
-            <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
-              <span>مدة الصدمة الميكانيكية:</span>
-              <b id="sfDrMsLbl" style="color:var(--accent)">250 ms</b>
-            </div>
-            <input type="range" id="sfDrMs" min="100" max="600" step="25" value="250" oninput="$('sfDrMsLbl').textContent=this.value+' ms'" onchange="updateSafetyConfigFromUI()" style="width:100%">
-          </div>
-          <div>
-            <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
-              <span>فارق أمبير الصدمة:</span>
-              <b id="sfDrAmpLbl" style="color:var(--accent)">+1.2 A</b>
-            </div>
-            <input type="range" id="sfDrAmp" min="0.6" max="3.0" step="0.1" value="1.2" oninput="$('sfDrAmpLbl').textContent='+'+(+this.value).toFixed(1)+' A'" onchange="updateSafetyConfigFromUI()" style="width:100%">
-          </div>
-        </div>
-      </div>
-
-      <!-- 3. آلية الإنقاذ وتخفيض السرعة عند الارتباك (Auto-Rescue) -->
-      <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:10px 12px;border:1px solid rgba(255,255,255,0.06)">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <div style="font-weight:bold;font-size:12.5px;color:var(--text);display:flex;align-items:center;gap:6px">
-            <span>🏃 3. نظام الإنقاذ وخفض السرعة عند الارتباك (Auto-Rescue)</span>
-          </div>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
-            <span style="font-size:11px;color:var(--dim)">تفعيل:</span>
-            <input type="checkbox" id="sfRcEn" checked onchange="updateSafetyConfigFromUI()" style="transform:scale(1.2);accent-color:var(--accent);cursor:pointer">
-          </label>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11.5px">
-          <div>
-            <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
-              <span>مقدار خفض السرعة:</span>
-              <b id="sfRcDropLbl" style="color:var(--accent)">-2.5 كم/س</b>
-            </div>
-            <input type="range" id="sfRcDrop" min="1.0" max="5.0" step="0.5" value="2.5" oninput="$('sfRcDropLbl').textContent='-'+(+this.value).toFixed(1)+' كم/س'" onchange="updateSafetyConfigFromUI()" style="width:100%">
-          </div>
-          <div>
-            <div style="display:flex;justify-content:space-between;color:var(--dim);margin-bottom:4px">
-              <span>نسبة تشتت الخطوات:</span>
-              <b id="sfRcVarLbl" style="color:var(--accent)">35%</b>
-            </div>
-            <input type="range" id="sfRcVar" min="15" max="55" step="5" value="35" oninput="$('sfRcVarLbl').textContent=this.value+'%'" onchange="updateSafetyConfigFromUI()" style="width:100%">
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- شريط حالة وسجل درع الأمان المستقل (منفصل تماماً عن مربع أخطاء المحرك) -->
-    <div id="sfEventLogBox" style="margin-top:12px;padding:9px 12px;border-radius:9px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);font-size:11.5px;color:var(--ok);display:flex;justify-content:space-between;align-items:center;gap:8px">
-      <span id="sfEventText">🛡️ درع الأمان الذكي نشط فوراً — يميز آلياً بين نبضة القدم العابرة (الصعود/المشي) والانحشار المستمر (قاع الموجة)</span>
-      <span id="sfEventTime" style="font-size:10px;color:var(--dim);white-space:nowrap">مستقر ✓</span>
-    </div>
-
-    <!-- أزرار الإجراء وسجل الأحداث الحي للأمان -->
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.08)">
-      <div id="sfLiveStatus" style="font-size:11px;color:var(--dim)">
-        ✓ الإعدادات متزامنة ومحفوظة في فلاش اللوحة (NVS)
-      </div>
-      <div style="display:flex;gap:8px">
-        <button type="button" onclick="window.sfForceReadFromBoard=true; bridgeCmd('SFQ')" style="min-height:28px;padding:3px 10px;font-size:11px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:#fff;cursor:pointer">🔄 قراءة اللوحة</button>
-        <button type="button" onclick="saveSafetyConfigToBoard()" style="min-height:28px;padding:3px 12px;font-size:11px;font-weight:bold;background:linear-gradient(135deg,#0284c7,#0369a1);border:1px solid #38bdf8;border-radius:6px;color:#fff;cursor:pointer">💾 حفظ في اللوحة</button>
-      </div>
-    </div>
-  </div>
 
   <!-- بطاقة المعايرة الميدانية الذكية للوزن والخطوات -->
   <!-- شبكة المؤشرات الستة الحيوية المدمجة (2x3) -->
@@ -2914,191 +2933,14 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
       <button type="button" onclick="bridgeCmd('IS')" style="min-height:42px;font-size:12.5px">🔄 تصفير الخطوات</button>
     </div>
 
-    <!-- الأكورديون 1: هوامش ضبط ومعايرة الـ DSP وحماية الانحشار (كامل 100%) -->
-    <details id="dspCfgDetails" class="clean-accordion" open style="margin:10px 0;border:1px solid var(--border);border-radius:14px;padding:12px;background:#131c26">
-      <summary style="font-weight:800;font-size:14px;color:var(--amber);cursor:pointer;padding:4px 0">
-        <span>⚙️ هوامش ضبط ومعايرة تيار المحرك والفحمات (DSP Tuning) ▾</span>
-      </summary>
-      <div style="font-size:12px;color:var(--dim);margin:8px 0 12px;line-height:1.7">
-        تتيح هذه الخيارات ضبط هوامش حساسية الحماية وتفرطح الفحمات بحرية حسب ظروف تشغيل المشاية، وتُحفظ مباشرة في ذاكرة اللوحة.
-      </div>
-      <div style="font-size: 12px; color: var(--dim); margin: 8px 0 12px; line-height: 1.8;">
-      تتيح هذه الخيارات ضبط هوامش حساسية الحماية وتفرطح الفحمات بحرية حسب ظروف تشغيل المشاية، وتُحفظ مباشرة في ذاكرة اللوحة الدائمة (NVS).
-    </div>
-    <div class="cfg-table" style="margin-bottom: 10px;">
-      <div class="cfg-row">
-        <div class="cfg-label">تيار المحرك المقنن المستمر (FLA) <button type="button" class="dsp-info-btn" onclick="showDspTip('fla')" title="شرح البارامتر">?</button><small>[الموصى به لمحرك 2.5HP: 10.0A]</small></div>
-        <div class="cfg-input-wrap"><input id="dspFLA" type="number" inputmode="decimal" step="0.5" min="5" max="25"> <span>A</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">حد حماية التوقف والانحشار (Stall Limit) <button type="button" class="dsp-info-btn" onclick="showDspTip('stl')" title="شرح البارامتر">?</button><small>[النطاق: 2.0A - 15.0A | الافتراضي: 10.0A]</small></div>
-        <div class="cfg-input-wrap"><input id="dspSTL" type="number" inputmode="decimal" step="0.5" min="2" max="15"> <span>A</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">زمن استجابة حماية التوقف <button type="button" class="dsp-info-btn" onclick="showDspTip('sd')" title="شرح البارامتر">?</button><small>[الموصى به: 300 ملي ثانية]</small></div>
-        <div class="cfg-input-wrap"><input id="dspSD" type="number" inputmode="numeric" step="50" min="100" max="1500"> <span>ms</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">عتبة تفرطح شرار الفحمات (Kurtosis) <button type="button" class="dsp-info-btn" onclick="showDspTip('kt')" title="شرح البارامتر">?</button><small>[الموصى به: 6.5]</small></div>
-        <div class="cfg-input-wrap"><input id="dspKT" type="number" inputmode="decimal" step="0.1" min="4" max="30"> <span>K</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">عتبة تراكم CUSUM للتحذير <button type="button" class="dsp-info-btn" onclick="showDspTip('cw')" title="شرح البارامتر">?</button><small>[الموصى به: 18.0 نقطة]</small></div>
-        <div class="cfg-input-wrap"><input id="dspCW" type="number" inputmode="decimal" step="1" min="5" max="50"> <span>نقطة</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">عتبة تراكم CUSUM للخطر الحرج <button type="button" class="dsp-info-btn" onclick="showDspTip('cc')" title="شرح البارامتر">?</button><small>[الموصى به: 45.0 نقطة]</small></div>
-        <div class="cfg-input-wrap"><input id="dspCC" type="number" inputmode="decimal" step="1" min="20" max="90"> <span>نقطة</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">حد تنبيه تشحيم السير الفارغ <button type="button" class="dsp-info-btn" onclick="showDspTip('eb')" title="شرح البارامتر">?</button><small>[الموصى به: 3.5A سحب فارغ]</small></div>
-        <div class="cfg-input-wrap"><input id="dspEB" type="number" inputmode="decimal" step="0.1" min="1.5" max="6"> <span>A</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">حساسية نبضة ضربة القدم <button type="button" class="dsp-info-btn" onclick="showDspTip('stp')" title="شرح البارامتر">?</button><small>[الموصى به: 0.22A]</small></div>
-        <div class="cfg-input-wrap"><input id="dspSTP" type="number" inputmode="decimal" step="0.02" min="0.08" max="0.8"> <span>A</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">معامل حساسية الحساس ACS758 <button type="button" class="dsp-info-btn" onclick="showDspTip('sns')" title="شرح البارامتر">?</button><small>[الموصى به على 3.3V: 26.4]</small></div>
-        <div class="cfg-input-wrap"><input id="dspSNS" type="number" inputmode="decimal" step="0.1" min="15" max="45"> <span>mV/A</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">الجهد الاسمي لناقل المحرك <button type="button" class="dsp-info-btn" onclick="showDspTip('v')" title="شرح البارامتر">?</button><small>[الموصى به لمشاية Kettler: 180V]</small></div>
-        <div class="cfg-input-wrap"><input id="dspV" type="number" inputmode="decimal" step="5" min="90" max="240"> <span>V</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">خط أساس السير بعد التشحيم <button type="button" class="dsp-info-btn" onclick="showDspTip('bl')" title="شرح البارامتر">?</button><small>[يتعلم ذاتياً عند الضغط على "تم التشحيم"]</small></div>
-        <div class="cfg-input-wrap"><input id="dspBL" type="number" inputmode="decimal" step="0.01" min="0.5" max="5" value="1.38"> <span>A</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">معايرة الحساسية تلقائياً <span dir="ltr" style="display:inline-block">(Auto Ratiometric)</span> <button type="button" class="dsp-info-btn" onclick="showDspTip('aes')" title="شرح البارامتر">?</button><small>[حساب الحساسية تلقائياً من جهد الصفر الفعلي]</small></div>
-        <div class="cfg-input-wrap">
-          <select id="dspAutoSens" style="padding:4px 8px;font-size:12px;background:var(--card);color:var(--txt);border:1px solid var(--border);border-radius:4px">
-            <option value="1">مفعّلة (تلقائي بحسب الفولت)</option>
-            <option value="0">يدوية (قيمة mV/A المحددة أعلاه)</option>
-          </select>
-        </div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">تأخير عزم العطالة للبداية <span dir="ltr" style="display:inline-block">(Inertia Delay)</span> <button type="button" class="dsp-info-btn" onclick="showDspTip('ijd')" title="شرح البارامتر">?</button><small>[الموصى به: 3.5 ثانية لعزل تسارع البكرات]</small></div>
-        <div class="cfg-input-wrap"><input id="dspInertia" type="number" inputmode="decimal" step="0.5" min="1.0" max="10.0"> <span>ثوانٍ</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">تعويض تيار الميل الكهربائي <span dir="ltr" style="display:inline-block">(Incline Comp)</span> <button type="button" class="dsp-info-btn" onclick="showDspTip('inc')" title="شرح البارامتر">?</button><small>[الموصى به: 0.15 A لكل 1% ميل]</small></div>
-        <div class="cfg-input-wrap"><input id="dspIncComp" type="number" inputmode="decimal" step="0.05" min="0.0" max="0.50"> <span>A/%</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">التتبع الحراري لنقطة الصفر عند السكون <button type="button" class="dsp-info-btn" onclick="showDspTip('ztr')" title="شرح البارامتر">?</button><small>[الموصى به: مفعّل لتعويض حرارة الغرفة وحوض المحرك]</small></div>
-        <div class="cfg-input-wrap">
-          <select id="dspZeroTrack" style="padding:4px 8px;font-size:12px;background:var(--card);color:var(--txt);border:1px solid var(--border);border-radius:4px">
-            <option value="1">مفعّل</option>
-            <option value="0">معطّل (صفر ثابت)</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div id="dspCfgStatus" style="font-size: 12.5px; margin-bottom: 8px; min-height: 18px;"></div>
-    <div class="row r3" style="gap: 6px;">
-      <button id="dspSaveBtn" type="button" style="min-height: 38px; font-weight: bold; background: var(--ok); color: #000;">حفظ الهوامش</button>
-      <button id="dspReadBtn" type="button" style="min-height: 38px;">قراءة من اللوحة</button>
-      <button id="dspResetBtn" type="button" style="min-height: 38px;">استعادة المصنع (2.5HP)</button>
-    </div>
-      <div class="row r2" style="margin-top:14px">
-        <button class="primary" id="dspSaveBtn" style="min-height:46px;font-weight:800" onclick="dspSave()">💾 حفظ الإعدادات في اللوحة</button>
-        <button type="button" onclick="bridgeCmd('KQ')" style="min-height:46px">🔄 قراءة من اللوحة</button>
-      </div>
-    </details>
 
-    <!-- الأكورديون 2: التحليلات الحركية واقتصادية الجري واستهلاك الكهرباء (كامل 100%) -->
-    <details class="clean-accordion" open style="margin:10px 0;border:1px solid var(--border);border-radius:14px;padding:12px;background:#131c26">
-      <summary style="font-weight:800;font-size:14px;color:#38bdf8;cursor:pointer;padding:4px 0">
-        <span>🏃‍♂️ تحليلات المشي واستهلاك الكهرباء وشريط التوازن ▾</span>
-      </summary>
-      <div class="mh-stat-grid" style="grid-template-columns:repeat(3,1fr);margin:10px 0 8px">
-      
-      <div class="mh-stat-card">
-        <b id="curEcon">-- Wh/km</b>
-        <span>اقتصادية الجري</span>
-        <small id="curEconLbl" style="font-size:11px;color:var(--ok);margin-top:3px;display:block">كفاءة ممتازة</small>
-      </div>
-      <div class="mh-stat-card">
-        <b id="curFatigue" style="color:var(--ok)">🟢 نشيط وموزون</b>
-        <span>مؤشر التعب والإجهاد</span>
-        <small style="font-size:10.5px;color:var(--dim);margin-top:3px;display:block">حماية من إصابات الركبة</small>
-      </div>
-    </div>
-
-    <!-- شريط توازن وتناسق الساقين التفاعلي -->
-    <div style="background:var(--panel-card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px">
-      <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:8px">
-        <span style="color:var(--amber);font-weight:700">⚡ إيقاع الخطى: <b id="gaitCadence" style="color:#fff">-- SPM</b></span>
-        <span style="color:var(--ok);font-weight:700">معدل الانتظام الإيقاعي: <b id="gaitSymVal">100%</b></span>
-      </div>
-      <div style="height:10px;background:rgba(255,255,255,0.08);border-radius:6px;overflow:hidden">
-        <div id="gaitRegBar" style="height:100%;width:100%;background:linear-gradient(90deg, #10b981, #0ea5e9);transition:width 0.3s;border-radius:6px"></div>
-      </div>
-      <div style="font-size:11px;color:var(--dim);margin-top:6px;display:flex;justify-content:space-between">
-        <span>ثبات وتناسق وتيرة الجري</span>
-        <span id="gaitTip" style="color:var(--ok);font-weight:700">🟢 إيقاع متوازن ومنتظم</span>
-      </div>
-    </div>
-
-    <!-- حماية السقوط والنزول التلقائي -->
-    <div style="background:rgba(239,68,68,0.04);border:1px solid rgba(239,68,68,0.25);border-radius:10px;padding:10px 12px;margin-bottom:8px">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <b style="font-size:13px;color:#f87171">🛡️ حماية السقوط والنزول التلقائي (Auto Step-Off)</b>
-          <div style="font-size:11.5px;color:var(--dim);margin-top:2px">إيقاف الحزام تلقائياً عند نزول المتدرب أو التعثر لأكثر من 4 ثوانٍ</div>
-        </div>
-        <label style="margin:0;cursor:pointer">
-          <input type="checkbox" id="optAutoStepOff" checked style="width:20px;height:20px;cursor:pointer">
-        </label>
-      </div>
-      <div id="stepOffBanner" style="display:none;margin-top:8px;padding:8px 10px;background:#ef4444;color:#fff;border-radius:6px;font-weight:bold;text-align:center;font-size:12.5px">
-        ⚠️ تم رصد نزول عن السير — جارٍ الإيقاف التلقائي للأمان...
-      </div>
-    </div>
-
-    <!-- التشخيص الميكانيكي لشد السير ورولمان البلي -->
-    <div class="mh-stat-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:8px">
-      <div class="mh-stat-card">
-        <b id="curTension" style="color:var(--ok)">🟢 شد مثالي وموزون</b>
-        <span>فحص شد سير الجري</span>
-      </div>
-      <div class="mh-stat-card">
-        <b id="curSymCard" style="color:var(--ok)">🟢 انتظام ممتاز</b>
-        <span>تطابق وتناسق الخطوات</span>
-      </div>
-    </div>
-
-    <!-- عداد وتكلفة الكهرباء -->
-    <div class="mh-stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:8px">
-      <div class="mh-stat-card"><b id="curKwhTotal">0.00 kWh</b><span>الطاقة التراكمية</span></div>
-      <div class="mh-stat-card"><b id="curCostSession">0.00 د.ج</b><span>تكلفة التمرين الحالي</span></div>
-      <div class="mh-stat-card"><b id="curCostRate">0.00 د.ج/س</b><span>معدل التكلفة بالساعة</span></div>
-    </div>
-    <div style="background:var(--panel-card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;font-size:12px">
-      <span>سعر الكهرباء (التعريفة):</span>
-      <div style="display:flex;align-items:center;gap:6px">
-        <input id="elecTariff" type="number" step="0.25" min="0.1" value="5.50" inputmode="decimal" style="width:75px;padding:4px 6px;text-align:center;font-weight:bold;min-height:0">
-        <select id="elecCurr" style="min-height:0;padding:4px 6px;font-size:11.5px">
-          <option value="د.ج">د.ج (جزائري)</option>
-          <option value="ريال">ريال</option>
-          <option value="درهم">درهم</option>
-          <option value="د.ت">د.ت (تونسي)</option>
-          <option value="$">$ (USD)</option>
-          <option value="€">€ (EUR)</option>
-        </select>
-      </div>
-    </div>
-    </details>
 
     <div class="page-btn-grid" style="margin: 14px 0 20px 0">
-      <button type="button" class="page-open-btn" onclick="openAppPage('pageDsp')">
+      <button type="button" class="page-open-btn" onclick="openDspSettings()">
         <div class="po-left">
           <div class="po-icon">⚙️</div>
           <div class="po-texts">
-            <b>ضبط وهوامش الـ DSP وحماية الانحشار</b>
+            <b>ضبط الـ DSP وحماية الانحشار (في ضبط اللوحة)</b>
             <span>حد الحماية (2-15A)، الفحمات، أزمنة الفصل</span>
           </div>
         </div>
@@ -3174,7 +3016,7 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
 
   <!-- 1. حدود حماية حرارة المحرك -->
   <div style="font-weight:700;font-size:13.5px;color:var(--amber);margin:10px 0 6px">🌡️ حدود حماية حرارة المحرك (°C):</div>
-  <div class="cfg-table" style="margin-bottom:8px">
+  <div class="cfg-table u-mb8">
     <div class="cfg-row">
       <div class="cfg-label">يبدأ الأصفر (تحذير) <small>(تبدأ السرعة بالانخفاض التدريجي)</small></div>
       <div class="cfg-input-wrap"><input id="tWarn" type="number" min="20" max="150" step="1" inputmode="decimal"> <span>°C</span></div>
@@ -3240,6 +3082,241 @@ body { padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important;
   <hr style="border:0;border-top:1px solid var(--line);margin:14px 0">
 
   <!-- Old OTA bottom section moved to top -->
+
+  <!-- ===== أُعيد تنظيمه v114.1-UI: درع الأمان وهوامش DSP ضمن ضبط اللوحة ===== -->
+  <!-- بطاقة درع الأمان الذكي المستقلة تماماً عن مربع الأخطاء (Smart Fall & Safety Guard) -->
+  <div class="card" id="safetyCard" style="background:linear-gradient(135deg, rgba(15,23,42,0.92), rgba(30,41,59,0.98));border:1.5px solid rgba(56,189,248,0.3);border-radius:14px;padding:14px 16px;margin:12px 0 16px 0;box-shadow:0 6px 20px rgba(0,0,0,0.4)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px;color:var(--text)">
+        <span>🛡️ درع الأمان وكشف السقوط والنزول التلقائي (DSP Guard)</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span id="sfBadge" style="font-size:11px;padding:3px 9px;border-radius:6px;background:rgba(16,185,129,0.15);color:var(--ok);font-weight:bold;border:1px solid rgba(16,185,129,0.3)">
+          🟢 المراقبة جاهزة
+        </span>
+      </div>
+    </div>
+
+    <!-- مفتاح وضع الاختبار الآمن (Dry-Run Test Mode) -->
+    <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-weight:bold;font-size:12.5px;color:var(--amber);display:flex;align-items:center;gap:5px">
+          <span>🧪 وضع الاختبار الآمن (بدون إيقاف المحرك)</span>
+        </div>
+        <div style="font-size:10.5px;color:var(--dim);margin-top:2px">
+          تنبيه صوتي ومرئي فقط لتجربة الحساسية وقياس الأوقات بأمان تام قبل تفعيل الإيقاف الحقيقي
+        </div>
+      </div>
+      <label style="position:relative;display:inline-flex;align-items:center;cursor:pointer">
+        <input type="checkbox" id="sfTestToggle" onchange="onSfTestToggleChanged()" style="transform:scale(1.4);accent-color:var(--amber);cursor:pointer">
+      </label>
+    </div>
+
+    <!-- الآليات الثلاث المجمعة مع بارامتراتها القابلة للتعديل -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <!-- 1. آلية كاشف النزول والسقوط السريع (Dismount) -->
+      <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:10px 12px;border:1px solid rgba(255,255,255,0.06)">
+        <div class="u-row-between">
+          <div style="font-weight:bold;font-size:12.5px;color:var(--text);display:flex;align-items:center;gap:6px">
+            <span>⚡ 1. كاشف النزول أو الخروج من السير (Dismount)</span>
+          </div>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <span class="u-dim11">تفعيل:</span>
+            <input type="checkbox" id="sfFsEn" checked onchange="updateSafetyConfigFromUI()" style="transform:scale(1.2);accent-color:var(--accent);cursor:pointer">
+          </label>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11.5px">
+          <div>
+            <div class="u-row-dim">
+              <span>مهلة انعدام الخطوة:</span>
+              <b id="sfFsMsLbl" style="color:var(--accent)">1.5 ثانية</b>
+            </div>
+            <input type="range" id="sfFsMs" min="0.5" max="20.0" step="0.5" value="1.5" oninput="$('sfFsMsLbl').textContent=(+this.value).toFixed(1)+' ثانية'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+          </div>
+          <div>
+            <div class="u-row-dim">
+              <span>أدنى سرعة للتفعيل:</span>
+              <b id="sfFsVminLbl" style="color:var(--accent)">3.0 كم/س</b>
+            </div>
+            <input type="range" id="sfFsVmin" min="1.5" max="6.0" step="0.5" value="3.0" oninput="$('sfFsVminLbl').textContent=(+this.value).toFixed(1)+' كم/س'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. آلية كاشف الانزلاق والصدمة الشاذة (Sustained Drag) -->
+      <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:10px 12px;border:1px solid rgba(255,255,255,0.06)">
+        <div class="u-row-between">
+          <div style="font-weight:bold;font-size:12.5px;color:var(--text);display:flex;align-items:center;gap:6px">
+            <span>🛑 2. كاشف الانزلاق والاحتكاك الشاذ (Sustained Drag)</span>
+          </div>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <span class="u-dim11">تفعيل:</span>
+            <input type="checkbox" id="sfDrEn" checked onchange="updateSafetyConfigFromUI()" style="transform:scale(1.2);accent-color:var(--accent);cursor:pointer">
+          </label>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11.5px">
+          <div>
+            <div class="u-row-dim">
+              <span>مدة الصدمة الميكانيكية:</span>
+              <b id="sfDrMsLbl" style="color:var(--accent)">250 ms</b>
+            </div>
+            <input type="range" id="sfDrMs" min="100" max="600" step="25" value="250" oninput="$('sfDrMsLbl').textContent=this.value+' ms'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+          </div>
+          <div>
+            <div class="u-row-dim">
+              <span>فارق أمبير الصدمة:</span>
+              <b id="sfDrAmpLbl" style="color:var(--accent)">+1.2 A</b>
+            </div>
+            <input type="range" id="sfDrAmp" min="0.6" max="3.0" step="0.1" value="1.2" oninput="$('sfDrAmpLbl').textContent='+'+(+this.value).toFixed(1)+' A'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. آلية الإنقاذ وتخفيض السرعة عند الارتباك (Auto-Rescue) -->
+      <div style="background:rgba(0,0,0,0.25);border-radius:10px;padding:10px 12px;border:1px solid rgba(255,255,255,0.06)">
+        <div class="u-row-between">
+          <div style="font-weight:bold;font-size:12.5px;color:var(--text);display:flex;align-items:center;gap:6px">
+            <span>🏃 3. نظام الإنقاذ وخفض السرعة عند الارتباك (Auto-Rescue)</span>
+          </div>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <span class="u-dim11">تفعيل:</span>
+            <input type="checkbox" id="sfRcEn" checked onchange="updateSafetyConfigFromUI()" style="transform:scale(1.2);accent-color:var(--accent);cursor:pointer">
+          </label>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11.5px">
+          <div>
+            <div class="u-row-dim">
+              <span>مقدار خفض السرعة:</span>
+              <b id="sfRcDropLbl" style="color:var(--accent)">-2.5 كم/س</b>
+            </div>
+            <input type="range" id="sfRcDrop" min="1.0" max="5.0" step="0.5" value="2.5" oninput="$('sfRcDropLbl').textContent='-'+(+this.value).toFixed(1)+' كم/س'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+          </div>
+          <div>
+            <div class="u-row-dim">
+              <span>نسبة تشتت الخطوات:</span>
+              <b id="sfRcVarLbl" style="color:var(--accent)">35%</b>
+            </div>
+            <input type="range" id="sfRcVar" min="15" max="55" step="5" value="35" oninput="$('sfRcVarLbl').textContent=this.value+'%'" onchange="updateSafetyConfigFromUI()" style="width:100%">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- شريط حالة وسجل درع الأمان المستقل (منفصل تماماً عن مربع أخطاء المحرك) -->
+    <div id="sfEventLogBox" style="margin-top:12px;padding:9px 12px;border-radius:9px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);font-size:11.5px;color:var(--ok);display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <span id="sfEventText">🛡️ درع الأمان الذكي نشط فوراً — يميز آلياً بين نبضة القدم العابرة (الصعود/المشي) والانحشار المستمر (قاع الموجة)</span>
+      <span id="sfEventTime" style="font-size:10px;color:var(--dim);white-space:nowrap">مستقر ✓</span>
+    </div>
+
+    <!-- أزرار الإجراء وسجل الأحداث الحي للأمان -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.08)">
+      <div id="sfLiveStatus" style="font-size:11px;color:var(--dim)">
+        ✓ الإعدادات متزامنة ومحفوظة في فلاش اللوحة (NVS)
+      </div>
+      <div style="display:flex;gap:8px">
+        <button type="button" onclick="window.sfForceReadFromBoard=true; bridgeCmd('SFQ')" style="min-height:28px;padding:3px 10px;font-size:11px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:#fff;cursor:pointer">🔄 قراءة اللوحة</button>
+        <button type="button" onclick="saveSafetyConfigToBoard()" style="min-height:28px;padding:3px 12px;font-size:11px;font-weight:bold;border-radius:6px;cursor:pointer" class="btn-save">💾 حفظ في اللوحة</button>
+      </div>
+    </div>
+  </div>
+
+    <!-- الأكورديون 1: هوامش ضبط ومعايرة الـ DSP وحماية الانحشار (كامل 100%) -->
+    <details id="dspCfgDetails" class="clean-accordion" style="margin:10px 0;border:1px solid var(--border);border-radius:14px;padding:12px;background:#131c26">
+      <summary style="font-weight:800;font-size:14px;color:var(--amber);cursor:pointer;padding:4px 0">
+        <span>⚙️ هوامش ضبط ومعايرة تيار المحرك والفحمات (DSP Tuning) ▾</span>
+      </summary>
+      <div style="font-size:12px;color:var(--dim);margin:8px 0 12px;line-height:1.7">
+        تتيح هذه الخيارات ضبط هوامش حساسية الحماية وتفرطح الفحمات بحرية حسب ظروف تشغيل المشاية، وتُحفظ مباشرة في ذاكرة اللوحة.
+      </div>
+    <div class="cfg-table" style="margin-bottom: 10px;">
+      <div class="cfg-row">
+        <div class="cfg-label">تيار المحرك المقنن المستمر (FLA) <button type="button" class="dsp-info-btn" onclick="showDspTip('fla')" title="شرح البارامتر">?</button><small>[الموصى به لمحرك 2.5HP: 10.0A]</small></div>
+        <div class="cfg-input-wrap"><input id="dspFLA" type="number" inputmode="decimal" step="0.5" min="5" max="25"> <span>A</span></div>
+      </div>
+      <div class="cfg-row">
+        <div class="cfg-label">حد حماية التوقف والانحشار (Stall Limit) <button type="button" class="dsp-info-btn" onclick="showDspTip('stl')" title="شرح البارامتر">?</button><small>[النطاق: 2.0A - 15.0A | الافتراضي: 10.0A]</small></div>
+        <div class="cfg-input-wrap"><input id="dspSTL" type="number" inputmode="decimal" step="0.5" min="2" max="15"> <span>A</span></div>
+      </div>
+      <div class="cfg-row">
+        <div class="cfg-label">زمن استجابة حماية التوقف <button type="button" class="dsp-info-btn" onclick="showDspTip('sd')" title="شرح البارامتر">?</button><small>[الموصى به: 300 ملي ثانية]</small></div>
+        <div class="cfg-input-wrap"><input id="dspSD" type="number" inputmode="numeric" step="50" min="100" max="1500"> <span>ms</span></div>
+      </div>
+      <div class="cfg-row">
+        <div class="cfg-label">عتبة تفرطح شرار الفحمات (Kurtosis) <button type="button" class="dsp-info-btn" onclick="showDspTip('kt')" title="شرح البارامتر">?</button><small>[الموصى به: 6.5]</small></div>
+        <div class="cfg-input-wrap"><input id="dspKT" type="number" inputmode="decimal" step="0.1" min="4" max="30"> <span>K</span></div>
+      </div>
+      <div class="cfg-row">
+        <div class="cfg-label">عتبة تراكم CUSUM للتحذير <button type="button" class="dsp-info-btn" onclick="showDspTip('cw')" title="شرح البارامتر">?</button><small>[الموصى به: 18.0 نقطة]</small></div>
+        <div class="cfg-input-wrap"><input id="dspCW" type="number" inputmode="decimal" step="1" min="5" max="50"> <span>نقطة</span></div>
+      </div>
+      <div class="cfg-row">
+        <div class="cfg-label">عتبة تراكم CUSUM للخطر الحرج <button type="button" class="dsp-info-btn" onclick="showDspTip('cc')" title="شرح البارامتر">?</button><small>[الموصى به: 45.0 نقطة]</small></div>
+        <div class="cfg-input-wrap"><input id="dspCC" type="number" inputmode="decimal" step="1" min="20" max="90"> <span>نقطة</span></div>
+      </div>
+      <div class="cfg-row">
+        <div class="cfg-label">حد تنبيه تشحيم السير الفارغ <button type="button" class="dsp-info-btn" onclick="showDspTip('eb')" title="شرح البارامتر">?</button><small>[الموصى به: 3.5A سحب فارغ]</small></div>
+        <div class="cfg-input-wrap"><input id="dspEB" type="number" inputmode="decimal" step="0.1" min="1.5" max="6"> <span>A</span></div>
+      </div>
+      <div class="cfg-row">
+        <div class="cfg-label">حساسية نبضة ضربة القدم <button type="button" class="dsp-info-btn" onclick="showDspTip('stp')" title="شرح البارامتر">?</button><small>[الموصى به: 0.22A]</small></div>
+        <div class="cfg-input-wrap"><input id="dspSTP" type="number" inputmode="decimal" step="0.02" min="0.08" max="0.8"> <span>A</span></div>
+      </div>
+      <div class="cfg-row">
+        <div class="cfg-label">معامل حساسية الحساس ACS758 <button type="button" class="dsp-info-btn" onclick="showDspTip('sns')" title="شرح البارامتر">?</button><small>[الموصى به على 3.3V: 26.4]</small></div>
+        <div class="cfg-input-wrap"><input id="dspSNS" type="number" inputmode="decimal" step="0.1" min="15" max="45"> <span>mV/A</span></div>
+      </div>
+      <div class="cfg-row">
+        <div class="cfg-label">الجهد الاسمي لناقل المحرك <button type="button" class="dsp-info-btn" onclick="showDspTip('v')" title="شرح البارامتر">?</button><small>[الموصى به لمشاية Kettler: 180V]</small></div>
+        <div class="cfg-input-wrap"><input id="dspV" type="number" inputmode="decimal" step="5" min="90" max="240"> <span>V</span></div>
+      </div>
+      <div class="cfg-row">
+        <div class="cfg-label">خط أساس السير بعد التشحيم <button type="button" class="dsp-info-btn" onclick="showDspTip('bl')" title="شرح البارامتر">?</button><small>[يتعلم ذاتياً عند الضغط على "تم التشحيم"]</small></div>
+        <div class="cfg-input-wrap"><input id="dspBL" type="number" inputmode="decimal" step="0.01" min="0.5" max="5" value="1.38"> <span>A</span></div>
+      </div>
+      <div class="cfg-row">
+        <div class="cfg-label">معايرة الحساسية تلقائياً <span dir="ltr" style="display:inline-block">(Auto Ratiometric)</span> <button type="button" class="dsp-info-btn" onclick="showDspTip('aes')" title="شرح البارامتر">?</button><small>[حساب الحساسية تلقائياً من جهد الصفر الفعلي]</small></div>
+        <div class="cfg-input-wrap">
+          <select id="dspAutoSens" style="padding:4px 8px;font-size:12px;background:var(--card);color:var(--txt);border:1px solid var(--border);border-radius:4px">
+            <option value="1">مفعّلة (تلقائي بحسب الفولت)</option>
+            <option value="0">يدوية (قيمة mV/A المحددة أعلاه)</option>
+          </select>
+        </div>
+      </div>
+      <div class="cfg-row">
+        <div class="cfg-label">تأخير عزم العطالة للبداية <span dir="ltr" style="display:inline-block">(Inertia Delay)</span> <button type="button" class="dsp-info-btn" onclick="showDspTip('ijd')" title="شرح البارامتر">?</button><small>[الموصى به: 3.5 ثانية لعزل تسارع البكرات]</small></div>
+        <div class="cfg-input-wrap"><input id="dspInertia" type="number" inputmode="decimal" step="0.5" min="1.0" max="10.0"> <span>ثوانٍ</span></div>
+      </div>
+      <div class="cfg-row">
+        <div class="cfg-label">تعويض تيار الميل الكهربائي <span dir="ltr" style="display:inline-block">(Incline Comp)</span> <button type="button" class="dsp-info-btn" onclick="showDspTip('inc')" title="شرح البارامتر">?</button><small>[الموصى به: 0.15 A لكل 1% ميل]</small></div>
+        <div class="cfg-input-wrap"><input id="dspIncComp" type="number" inputmode="decimal" step="0.05" min="0.0" max="0.50"> <span>A/%</span></div>
+      </div>
+      <div class="cfg-row">
+        <div class="cfg-label">التتبع الحراري لنقطة الصفر عند السكون <button type="button" class="dsp-info-btn" onclick="showDspTip('ztr')" title="شرح البارامتر">?</button><small>[الموصى به: مفعّل لتعويض حرارة الغرفة وحوض المحرك]</small></div>
+        <div class="cfg-input-wrap">
+          <select id="dspZeroTrack" style="padding:4px 8px;font-size:12px;background:var(--card);color:var(--txt);border:1px solid var(--border);border-radius:4px">
+            <option value="1">مفعّل</option>
+            <option value="0">معطّل (صفر ثابت)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div id="dspCfgStatus" style="font-size: 12.5px; margin-bottom: 8px; min-height: 18px;"></div>
+    <div class="row r3" style="gap: 6px;">
+      <button id="dspSaveBtn" type="button" style="min-height: 38px;font-weight: bold" class="btn-save">حفظ الهوامش</button>
+      <button id="dspReadBtn" type="button" style="min-height: 38px;">قراءة من اللوحة</button>
+      <button id="dspResetBtn" type="button" style="min-height: 38px" class="btn-danger">استعادة المصنع (2.5HP)</button>
+    </div>
+    <div class="row r2 u-mt8">
+      <button type="button" onclick="bridgeCmd('IA')" style="min-height:36px;font-size:12px">إعادة ضبط الفحمات</button>
+      <div class="cfg-input-wrap" style="display:flex;align-items:center;gap:4px">
+        <span class="u-dim12">تنبيه التشحيم:</span>
+        <input id="mhInt" type="number" min="1" max="500" step="1" inputmode="decimal" style="width:60px">
+        <span style="font-size:12px">ساعة</span>
+      </div>
+    </div>
+    </details>
 </div>
 
 <div id="pad"><div class="padbox">
@@ -3419,7 +3496,7 @@ function switchTempSub(idx){
 
   if(idx === 1 && window.tRx && !window.otaBusy){
     window.cfgForceRead = true;
-    if(typeof bridgeCmd === 'function') bridgeCmd('KQ');
+    if(typeof bridgeCmd === 'function'){ bridgeCmd('KQ'); setTimeout(()=>{ try{ bridgeCmd('PQ'); }catch(_){} },400); }
   }
   if(idx === 0 && window.tRx){
     if(typeof bridgeCmd === 'function') bridgeCmd('PQ');
@@ -3432,6 +3509,16 @@ function switchTempSub(idx){
   window.scrollTo(0, 0);
 }
 window.switchTempSub = switchTempSub;
+
+function openDspSettings(){
+  try{
+    switchTempSub(1);
+    const d=document.getElementById('dspCfgDetails');
+    if(d){ d.open=true; setTimeout(()=>d.scrollIntoView({behavior:'smooth',block:'start'}),120); }
+  }catch(_){}
+}
+window.openDspSettings = openDspSettings;
+
 setTimeout(() => { if(typeof mhRender === 'function') mhRender(); }, 150);
 
 
@@ -10140,113 +10227,6 @@ window.copyRawData = copyRawData;
 
 </script>
 
-<!-- صفحة 1: ضبط وهوامش تيار المحرك والـ DSP -->
-<div id="pageDsp" class="subpage-overlay">
-  <div class="subpage-header">
-    <h2>⚙️ ضبط وحماية الـ DSP والانحشار</h2>
-    <span class="bclk" title="ساعة اللوحة الفعلية"></span>
-    <button type="button" class="subpage-back-btn" onclick="closeAppPage('pageDsp')">← رجوع</button>
-  </div>
-  <div class="subpage-body">
-    <div style="font-size:12px;color:var(--dim);margin-bottom:12px;line-height:1.7">
-      تتيح هذه الصفحة ضبط هوامش حساسية الحماية وتفرطح الفحمات بحرية حسب ظروف تشغيل المشاية، وتُحفظ مباشرة في ذاكرة اللوحة.
-    </div>
-    <div style="font-size: 12px; color: var(--dim); margin: 8px 0 12px; line-height: 1.8;">
-      تتيح هذه الخيارات ضبط هوامش حساسية الحماية وتفرطح الفحمات بحرية حسب ظروف تشغيل المشاية، وتُحفظ مباشرة في ذاكرة اللوحة الدائمة (NVS).
-    </div>
-    <div class="cfg-table" style="margin-bottom: 10px;">
-      <div class="cfg-row">
-        <div class="cfg-label">تيار المحرك المقنن المستمر (FLA) <button type="button" class="dsp-info-btn" onclick="showDspTip('fla')" title="شرح البارامتر">?</button><small>[الموصى به لمحرك 2.5HP: 10.0A]</small></div>
-        <div class="cfg-input-wrap"><input id="dspFLA" type="number" inputmode="decimal" step="0.5" min="5" max="25"> <span>A</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">حد حماية التوقف والانحشار (Stall Limit) <button type="button" class="dsp-info-btn" onclick="showDspTip('stl')" title="شرح البارامتر">?</button><small>[النطاق: 2.0A - 15.0A | الافتراضي: 10.0A]</small></div>
-        <div class="cfg-input-wrap"><input id="dspSTL" type="number" inputmode="decimal" step="0.5" min="2" max="15"> <span>A</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">زمن استجابة حماية التوقف <button type="button" class="dsp-info-btn" onclick="showDspTip('sd')" title="شرح البارامتر">?</button><small>[الموصى به: 300 ملي ثانية]</small></div>
-        <div class="cfg-input-wrap"><input id="dspSD" type="number" inputmode="numeric" step="50" min="100" max="1500"> <span>ms</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">عتبة تفرطح شرار الفحمات (Kurtosis) <button type="button" class="dsp-info-btn" onclick="showDspTip('kt')" title="شرح البارامتر">?</button><small>[الموصى به: 6.5]</small></div>
-        <div class="cfg-input-wrap"><input id="dspKT" type="number" inputmode="decimal" step="0.1" min="4" max="30"> <span>K</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">عتبة تراكم CUSUM للتحذير <button type="button" class="dsp-info-btn" onclick="showDspTip('cw')" title="شرح البارامتر">?</button><small>[الموصى به: 18.0 نقطة]</small></div>
-        <div class="cfg-input-wrap"><input id="dspCW" type="number" inputmode="decimal" step="1" min="5" max="50"> <span>نقطة</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">عتبة تراكم CUSUM للخطر الحرج <button type="button" class="dsp-info-btn" onclick="showDspTip('cc')" title="شرح البارامتر">?</button><small>[الموصى به: 45.0 نقطة]</small></div>
-        <div class="cfg-input-wrap"><input id="dspCC" type="number" inputmode="decimal" step="1" min="20" max="90"> <span>نقطة</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">حد تنبيه تشحيم السير الفارغ <button type="button" class="dsp-info-btn" onclick="showDspTip('eb')" title="شرح البارامتر">?</button><small>[الموصى به: 3.5A سحب فارغ]</small></div>
-        <div class="cfg-input-wrap"><input id="dspEB" type="number" inputmode="decimal" step="0.1" min="1.5" max="6"> <span>A</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">حساسية نبضة ضربة القدم <button type="button" class="dsp-info-btn" onclick="showDspTip('stp')" title="شرح البارامتر">?</button><small>[الموصى به: 0.22A]</small></div>
-        <div class="cfg-input-wrap"><input id="dspSTP" type="number" inputmode="decimal" step="0.02" min="0.08" max="0.8"> <span>A</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">معامل حساسية الحساس ACS758 <button type="button" class="dsp-info-btn" onclick="showDspTip('sns')" title="شرح البارامتر">?</button><small>[الموصى به على 3.3V: 26.4]</small></div>
-        <div class="cfg-input-wrap"><input id="dspSNS" type="number" inputmode="decimal" step="0.1" min="15" max="45"> <span>mV/A</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">الجهد الاسمي لناقل المحرك <button type="button" class="dsp-info-btn" onclick="showDspTip('v')" title="شرح البارامتر">?</button><small>[الموصى به لمشاية Kettler: 180V]</small></div>
-        <div class="cfg-input-wrap"><input id="dspV" type="number" inputmode="decimal" step="5" min="90" max="240"> <span>V</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">خط أساس السير بعد التشحيم <button type="button" class="dsp-info-btn" onclick="showDspTip('bl')" title="شرح البارامتر">?</button><small>[يتعلم ذاتياً عند الضغط على "تم التشحيم"]</small></div>
-        <div class="cfg-input-wrap"><input id="dspBL" type="number" inputmode="decimal" step="0.01" min="0.5" max="5" value="1.38"> <span>A</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">معايرة الحساسية تلقائياً <span dir="ltr" style="display:inline-block">(Auto Ratiometric)</span> <button type="button" class="dsp-info-btn" onclick="showDspTip('aes')" title="شرح البارامتر">?</button><small>[حساب الحساسية تلقائياً من جهد الصفر الفعلي]</small></div>
-        <div class="cfg-input-wrap">
-          <select id="dspAutoSens" style="padding:4px 8px;font-size:12px;background:var(--card);color:var(--txt);border:1px solid var(--border);border-radius:4px">
-            <option value="1">مفعّلة (تلقائي بحسب الفولت)</option>
-            <option value="0">يدوية (قيمة mV/A المحددة أعلاه)</option>
-          </select>
-        </div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">تأخير عزم العطالة للبداية <span dir="ltr" style="display:inline-block">(Inertia Delay)</span> <button type="button" class="dsp-info-btn" onclick="showDspTip('ijd')" title="شرح البارامتر">?</button><small>[الموصى به: 3.5 ثانية لعزل تسارع البكرات]</small></div>
-        <div class="cfg-input-wrap"><input id="dspInertia" type="number" inputmode="decimal" step="0.5" min="1.0" max="10.0"> <span>ثوانٍ</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">تعويض تيار الميل الكهربائي <span dir="ltr" style="display:inline-block">(Incline Comp)</span> <button type="button" class="dsp-info-btn" onclick="showDspTip('inc')" title="شرح البارامتر">?</button><small>[الموصى به: 0.15 A لكل 1% ميل]</small></div>
-        <div class="cfg-input-wrap"><input id="dspIncComp" type="number" inputmode="decimal" step="0.05" min="0.0" max="0.50"> <span>A/%</span></div>
-      </div>
-      <div class="cfg-row">
-        <div class="cfg-label">التتبع الحراري لنقطة الصفر عند السكون <button type="button" class="dsp-info-btn" onclick="showDspTip('ztr')" title="شرح البارامتر">?</button><small>[الموصى به: مفعّل لتعويض حرارة الغرفة وحوض المحرك]</small></div>
-        <div class="cfg-input-wrap">
-          <select id="dspZeroTrack" style="padding:4px 8px;font-size:12px;background:var(--card);color:var(--txt);border:1px solid var(--border);border-radius:4px">
-            <option value="1">مفعّل</option>
-            <option value="0">معطّل (صفر ثابت)</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div id="dspCfgStatus" style="font-size: 12.5px; margin-bottom: 8px; min-height: 18px;"></div>
-    <div class="row r3" style="gap: 6px;">
-      <button id="dspSaveBtn" type="button" style="min-height: 38px; font-weight: bold; background: var(--ok); color: #000;">حفظ الهوامش</button>
-      <button id="dspReadBtn" type="button" style="min-height: 38px;">قراءة من اللوحة</button>
-      <button id="dspResetBtn" type="button" style="min-height: 38px;">استعادة المصنع (2.5HP)</button>
-    </div>
-    <div class="row r2" style="margin-top:8px">
-      <button type="button" onclick="bridgeCmd('IA')" style="min-height:36px;font-size:12px">إعادة ضبط الفحمات</button>
-      <div class="cfg-input-wrap" style="display:flex;align-items:center;gap:4px">
-        <span style="font-size:12px;color:var(--dim)">تنبيه التشحيم:</span>
-        <input id="mhInt" type="number" min="1" max="500" step="1" inputmode="decimal" style="width:60px">
-        <span style="font-size:12px">ساعة</span>
-      </div>
-    </div>
-    <div class="row r2" style="margin-top:16px">
-      <button class="primary" id="dspSaveBtnPage" style="min-height:46px;font-weight:800" onclick="dspSave();closeAppPage('pageDsp')">💾 حفظ الإعدادات في اللوحة</button>
-      <button type="button" class="subpage-back-btn" style="min-height:46px;text-align:center;justify-content:center" onclick="closeAppPage('pageDsp')">إغلاق</button>
-    </div>
-  </div>
-</div>
-
 <!-- صفحة 2: تحليلات المشي واستهلاك الكهرباء وشريط التوازن -->
 <div id="pageAnalytics" class="subpage-overlay">
   <div class="subpage-header">
@@ -10272,8 +10252,8 @@ window.copyRawData = copyRawData;
     <!-- شريط توازن وتناسق الساقين التفاعلي -->
     <div style="background:var(--panel-card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px">
       <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:8px">
-        <span style="color:var(--amber);font-weight:700">⚡ إيقاع الخطى: <b id="gaitCadence" style="color:#fff">-- SPM</b></span>
-        <span style="color:var(--ok);font-weight:700">معدل الانتظام الإيقاعي: <b id="gaitSymVal">100%</b></span>
+        <span class="u-amber-b">⚡ إيقاع الخطى: <b id="gaitCadence" style="color:#fff">-- SPM</b></span>
+        <span class="u-ok-b">معدل الانتظام الإيقاعي: <b id="gaitSymVal">100%</b></span>
       </div>
       <div style="height:10px;background:rgba(255,255,255,0.08);border-radius:6px;overflow:hidden">
         <div id="gaitRegBar" style="height:100%;width:100%;background:linear-gradient(90deg, #10b981, #0ea5e9);transition:width 0.3s;border-radius:6px"></div>
@@ -10368,26 +10348,26 @@ window.copyRawData = copyRawData;
   <div class="subpage-body">
     <div style="font-size:13px;font-weight:800;color:var(--amber);margin-bottom:8px">🏃 اختر السرعة المطلوبة مباشرة (كم/س):</div>
     <div class="quick-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">
-      <button type="button" style="min-height:50px;font-size:18px;font-weight:900" onclick="quickSetSpeed(2);closeAppPage('pageQuick')">2</button>
-      <button type="button" style="min-height:50px;font-size:18px;font-weight:900" onclick="quickSetSpeed(4);closeAppPage('pageQuick')">4</button>
-      <button type="button" style="min-height:50px;font-size:18px;font-weight:900" onclick="quickSetSpeed(6);closeAppPage('pageQuick')">6</button>
-      <button type="button" style="min-height:50px;font-size:18px;font-weight:900" onclick="quickSetSpeed(8);closeAppPage('pageQuick')">8</button>
-      <button type="button" style="min-height:50px;font-size:18px;font-weight:900" onclick="quickSetSpeed(10);closeAppPage('pageQuick')">10</button>
-      <button type="button" style="min-height:50px;font-size:18px;font-weight:900" onclick="quickSetSpeed(12);closeAppPage('pageQuick')">12</button>
-      <button type="button" style="min-height:50px;font-size:18px;font-weight:900" onclick="quickSetSpeed(14);closeAppPage('pageQuick')">14</button>
-      <button type="button" style="min-height:50px;font-size:18px;font-weight:900" onclick="quickSetSpeed(16);closeAppPage('pageQuick')">16</button>
+      <button type="button" onclick="quickSetSpeed(2);closeAppPage('pageQuick')" class="u-btn-xl">2</button>
+      <button type="button" onclick="quickSetSpeed(4);closeAppPage('pageQuick')" class="u-btn-xl">4</button>
+      <button type="button" onclick="quickSetSpeed(6);closeAppPage('pageQuick')" class="u-btn-xl">6</button>
+      <button type="button" onclick="quickSetSpeed(8);closeAppPage('pageQuick')" class="u-btn-xl">8</button>
+      <button type="button" onclick="quickSetSpeed(10);closeAppPage('pageQuick')" class="u-btn-xl">10</button>
+      <button type="button" onclick="quickSetSpeed(12);closeAppPage('pageQuick')" class="u-btn-xl">12</button>
+      <button type="button" onclick="quickSetSpeed(14);closeAppPage('pageQuick')" class="u-btn-xl">14</button>
+      <button type="button" onclick="quickSetSpeed(16);closeAppPage('pageQuick')" class="u-btn-xl">16</button>
     </div>
 
     <div style="font-size:13px;font-weight:800;color:var(--amber);margin-bottom:8px">⛰️ اختر زاوية الميل المطلوبة مباشرة (%):</div>
     <div class="quick-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
-      <button type="button" style="min-height:50px;font-size:17px;font-weight:900" onclick="quickSetIncline(0);closeAppPage('pageQuick')">0%</button>
-      <button type="button" style="min-height:50px;font-size:17px;font-weight:900" onclick="quickSetIncline(2);closeAppPage('pageQuick')">2%</button>
-      <button type="button" style="min-height:50px;font-size:17px;font-weight:900" onclick="quickSetIncline(4);closeAppPage('pageQuick')">4%</button>
-      <button type="button" style="min-height:50px;font-size:17px;font-weight:900" onclick="quickSetIncline(6);closeAppPage('pageQuick')">6%</button>
-      <button type="button" style="min-height:50px;font-size:17px;font-weight:900" onclick="quickSetIncline(8);closeAppPage('pageQuick')">8%</button>
-      <button type="button" style="min-height:50px;font-size:17px;font-weight:900" onclick="quickSetIncline(10);closeAppPage('pageQuick')">10%</button>
-      <button type="button" style="min-height:50px;font-size:17px;font-weight:900" onclick="quickSetIncline(12);closeAppPage('pageQuick')">12%</button>
-      <button type="button" style="min-height:50px;font-size:17px;font-weight:900" onclick="quickSetIncline(15);closeAppPage('pageQuick')">15%</button>
+      <button type="button" onclick="quickSetIncline(0);closeAppPage('pageQuick')" class="u-btn-xl2">0%</button>
+      <button type="button" onclick="quickSetIncline(2);closeAppPage('pageQuick')" class="u-btn-xl2">2%</button>
+      <button type="button" onclick="quickSetIncline(4);closeAppPage('pageQuick')" class="u-btn-xl2">4%</button>
+      <button type="button" onclick="quickSetIncline(6);closeAppPage('pageQuick')" class="u-btn-xl2">6%</button>
+      <button type="button" onclick="quickSetIncline(8);closeAppPage('pageQuick')" class="u-btn-xl2">8%</button>
+      <button type="button" onclick="quickSetIncline(10);closeAppPage('pageQuick')" class="u-btn-xl2">10%</button>
+      <button type="button" onclick="quickSetIncline(12);closeAppPage('pageQuick')" class="u-btn-xl2">12%</button>
+      <button type="button" onclick="quickSetIncline(15);closeAppPage('pageQuick')" class="u-btn-xl2">15%</button>
     </div>
     <button type="button" class="primary" style="width:100%;min-height:46px;margin-top:16px;font-weight:800" onclick="closeAppPage('pageQuick')">← رجوع للتحكم</button>
   </div>
