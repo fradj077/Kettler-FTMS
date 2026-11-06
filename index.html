@@ -2275,9 +2275,34 @@ html body .ccb-brand{font-size:13px !important}
 html body .ccb-status{font-size:11px !important}
 html body #tempSubTabs button{border-radius:14px !important;background:rgba(255,255,255,.05) !important;border:1px solid var(--line) !important;color:var(--dim) !important;box-shadow:none !important}
 html body #tempSubTabs button.on,html body #tempSubTabs button.active{background:var(--spectrum) !important;color:#fff !important;border:0 !important;box-shadow:0 6px 18px rgba(124,107,255,.35) !important}
+/* ===== شريط سبب التوقف العام (يظهر فوق كل الصفحات) ===== */
+#stopReasonBar{position:fixed;left:0;right:0;top:0;z-index:2147483000;display:none;box-sizing:border-box;padding:calc(env(safe-area-inset-top,0px) + 8px) 12px 10px;background:rgba(127,29,29,.97);color:#fff;border-bottom:2px solid #fca5a5;box-shadow:0 6px 24px rgba(0,0,0,.55);direction:rtl;font-family:inherit}
+#stopReasonBar.show{display:block}
+#stopReasonBar .srb-row{display:flex;align-items:flex-start;gap:10px}
+#stopReasonBar .srb-txt{flex:1;font-size:15px;font-weight:800;line-height:1.5}
+#stopReasonBar .srb-time{font-size:11px;font-weight:600;opacity:.8;margin-top:2px}
+#stopReasonBar button{flex:none;background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.45);border-radius:10px;min-width:44px;min-height:44px;font-size:18px;font-weight:800;cursor:pointer}
+/* ===== مكتبة YouTube والمشغل العائم ===== */
+#ytFloat{position:fixed;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 78px);width:min(92vw,340px);z-index:2147482000;display:none;background:#05070f;border:1px solid var(--line,#2a3352);border-radius:14px;box-shadow:0 10px 34px rgba(0,0,0,.65);overflow:hidden;direction:rtl}
+#ytFloat.show{display:block}
+#ytFloat.top{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 8px)}
+#ytFloat.sz1{width:min(96vw,460px)}
+#ytFloat.sz2{width:96vw;left:2vw;right:2vw}
+#ytFloat .yt-bar{display:flex;align-items:center;gap:4px;padding:4px 6px;background:rgba(18,24,48,.96)}
+#ytFloat .yt-ttl{flex:1;font-size:12px;font-weight:700;color:#e5e9ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ytFloat .yt-bar button{min-width:38px;min-height:34px;padding:0 6px;font-size:15px;border-radius:8px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);cursor:pointer}
+#ytFloat .yt-box{position:relative;width:100%;aspect-ratio:16/9;background:#000}
+#ytFloat .yt-box iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+#ytFloat.min .yt-box{display:none}
+#ytLib .yt-item{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--line,#2a3352)}
+#ytLib .yt-item .yt-name{flex:1;font-size:13px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#ytLib .yt-item button{min-width:40px;min-height:38px;padding:0 6px}
+#ytLib .yt-item.linked .yt-name{color:#34d399}
 </style>
 </head>
 <body>
+<div id="ytFloat"><div class="yt-bar"><div class="yt-ttl" id="ytFTitle">YouTube</div><button type="button" id="ytFMin" title="تصغير">▁</button><button type="button" id="ytFPos" title="أعلى/أسفل">⇅</button><button type="button" id="ytFSize" title="الحجم">⤢</button><button type="button" id="ytFClose" title="إغلاق">✕</button></div><div class="yt-box" id="ytFBox"></div></div>
+<div id="stopReasonBar" role="alert" aria-live="assertive"><div class="srb-row"><div class="srb-txt"><div id="srbTxt"></div><div class="srb-time" id="srbTime"></div></div><button type="button" id="srbClose" aria-label="إغلاق" onclick="hideStopReason()">✕</button></div></div>
 <div id="gate" onclick="if(event.target===this)hideGate()"><div class="gbox" style="position:relative">
   <button type="button" onclick="hideGate()" style="position:absolute;top:12px;left:12px;width:34px;height:34px;min-height:34px;padding:0;background:rgba(255,255,255,0.12);border:none;border-radius:50%;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;">✕</button>
   <div style="background:#0284c7;color:#fff;font-weight:bold;padding:5px 14px;border-radius:20px;display:inline-block;font-size:12px;margin-bottom:12px;letter-spacing:0.5px;box-shadow:0 0 12px rgba(56,189,248,0.4)">🚀 النسخة v114.1 (تمرير اليد أمام الكاميرا — مفتاحه في الصفحة الرئيسية)</div>
@@ -2640,7 +2665,15 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
   <div id="info"></div>
   <div class="row r2"><button class="go" id="runProg" disabled>بدء البرنامج</button><button id="stopProg" disabled>إيقاف البرنامج</button></div>
   <div class="row r2"><button id="pauseProg" disabled>إيقاف مؤقت</button><button id="skipProg" disabled>تخطَّ المرحلة</button></div>
-  <button type="button" id="openCockpitBtn" onclick="preview(); setCockpitFs(true);" style="width:100%;margin-bottom:8px;background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;border:0;font-weight:800">🚀 فتح قمرة القيادة الثلاثية (3D / الشبح / الحلقات)</button>
+  <details id="ytLib" class="u-mt8">
+    <summary>📺 مكتبة فيديوهات YouTube (جري مباشر / Live running)</summary>
+    <div class="row r2" style="margin-top:8px"><input id="ytUrl" placeholder="الصق رابط فيديو أو بث مباشر أو قائمة تشغيل" dir="ltr" inputmode="url"><input id="ytTitle" placeholder="اسم الفيديو (اختياري)"></div>
+    <button type="button" id="ytAdd" style="width:100%;margin-bottom:6px">+ إضافة إلى المكتبة</button>
+    <div id="ytLinkInfo" style="font-size:12px;color:var(--dim);min-height:16px;margin-bottom:4px"></div>
+    <div id="ytList"></div>
+    <label style="display:block;margin-top:8px"><input type="checkbox" id="ytAuto" checked> تشغيل الفيديو المرتبط تلقائياً عند بدء البرنامج</label>
+    <div style="font-size:11px;color:var(--dim);line-height:1.8;margin-top:6px">زر 🔗 يربط الفيديو بالبرنامج المختار في القائمة أعلاه. المشغّل عائم ويبقى ظاهراً في كل التبويبات. يحتاج إنترنت، وبعض الفيديوهات يمنع أصحابها تضمينها.</div>
+  </details>
   <details><summary>خيارات الجلسة (صوت، تدرّج، هدف)</summary>
     <label><input type="checkbox" id="optVoice" checked> تنبيه صوتي واهتزاز قبل تغيّر المرحلة</label>
     <label>نوع الصوت <select id="optMode"><option value="s">نطق</option><option value="b">نغمة</option><option value="n">بدون صوت</option></select></label>
@@ -2680,24 +2713,6 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 </div>
 
 <div class="panel" id="runPanel">
-  <div class="cp-head">
-    <div class="cp-title-wrap">
-      <h2>🚀 قمرة قيادة البرنامج</h2>
-      <span class="cp-zone-pill" id="cpZoneBadge">جاهز للانطلاق</span>
-    </div>
-    <button type="button" class="cp-fs-btn" id="cpFullBtn" onclick="toggleCockpitFs()">⛶ ملء الشاشة</button>
-  </div>
-
-  <div class="cp-mode-bar" id="cpModeBar">
-    <button type="button" class="cp-mode-btn on" id="cpBtnRoad" onclick="setCockpitMode('road')">🛣️ الطريق 3D</button>
-    <button type="button" class="cp-mode-btn" id="cpBtnTrack" onclick="setCockpitMode('track')">🏟️ مضمار الشبح</button>
-    <button type="button" class="cp-mode-btn" id="cpBtnRings" onclick="setCockpitMode('rings')">⭕ الحلقات النابضة</button>
-  </div>
-
-  <div class="cp-stage-wrap" id="cpStageWrap">
-    <canvas id="cpCanvas" width="680" height="440"></canvas>
-    <div class="cp-trans-banner" id="cpTransBanner"></div>
-  </div>
 
   <div class="cp-cadence-bar">
     <button type="button" class="cp-cad-toggle" id="cpCadBtn" onclick="toggleCadenceBeat()">👟 صوت الخطوات: إيقاف</button>
@@ -4367,6 +4382,29 @@ function setBridge(st){
   }
   topSync();
 }
+// ---------- شريط سبب التوقف العام: يظهر في أي صفحة عندما تتوقف المشاية بسبب اللوحة (وليس بأمر منك) ----------
+var _srbKey = '';
+function showStopReason(txt, key){
+  try{
+    const bar = document.getElementById('stopReasonBar');
+    if(!bar) return;
+    _srbKey = key || '';
+    document.getElementById('srbTxt').textContent = txt;
+    document.getElementById('srbTime').textContent = 'الوقت: ' + new Date().toLocaleTimeString() + ' — اضغط ✕ للإغلاق';
+    bar.classList.add('show');
+    try{ if(navigator.vibrate) navigator.vibrate([200,100,200]); }catch(_){}
+  }catch(_){}
+}
+function hideStopReason(onlyKey){
+  try{
+    if(onlyKey && _srbKey !== onlyKey) return;
+    const bar = document.getElementById('stopReasonBar');
+    if(bar) bar.classList.remove('show');
+    _srbKey = '';
+  }catch(_){}
+}
+window.showStopReason = showStopReason;
+window.hideStopReason = hideStopReason;
 var lastDiagCode = 0, lastDiagReason = '';
 function updateLockBanner(){
   const e = $('tLock');
@@ -4389,9 +4427,11 @@ function updateLockBanner(){
       e.textContent = '🛑 الوسيط أوقف المشاية لحماية المحرك — انتظر توقف السير للاستئناف';
       e.style.color = 'var(--red)';
     }
+    showStopReason(e.textContent, 'lock');
   }else{
     e.style.display = 'none';
     e.textContent = '';
+    hideStopReason('lock');
   }
 }
 function setBridgeLock(on){
@@ -4552,6 +4592,7 @@ function triggerSafetyEventAction(type, val, isTest){
     if(!isTest) safetyActOnPhone('rescue', parseFloat(val));
   }
 
+  if(!isTest && (type === 'DISMOUNT' || type === 'DRAG')) showStopReason(msg, 'sf');
   updateSafetyEventBox(msg, isTest ? 'var(--amber)' : 'var(--red)', isTest ? 'rgba(245,158,11,0.35)' : 'rgba(239,68,68,0.4)', isTest ? 'rgba(245,158,11,0.1)' : 'rgba(239,68,68,0.12)');
   toast(msg);
 
@@ -6661,6 +6702,107 @@ renderLog();
 $('runProg').onclick = runProg;
 $('stopProg').onclick = async () => { if(RT.active) routeStop('أُوقف الطريق'); abort = true; paused = false; await send([0x08, 0x01]); };
 booted = true; fillSel(); preview();
+// ---------- مكتبة YouTube + مشغل عائم + ربط الفيديو بالبرنامج ----------
+(function(){
+  const LIB_K='kettler_yt_lib', MAP_K='kettler_yt_map';
+  let lib=[], map={};
+  try{ lib=JSON.parse(localStorage.getItem(LIB_K))||[]; }catch(_){}
+  try{ map=JSON.parse(localStorage.getItem(MAP_K))||{}; }catch(_){}
+  const save=()=>{ try{ localStorage.setItem(LIB_K,JSON.stringify(lib)); localStorage.setItem(MAP_K,JSON.stringify(map)); }catch(_){} };
+  const $e=id=>document.getElementById(id);
+  function parse(u){
+    u=(u||'').trim(); if(!u) return null;
+    let m=u.match(/[?&]list=([A-Za-z0-9_-]{10,})/);
+    const v=u.match(/(?:v=|youtu\.be\/|shorts\/|live\/|embed\/)([A-Za-z0-9_-]{11})/);
+    if(v) return {t:'v',id:v[1]};
+    if(m) return {t:'p',id:m[1]};
+    if(/^[A-Za-z0-9_-]{11}$/.test(u)) return {t:'v',id:u};
+    return null;
+  }
+  function src(it){
+    return it.t==='p'
+      ? 'https://www.youtube-nocookie.com/embed/videoseries?list='+encodeURIComponent(it.id)+'&autoplay=1&playsinline=1&rel=0'
+      : 'https://www.youtube-nocookie.com/embed/'+encodeURIComponent(it.id)+'?autoplay=1&playsinline=1&rel=0';
+  }
+  function play(it){
+    if(!it) return;
+    if(!navigator.onLine){ try{ toast('📺 لا يوجد اتصال بالإنترنت'); }catch(_){} return; }
+    const f=$e('ytFloat'), box=$e('ytFBox');
+    box.innerHTML='';
+    const ifr=document.createElement('iframe');
+    ifr.src=src(it);
+    ifr.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
+    ifr.setAttribute('allowfullscreen','');
+    ifr.referrerPolicy='strict-origin-when-cross-origin';
+    box.appendChild(ifr);
+    $e('ytFTitle').textContent='📺 '+(it.title||'YouTube');
+    f.classList.remove('min'); f.classList.add('show');
+  }
+  function closeP(){ const f=$e('ytFloat'); f.classList.remove('show'); $e('ytFBox').innerHTML=''; }
+  function curProg(){ const s=$e('progSel'); return s ? s.value : ''; }
+  function linkedItem(){ const k=map[curProg()]; return k ? lib.find(x=>x.t+':'+x.id===k) : null; }
+  function render(){
+    const box=$e('ytList'); if(!box) return;
+    box.innerHTML='';
+    const lk=map[curProg()];
+    lib.forEach((it,i)=>{
+      const key=it.t+':'+it.id;
+      const row=document.createElement('div'); row.className='yt-item'+(lk===key?' linked':'');
+      const nm=document.createElement('div'); nm.className='yt-name'; nm.textContent=(it.t==='p'?'📑 ':'🎬 ')+(it.title||it.id);
+      const bp=document.createElement('button'); bp.type='button'; bp.textContent='▶'; bp.onclick=()=>play(it);
+      const bl=document.createElement('button'); bl.type='button'; bl.textContent=lk===key?'✔':'🔗';
+      bl.title='ربط بالبرنامج المختار';
+      bl.onclick=()=>{
+        const p=curProg(); if(!p){ return; }
+        if(map[p]===key) delete map[p]; else map[p]=key;
+        save(); render();
+      };
+      const bd=document.createElement('button'); bd.type='button'; bd.textContent='🗑';
+      bd.onclick=()=>{
+        lib.splice(i,1);
+        Object.keys(map).forEach(p=>{ if(map[p]===key) delete map[p]; });
+        save(); render();
+      };
+      row.append(nm,bp,bl,bd); box.appendChild(row);
+    });
+    if(!lib.length){ box.innerHTML='<div style="font-size:12px;color:var(--dim);padding:6px 0">المكتبة فارغة — الصق رابطاً وأضفه.</div>'; }
+    const info=$e('ytLinkInfo'), li=linkedItem();
+    if(info) info.textContent = li ? ('🔗 الفيديو المرتبط بالبرنامج «'+curProg()+'»: '+(li.title||li.id)) : ('لا يوجد فيديو مرتبط بالبرنامج «'+curProg()+'»');
+  }
+  window.ytRenderLib=render;
+  document.addEventListener('DOMContentLoaded',()=>{});
+  function init(){
+    if(!$e('ytAdd')) return;
+    $e('ytAdd').onclick=()=>{
+      const it=parse($e('ytUrl').value);
+      if(!it){ try{ toast('❌ الرابط غير صالح'); }catch(_){} return; }
+      it.title=($e('ytTitle').value||'').trim()||('فيديو '+(lib.length+1));
+      if(!lib.some(x=>x.t===it.t&&x.id===it.id)) lib.push(it);
+      $e('ytUrl').value=''; $e('ytTitle').value='';
+      save(); render();
+    };
+    $e('ytFClose').onclick=closeP;
+    $e('ytFMin').onclick=()=>$e('ytFloat').classList.toggle('min');
+    $e('ytFPos').onclick=()=>$e('ytFloat').classList.toggle('top');
+    $e('ytFSize').onclick=()=>{
+      const f=$e('ytFloat');
+      if(f.classList.contains('sz2')){ f.classList.remove('sz2'); }
+      else if(f.classList.contains('sz1')){ f.classList.remove('sz1'); f.classList.add('sz2'); }
+      else f.classList.add('sz1');
+    };
+    const ps=$e('progSel'); if(ps) ps.addEventListener('change',render);
+    const ap=$e('applyProg'), sp=$e('saveProg'), dp=$e('delProg');
+    [ap,sp,dp].forEach(b=>{ if(b) b.addEventListener('click',()=>setTimeout(render,50)); });
+    const rp=$e('runProg');
+    if(rp) rp.addEventListener('click',()=>{
+      const au=$e('ytAuto'); if(au && !au.checked) return;
+      const li=linkedItem(); if(li) play(li);
+    });
+    render();
+  }
+  init();
+})();
+
 $('optCool').addEventListener('change', preview);
 $('applyProg').onclick = () => {
   const n = $('progSel').value || $('progName').value.trim(), s = readSegs();
@@ -7376,6 +7518,18 @@ function onDiagLine(str){
   if($('diagReason')){
     $('diagReason').textContent = def.reason;
     $('diagReason').style.color = def.c;
+  }
+  // شريط سبب التوقف العام: أول سطر بعد الاتصال يُعتمد كخط أساس فقط حتى لا يظهر توقف قديم
+  if(window._diagBaseSeen){
+    if([2,3,4,6,8].indexOf(code) >= 0 && code !== window._diagShownCode){
+      showStopReason('🛑 توقفت المشاية من اللوحة: ' + def.reason, 'diag' + code);
+      window._diagShownCode = code;
+    }else if(code === 0 || code === 1 || code === 7){
+      window._diagShownCode = 0;
+    }
+  }else{
+    window._diagBaseSeen = true;
+    window._diagShownCode = ([2,3,4,6,8].indexOf(code) >= 0) ? code : 0;
   }
   lastDiagCode = code;
   lastDiagReason = rawReason;
