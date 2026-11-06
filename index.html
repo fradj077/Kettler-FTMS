@@ -2295,7 +2295,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI4 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI5 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -4708,26 +4708,26 @@ async function saveSafetyConfigToBoard(quietSync){
               sfCfg.drEn + ',' + sfCfg.drMs + ',' + sfCfg.drAmp.toFixed(1) + ',' +
               sfCfg.rcEn + ',' + sfCfg.rcDrop.toFixed(1) + ',' + sfCfg.rcVar + ',' + sfCfg.safeTest;
   if(!quietSync){
+    // الحالة «بانتظار التأكيد» تُكتب قبل الإرسال: ردّ اللوحة قد يصل قبل أن يعود await
     window.sfVerify = {exp:[sfCfg.fsEn, sfCfg.fsMs, +sfCfg.fsVmin.toFixed(1), sfCfg.drEn, sfCfg.drMs, +sfCfg.drAmp.toFixed(1), sfCfg.rcEn, +sfCfg.rcDrop.toFixed(1), sfCfg.rcVar, sfCfg.safeTest]};
+    if($('sfLiveStatus')){
+      $('sfLiveStatus').textContent = '⏳ جارٍ الإرسال — بانتظار تأكيد اللوحة بالقيم المحفوظة...';
+      $('sfLiveStatus').style.color = 'var(--amber)';
+    }
+    clearTimeout(window.sfVerifyT);
+    window.sfVerifyT = setTimeout(() => {
+      if(window.sfVerify){
+        window.sfVerify = null;
+        toast('⚠ لم تؤكد اللوحة حفظ درع الأمان — أعد المحاولة');
+        if($('sfLiveStatus')){ $('sfLiveStatus').textContent = '⚠ لم تؤكد اللوحة الحفظ'; $('sfLiveStatus').style.color = 'var(--red)'; }
+      }
+    }, 6000);
   }
   const ok = await bridgeCmd(cmd);
   if(ok){
-    if(!quietSync){
-      if($('sfLiveStatus')){
-        $('sfLiveStatus').textContent = '⏳ أُرسلت — بانتظار تأكيد اللوحة بالقيم المحفوظة...';
-        $('sfLiveStatus').style.color = 'var(--amber)';
-      }
-      clearTimeout(window.sfVerifyT);
-      window.sfVerifyT = setTimeout(() => {
-        if(window.sfVerify){
-          window.sfVerify = null;
-          toast('⚠ لم تؤكد اللوحة حفظ درع الأمان — أعد المحاولة');
-          if($('sfLiveStatus')){ $('sfLiveStatus').textContent = '⚠ لم تؤكد اللوحة الحفظ'; $('sfLiveStatus').style.color = 'var(--red)'; }
-        }
-      }, 4000);
-    }
+    /* النتيجة تعرضها onSafetyLine عند وصول SF:OK / SF:C */
   } else if(!quietSync){
-    window.sfVerify = null;
+    window.sfVerify = null; clearTimeout(window.sfVerifyT);
     toast('💾 تم حفظ إعدادات درع الأمان محلياً في الهاتف (اللوحة غير متصلة حالياً)');
     if($('sfLiveStatus')){
       $('sfLiveStatus').textContent = '💾 محفوظ في الهاتف (مهلة ' + (sfCfg.fsMs / 1000).toFixed(1) + 'ث / +' + sfCfg.drAmp.toFixed(1) + 'A) — اتصل باللوحة للمزامنة';
@@ -7872,12 +7872,12 @@ async function cfgSave(){
     cfgSaving = false;
     cfgForceRead = true;
     window.cfgVerify = {S:s,I:i,A:a,D:d,C:c,T:t};
-    await bridgeCmd('KQ');
     showCfgStatus('⏳ أُرسلت الإعدادات — بانتظار تأكيد اللوحة...', false);
     clearTimeout(window.cfgVerifyT);
     window.cfgVerifyT = setTimeout(() => {
       if(window.cfgVerify){ window.cfgVerify = null; showCfgStatus('⚠ لم تؤكد اللوحة القيم — اضغط «قراءة» للتأكد', true); }
-    }, 5000);
+    }, 6000);
+    await bridgeCmd('KQ');
     log('أُرسلت إعدادات الحركة إلى اللوحة (بانتظار التأكيد)');
   }catch(e){
     cfgSaving = false;
@@ -8366,7 +8366,6 @@ async function dspCfgSave(){
     await sleepMs(150);
     dspCfgSaving = false;
     window.dspVerify = {exp:{F:f,L:l,D:d,K:k,W:w,C:c,B:b,T:t,S:s,V:v,BL:bl,AE:ae,IJ:ij,NC:nc,ZT:zt}};
-    await bridgeCmd('PQ');
     if(st){ st.style.color = 'var(--amber)'; st.textContent = '⏳ أُرسلت الهوامش — بانتظار تأكيد اللوحة بالقيم المحفوظة...'; }
     clearTimeout(window.dspVerifyT);
     window.dspVerifyT = setTimeout(() => {
@@ -8375,7 +8374,8 @@ async function dspCfgSave(){
         const st2 = document.getElementById('dspCfgStatus');
         if(st2){ st2.style.color = 'var(--red)'; st2.textContent = '⚠ لم تؤكد اللوحة القيم — اضغط «قراءة من اللوحة» للتأكد قبل الاعتماد'; }
       }
-    }, 5000);
+    }, 6000);
+    await bridgeCmd('PQ');
     log('أُرسلت هوامش الـ DSP إلى اللوحة (بانتظار التأكيد)');
   } catch(e) {
     dspCfgSaving = false;
