@@ -2354,6 +2354,31 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 #chTip button{min-height:34px;padding:0 10px;font-size:12px}
 .seg.flash{box-shadow:0 0 0 2px #38bdf8}
 .seg .dup{color:#e2e8f0;background:#243142;border-color:var(--line-light)}
+/* ===== v114.1-EXT: ربط المواقع ومقترحات الجدول (Intervals.icu + ZWO/JSON/MRC) ===== */
+.ext-sug-box{margin-top:8px;padding:10px;border-radius:12px;background:rgba(15,23,42,.65);border:1px solid var(--line,#263248)}
+.ext-sug-hd{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.ext-sug-ttl{font-size:13px;font-weight:800;color:#38bdf8;display:flex;align-items:center;gap:5px}
+.ext-sug-acts{display:flex;gap:5px}
+.ext-sug-acts button{min-height:30px!important;padding:2px 9px!important;font-size:11.5px!important;font-weight:700;border-radius:8px}
+.ext-cats{display:flex;gap:5px;overflow-x:auto;padding-bottom:6px;margin-bottom:6px;-webkit-overflow-scrolling:touch}
+.ext-cat{flex:0 0 auto;min-height:28px!important;padding:2px 10px!important;font-size:11.5px!important;font-weight:700;border-radius:999px;border:1px solid var(--line,#263248);background:var(--panel-card,#131c2a);color:var(--dim,#94a3b8)}
+.ext-cat.on{background:rgba(56,189,248,.18);color:#38bdf8;border-color:#38bdf8}
+.ext-cards{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.ext-card{flex:0 0 auto;min-width:148px;max-width:205px;min-height:68px!important;padding:8px 10px!important;text-align:right;border-radius:11px;border:1px solid var(--line,#263248);background:var(--panel-card,#131c2a);color:var(--text,#f1f5f9);scroll-snap-align:start;display:flex!important;flex-direction:column;justify-content:space-between}
+.ext-card.on{border-color:#10b981;box-shadow:0 0 0 1px #10b981 inset;background:rgba(16,185,129,.11)}
+.ext-card-top{display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:10px;font-weight:800;color:#38bdf8;margin-bottom:2px}
+.ext-card-top .bdg-icu{color:#a78bfa}
+.ext-card-top .bdg-imp{color:#f59e0b}
+.ext-card b{display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff}
+.ext-card span{display:block;font-size:11px;color:var(--dim,#94a3b8);margin-top:3px;font-weight:600}
+.ext-prv-bar{display:none;margin-top:8px;padding:8px 10px;border-radius:10px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.35);align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.ext-prv-bar.show{display:flex}
+.ext-prv-txt{font-size:12px;font-weight:700;color:#6ee7b7;flex:1;min-width:160px}
+.ext-prv-btns{display:flex;gap:6px}
+.ext-prv-btns button{min-height:34px!important;padding:4px 10px!important;font-size:12px!important;font-weight:800;border-radius:8px}
+.ext-hub-sec{background:rgba(15,23,42,.55);border:1px solid var(--line,#263248);border-radius:10px;padding:10px;margin-top:8px}
+.ext-hub-sec h4{margin:0 0 6px;font-size:13px;color:#38bdf8;display:flex;align-items:center;justify-content:space-between}
+.ext-stat{font-size:11.5px;color:var(--dim,#94a3b8);margin-top:6px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -2731,6 +2756,32 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
       <button id="stopProg" disabled>إيقاف</button>
     </div>
     <div id="pgLinkedVid"></div>
+    <div class="ext-sug-box" id="extSugBox">
+      <div class="ext-sug-hd">
+        <span class="ext-sug-ttl">🌐 مقترحات الجدول (Intervals.icu + قوالب عالمية)</span>
+        <div class="ext-sug-acts">
+          <button type="button" id="extQuickSyncBtn" title="جلب تمرين اليوم وجدول الأسبوع من Intervals.icu">🔄 مزامنة</button>
+          <button type="button" id="extOpenHubBtn" title="إعدادات الربط واستيراد القوالب">⚙️ المصدر</button>
+        </div>
+      </div>
+      <div class="ext-cats" id="extCatBar">
+        <button type="button" class="ext-cat on" data-ecat="all">الكل</button>
+        <button type="button" class="ext-cat" data-ecat="icu">📅 Intervals.icu</button>
+        <button type="button" class="ext-cat" data-ecat="z2">🔥 حرق دهون Z2</button>
+        <button type="button" class="ext-cat" data-ecat="hiit">⚡ فترات HIIT</button>
+        <button type="button" class="ext-cat" data-ecat="tempo">🏃 تيمبو وعتبة</button>
+        <button type="button" class="ext-cat" data-ecat="hills">⛰️ تلال وميل</button>
+        <button type="button" class="ext-cat" data-ecat="imp">📂 مستوردة</button>
+      </div>
+      <div class="ext-cards" id="extSugCards"></div>
+      <div class="ext-prv-bar" id="extPreviewBar">
+        <div class="ext-prv-txt" id="extPreviewTxt"></div>
+        <div class="ext-prv-btns">
+          <button type="button" class="btn-save" id="extSaveToProgsBtn">💾 حفظ في برامجي</button>
+          <button type="button" id="extJumpEditBtn">✏️ تعديل المراحل</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div data-pane="edit" class="pg-edit">
@@ -2745,6 +2796,53 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
   </div>
 
   <div data-pane="tools">
+  <details id="extWorkoutHub">
+    <summary>🌐 ربط المواقع ومستورد القوالب (Intervals.icu + ZWO / JSON / ERG)</summary>
+    <div class="ext-hub-sec">
+      <h4><span>🎯 السرعة المرجعية لحساب النسب المئوية (% Pace / ZWO)</span><small id="extRefPaceLbl" style="color:#10b981;font-weight:700" dir="ltr">6:00 /km</small></h4>
+      <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.6">تُستخدم لترجمة قوالب التمارين العالمية التي تُكتب كنسبة مئوية (مثل <code>80% Pace</code> أو ملفات Zwift <code>.zwo</code>) إلى سرعة حقيقية بالكيلومتر/ساعة في جدولك.</div>
+      <div class="row r2" style="align-items:center">
+        <label style="font-size:12px">السرعة المرجعية (100% = كم/س)<input id="extRefSpd" type="number" min="4" max="20" step="0.5" value="10" inputmode="decimal"></label>
+        <label style="font-size:12px">الميل الافتراضي للقوالب (%)<input id="extDefInc" type="number" min="0" max="15" step="1" value="0" inputmode="numeric"></label>
+      </div>
+    </div>
+
+    <div class="ext-hub-sec">
+      <h4><span>📅 الخيار 2: الربط المباشر مع تقويم Intervals.icu</span><a href="https://intervals.icu" target="_blank" rel="noopener" style="font-size:11px;color:#a78bfa;text-decoration:none">intervals.icu ↗</a></h4>
+      <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.6">أدخل مفتاح <b>API Key</b> من حسابك في <code>Intervals.icu → Settings → Developer Settings</code> (اترك معرف الرياضي <code>0</code> ليستخدم حساب المفتاح تلقائياً).</div>
+      <div class="row r2">
+        <label style="font-size:12px">معرف الرياضي (Athlete ID)<input id="icuAthId" type="text" value="0" placeholder="0 أو i123456" dir="ltr" autocomplete="off"></label>
+        <label style="font-size:12px">نطاق الجلب من التقويم<select id="icuDays"><option value="7" selected>أسبوع (7 أيام)</option><option value="14">أسبوعان (14 يوماً)</option><option value="30">شهر (30 يوماً)</option></select></label>
+      </div>
+      <label style="font-size:12px;display:block;margin-top:4px">مفتاح API Key (يُحفظ في متصفحك فقط)<input id="icuApiKey" type="password" placeholder="أدخل مفتاح API_KEY الخاص بـ Intervals.icu" dir="ltr" autocomplete="off"></label>
+      <div class="row r2" style="margin-top:6px">
+        <button type="button" class="primary" id="icuSyncBtn">🔄 جلب تمرين اليوم وجدول الأسبوع</button>
+        <button type="button" id="icuTestDemoBtn">🧪 تجربة تحليلي لنص تمرين</button>
+      </div>
+      <div id="icuStatusMsg" class="ext-stat">جاهز للربط — يمكنك جلب جدولك من Intervals.icu أو تحويل نص التمرين بالأسفل.</div>
+      <details id="icuTextDetails" style="margin-top:6px">
+        <summary style="font-size:12px;color:#cbd5e1">📝 لصق أو كتابة نص تمرين بصيغة باني التمارين (Intervals.icu Builder)</summary>
+        <input id="icuRawName" type="text" placeholder="اسم التمرين المقترح (اختياري)" style="margin-top:6px">
+        <textarea id="icuRawText" dir="ltr" style="height:96px;font-size:12px;margin-top:6px" placeholder="- 5m 60% Pace&#10;5x&#10;- 2m 95% Pace incline 2%&#10;- 1m 55% Pace&#10;- 5m 55% Pace"></textarea>
+        <button type="button" id="icuParseBtn" style="width:100%;margin-top:6px">⚡ تحويل النص واقتراحه في الجدول</button>
+      </details>
+    </div>
+
+    <div class="ext-hub-sec">
+      <h4><span>📂 الخيار 3: مستورد قوالب التمارين المفتوحة (ZWO / JSON / MRC / ERG / URL)</span></h4>
+      <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.6">يدعم ملفات <b>Zwift Workouts (<code>.zwo</code>)</b>، وملفات <b>Open-Workout / Kettler (<code>.json</code>)</b>، وملفات المدربات الذكية (<code>.mrc</code> / <code>.erg</code>) من هاتفك أو عبر رابط مباشر.</div>
+      <div class="row r2" style="margin-bottom:6px">
+        <input id="extUrlInp" type="url" dir="ltr" placeholder="https://.../workout.zwo أو .json">
+        <button type="button" id="extFetchUrlBtn">🌐 جلب من الرابط</button>
+      </div>
+      <div class="row r2">
+        <button type="button" id="extFilePickBtn">📂 اختيار ملف (.zwo / .json / .mrc / .erg)</button>
+        <button type="button" id="extClearImpBtn">🗑️ مسح البرامج المستوردة</button>
+      </div>
+      <input type="file" id="extFileInp" accept=".zwo,.json,.mrc,.erg,.txt,.xml,application/json,text/xml,text/plain" multiple hidden>
+      <div id="extImpStatusMsg" class="ext-stat">تم تضمين 8 قوالب عالمية قياسية جاهزة في شريط المقترحات، ويمكنك استيراد أي عدد إضافي.</div>
+    </div>
+  </details>
   <details id="ytLib">
     <summary>📺 مكتبة فيديوهات YouTube (جري مباشر / Live running)</summary>
     <div class="row r2" style="margin-top:8px"><input id="ytUrl" placeholder="الصق رابط فيديو أو بث مباشر أو قائمة تشغيل" dir="ltr" inputmode="url"><input id="ytTitle" placeholder="اسم الفيديو (اختياري)"></div>
@@ -10881,6 +10979,827 @@ window.copyRawData = copyRawData;
     if(dead){ stopCam(); startCam(); } else { hLastAt = Date.now(); lockScreen(); }
   });
   try{ if(localStorage.getItem(KEY) === '1'){ tg.checked = true; setTimeout(startCam, 1500); } }catch(_){}
+})();
+
+// ===== v114.1-EXT: نظام ربط المواقع ومستورد القوالب واقتراحها في الجدول (الخياران 2 و3 معاً — بدون تكييف مع حالة المحرك) =====
+(function(){
+  const K_CFG = 'kettler_ext_wk_cfg_v1';
+  const K_ICU = 'kettler_ext_icu_list_v1';
+  const K_IMP = 'kettler_ext_imp_list_v1';
+  const $id = id => document.getElementById(id);
+
+  // 8 قوالب عالمية قياسية مبنية وفق معايير Intervals.icu وZwift Running (تعتمد على نسب % من السرعة المرجعية أو سرعات قياسية)
+  const BUILTIN_TEMPLATES = [
+    {
+      id: 'tpl_z2_fatburn',
+      cat: 'z2',
+      src: 'قالب Z2',
+      name: 'حرق دهون مستقر (Zone 2 Base)',
+      steps: [
+        {m: 5, pct: 0.60, i: 0},
+        {m: 20, pct: 0.75, i: 1},
+        {m: 5, pct: 0.55, i: 0}
+      ]
+    },
+    {
+      id: 'tpl_hiit_billat',
+      cat: 'hiit',
+      src: 'قالب ZWO',
+      name: 'فترات بيلات 1/1 (VO2max HIIT)',
+      steps: [
+        {m: 5, pct: 0.60, i: 0},
+        {m: 1, pct: 1.05, i: 1}, {m: 1, pct: 0.55, i: 0},
+        {m: 1, pct: 1.05, i: 1}, {m: 1, pct: 0.55, i: 0},
+        {m: 1, pct: 1.05, i: 1}, {m: 1, pct: 0.55, i: 0},
+        {m: 1, pct: 1.05, i: 1}, {m: 1, pct: 0.55, i: 0},
+        {m: 1, pct: 1.05, i: 1}, {m: 1, pct: 0.55, i: 0},
+        {m: 1, pct: 1.05, i: 1}, {m: 1, pct: 0.55, i: 0},
+        {m: 4, pct: 0.55, i: 0}
+      ]
+    },
+    {
+      id: 'tpl_tempo_cruise',
+      cat: 'tempo',
+      src: 'قالب ICU',
+      name: 'تيمبو العتبة (3×6 د Threshold)',
+      steps: [
+        {m: 5, pct: 0.60, i: 0},
+        {m: 6, pct: 0.90, i: 1}, {m: 2, pct: 0.60, i: 0},
+        {m: 6, pct: 0.90, i: 1}, {m: 2, pct: 0.60, i: 0},
+        {m: 6, pct: 0.90, i: 1},
+        {m: 5, pct: 0.55, i: 0}
+      ]
+    },
+    {
+      id: 'tpl_hills_climb',
+      cat: 'hills',
+      src: 'قالب تلال',
+      name: 'تلال القوة المتدرجة (Hill Repeats)',
+      steps: [
+        {m: 4, pct: 0.60, i: 0},
+        {m: 2, pct: 0.80, i: 4}, {m: 1.5, pct: 0.58, i: 0},
+        {m: 2, pct: 0.80, i: 6}, {m: 1.5, pct: 0.58, i: 0},
+        {m: 2, pct: 0.80, i: 8}, {m: 1.5, pct: 0.58, i: 0},
+        {m: 2, pct: 0.82, i: 6}, {m: 1.5, pct: 0.58, i: 0},
+        {m: 4, pct: 0.55, i: 0}
+      ]
+    },
+    {
+      id: 'tpl_fartlek_swedish',
+      cat: 'hiit',
+      src: 'قالب ZWO',
+      name: 'فارتلك سويدي متغير (Speed Play)',
+      steps: [
+        {m: 4, pct: 0.60, i: 0},
+        {m: 3, pct: 0.85, i: 1}, {m: 2, pct: 0.65, i: 0},
+        {m: 2, pct: 0.95, i: 1}, {m: 1.5, pct: 0.60, i: 0},
+        {m: 1, pct: 1.05, i: 2}, {m: 1.5, pct: 0.60, i: 0},
+        {m: 3, pct: 0.88, i: 1},
+        {m: 4, pct: 0.55, i: 0}
+      ]
+    },
+    {
+      id: 'tpl_pyramid_5k',
+      cat: 'tempo',
+      src: 'قالب ICU',
+      name: 'هرم السرعة (1-2-3-2-1 د)',
+      steps: [
+        {m: 4, pct: 0.60, i: 0},
+        {m: 1, pct: 1.00, i: 1}, {m: 1, pct: 0.60, i: 0},
+        {m: 2, pct: 0.95, i: 1}, {m: 1, pct: 0.60, i: 0},
+        {m: 3, pct: 0.90, i: 1}, {m: 1.5, pct: 0.60, i: 0},
+        {m: 2, pct: 0.95, i: 1}, {m: 1, pct: 0.60, i: 0},
+        {m: 1, pct: 1.02, i: 1},
+        {m: 4, pct: 0.55, i: 0}
+      ]
+    },
+    {
+      id: 'tpl_z2_prog',
+      cat: 'z2',
+      src: 'قالب Z2',
+      name: 'بناء الهوائي التصاعدي (Progression)',
+      steps: [
+        {m: 5, pct: 0.60, i: 0},
+        {m: 8, pct: 0.70, i: 0},
+        {m: 8, pct: 0.78, i: 1},
+        {m: 6, pct: 0.86, i: 1},
+        {m: 3, pct: 0.55, i: 0}
+      ]
+    },
+    {
+      id: 'tpl_hills_walk',
+      cat: 'hills',
+      src: 'قالب مشي',
+      name: 'مشي جبلي لحرق الدهون (Incline Walk)',
+      steps: [
+        {m: 3, pct: 0.45, i: 2},
+        {m: 5, pct: 0.52, i: 6},
+        {m: 5, pct: 0.54, i: 9},
+        {m: 5, pct: 0.54, i: 11},
+        {m: 4, pct: 0.52, i: 6},
+        {m: 3, pct: 0.45, i: 1}
+      ]
+    }
+  ];
+
+  let cfg = {refSpd: 10, defInc: 0, athId: '0', apiKey: '', days: 7};
+  let icuList = [];
+  let impList = [];
+  let curCat = 'all';
+  let activeId = '';
+
+  function loadState(){
+    try{
+      const c = JSON.parse(localStorage.getItem(K_CFG));
+      if(c && typeof c === 'object') cfg = Object.assign(cfg, c);
+    }catch(_){}
+    try{ icuList = JSON.parse(localStorage.getItem(K_ICU)) || []; }catch(_){ icuList = []; }
+    try{ impList = JSON.parse(localStorage.getItem(K_IMP)) || []; }catch(_){ impList = []; }
+  }
+  function saveCfg(){
+    try{ localStorage.setItem(K_CFG, JSON.stringify(cfg)); }catch(_){}
+  }
+  function saveIcu(){
+    try{ localStorage.setItem(K_ICU, JSON.stringify(icuList.slice(0, 40))); }catch(_){}
+  }
+  function saveImp(){
+    try{ localStorage.setItem(K_IMP, JSON.stringify(impList.slice(0, 50))); }catch(_){}
+  }
+
+  function clampSpd(v){
+    const mx = typeof MAX_SPEED === 'number' ? MAX_SPEED : 20;
+    const st = typeof SSTEP === 'number' && SSTEP > 0 ? SSTEP : 0.5;
+    const r = Math.round((Number(v) || 5) / st) * st;
+    return Math.max(1, Math.min(mx, Math.round(r * 10) / 10));
+  }
+  function clampInc(v){
+    const mx = typeof MAX_INCL === 'number' ? MAX_INCL : 15;
+    const st = typeof ISTEP === 'number' && ISTEP > 0 ? ISTEP : 1;
+    const r = Math.round((Number(v) || 0) / st) * st;
+    return Math.max(0, Math.min(mx, Math.round(r)));
+  }
+  function clampMin(v){
+    const r = Math.round((Number(v) || 1) * 2) / 2;
+    return Math.max(0.5, Math.min(240, r));
+  }
+
+  // تحويل خطوات القالب إلى مراحل [{m, s, i}] حسب السرعة المرجعية
+  function materializeSegs(item){
+    const ref = Math.max(4, Math.min(20, Number(cfg.refSpd) || 10));
+    const dInc = clampInc(cfg.defInc || 0);
+    const raw = item.steps || item.segs || [];
+    const out = [];
+    raw.forEach(st => {
+      let s = st.s;
+      if(!(s > 0)){
+        const pct = st.pct != null ? Number(st.pct) : 0.75;
+        s = ref * pct;
+      }
+      const m = clampMin(st.m != null ? st.m : 1);
+      const i = clampInc(st.i != null ? st.i : dInc);
+      const cs = clampSpd(s);
+      // دمج المراحل المتتالية المتطابقة في السرعة والميل لتبسيط الجدول
+      if(out.length && out[out.length - 1].s === cs && out[out.length - 1].i === i && (out[out.length - 1].m + m) <= 240){
+        out[out.length - 1].m = Math.round((out[out.length - 1].m + m) * 10) / 10;
+      } else {
+        out.push({m, s: cs, i});
+      }
+    });
+    return out.length ? out : [{m: 5, s: clampSpd(ref * 0.7), i: dInc}];
+  }
+
+  function updateRefPaceLabel(){
+    const el = $id('extRefPaceLbl');
+    if(!el) return;
+    const ref = Math.max(4, Math.min(20, Number(cfg.refSpd) || 10));
+    const secPerKm = Math.round(3600 / ref);
+    const mm = Math.floor(secPerKm / 60), ss = String(secPerKm % 60).padStart(2, '0');
+    el.textContent = mm + ':' + ss + ' /km (' + ref.toFixed(1) + ' كم/س)';
+  }
+
+  function allItems(){
+    const list = [];
+    icuList.forEach(x => list.push(Object.assign({}, x, {cat: 'icu'})));
+    impList.forEach(x => list.push(Object.assign({}, x, {cat: x.cat || 'imp'})));
+    BUILTIN_TEMPLATES.forEach(x => list.push(x));
+    return list;
+  }
+
+  function renderCards(){
+    const box = $id('extSugCards');
+    if(!box) return;
+    box.innerHTML = '';
+    const items = allItems().filter(x => curCat === 'all' || x.cat === curCat);
+    if(!items.length){
+      box.innerHTML = '<div style="font-size:12px;color:var(--dim);padding:8px 4px">لا توجد برامج في هذا التصنيف حالياً — اضغط «⚙️ المصدر» للربط أو الاستيراد.</div>';
+      return;
+    }
+    items.forEach(it => {
+      const segs = materializeSegs(it);
+      const totMin = Math.round(segs.reduce((a, g) => a + g.m, 0) * 10) / 10;
+      const maxS = Math.max(...segs.map(g => g.s));
+      const maxI = Math.max(...segs.map(g => g.i));
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'ext-card' + (it.id === activeId ? ' on' : '');
+      const topCls = it.cat === 'icu' ? 'bdg-icu' : (it.cat === 'imp' ? 'bdg-imp' : '');
+      const topBadge = it.dateStr ? ('📅 ' + it.dateStr) : (it.src || 'قالب');
+      btn.innerHTML =
+        '<div class="ext-card-top"><span class="'+topCls+'">' + esc(topBadge) + '</span><span>' + segs.length + ' مراحل</span></div>' +
+        '<b>' + esc(it.name) + '</b>' +
+        '<span>⏱ ' + totMin + ' د • ⚡ ' + maxS + ' كم/س' + (maxI > 0 ? ' • ⛰️ ' + maxI + '٪' : '') + '</span>';
+      btn.onclick = () => previewItemInSchedule(it);
+      box.appendChild(btn);
+    });
+  }
+
+  // اقتراح البرنامج مباشرة في الجدول (#segs + #chart + #pl) دون تكييف مع المحرك
+  function previewItemInSchedule(it){
+    if(typeof running !== 'undefined' && running){
+      try{ info('أوقف البرنامج الجاري أولاً قبل معاينة برنامج مقترح'); }catch(_){}
+      return;
+    }
+    activeId = it.id;
+    const segs = materializeSegs(it);
+    const pn = $id('progName'), ps = $id('progSel'), sg = $id('segs');
+    if(pn) pn.value = it.name;
+    if(ps) ps.value = (typeof progs !== 'undefined' && progs[it.name]) ? it.name : '';
+    if(sg){
+      sg.innerHTML = '';
+      segs.forEach(g => addRow(g));
+    }
+    try{ total(); }catch(_){}
+    try{ pgCards(); }catch(_){}
+    renderCards();
+
+    // فتح جدول المراحل تلقائياً ليراه المستخدم فوراً
+    try{
+      const plEl = $id('pl');
+      if(plEl && plEl.parentElement && plEl.parentElement.tagName === 'DETAILS'){
+        plEl.parentElement.open = true;
+      }
+    }catch(_){}
+
+    const totMin = Math.round(segs.reduce((a, g) => a + g.m, 0) * 10) / 10;
+    const bar = $id('extPreviewBar'), txt = $id('extPreviewTxt');
+    if(bar && txt){
+      bar.classList.add('show');
+      txt.textContent = '📋 مقترح الآن في الجدول: «' + it.name + '» (' + segs.length + ' مراحل • ' + totMin + ' دقيقة)';
+    }
+    try{ info('تم اقتراح «' + it.name + '» في جدول المراحل — يمكنك البدء فوراً أو حفظه في برامجك'); }catch(_){}
+  }
+
+  // ---------- المحلل الذكي لصيغة نصوص Intervals.icu Workout Builder ----------
+  function parsePaceStrToKmh(str, refSpd){
+    // صيغة 4:30/km أو 5:00-5:30/km
+    const mRange = str.match(/(\d+):(\d{2})\s*(?:-\s*(\d+):(\d{2}))?\s*\/km/i);
+    if(mRange){
+      const sec1 = parseInt(mRange[1], 10) * 60 + parseInt(mRange[2], 10);
+      const sec2 = mRange[3] ? (parseInt(mRange[3], 10) * 60 + parseInt(mRange[4], 10)) : sec1;
+      const avgSec = (sec1 + sec2) / 2;
+      if(avgSec > 60) return 3600 / avgSec;
+    }
+    // صيغة سرعة مباشرة مثل 8.5km/h أو 10 kmh
+    const mKmh = str.match(/(\d+(?:\.\d+)?)\s*(?:km\/h|kmh|kph|كم\/س)/i);
+    if(mKmh) return parseFloat(mKmh[1]);
+    // صيغة نسبة مئوية مثل 80% أو 75-85%
+    const mPct = str.match(/(\d+(?:\.\d+)?)\s*(?:-\s*(\d+(?:\.\d+)?))?\s*%/);
+    if(mPct){
+      const p1 = parseFloat(mPct[1]), p2 = mPct[2] ? parseFloat(mPct[2]) : p1;
+      return refSpd * ((p1 + p2) / 200);
+    }
+    // مناطق الجهد Z1..Z5
+    const mZone = str.match(/\bZ([1-5])\b/i);
+    if(mZone){
+      const zMap = {1: 0.60, 2: 0.74, 3: 0.85, 4: 0.95, 5: 1.06};
+      return refSpd * (zMap[mZone[1]] || 0.75);
+    }
+    return refSpd * 0.75;
+  }
+
+  function parseIntervalsText(text, refSpd){
+    const lines = String(text || '').split(/\r?\n/);
+    const steps = [];
+    let pendingReps = 1;
+    let repBlock = [];
+
+    const flushBlock = () => {
+      if(repBlock.length && pendingReps > 1){
+        for(let r = 0; r < pendingReps; r++){
+          repBlock.forEach(st => steps.push(Object.assign({}, st)));
+        }
+      } else if(repBlock.length){
+        repBlock.forEach(st => steps.push(Object.assign({}, st)));
+      }
+      repBlock = [];
+      pendingReps = 1;
+    };
+
+    for(let rawLine of lines){
+      const line = rawLine.trim();
+      if(!line || line.startsWith('#') || line.startsWith('//')){
+        if(!line && repBlock.length) flushBlock();
+        continue;
+      }
+      // التحقق من سطر التكرار مثل "6x" أو "Main set 5x"
+      const repMatch = line.match(/^(?:[A-Za-z\u0600-\u06FF\s]+)?(\d+)\s*[xX×]\s*$/);
+      if(repMatch){
+        flushBlock();
+        pendingReps = Math.max(1, Math.min(30, parseInt(repMatch[1], 10)));
+        continue;
+      }
+      if(!line.startsWith('-') && !line.startsWith('*') && !/\d+\s*(?:m|min|s|sec|km|mtr)\b/i.test(line)){
+        continue;
+      }
+      const s = parsePaceStrToKmh(line, refSpd);
+      const pct = Math.round((s / refSpd) * 1000) / 1000;
+
+      // استخراج المدة بالدقائق (أو المسافة وتحويلها إلى دقائق بناءً على السرعة)
+      let durMin = 0;
+      const mComb = line.match(/(\d+)\s*m(?:in)?\s*(\d+)\s*s/i);
+      const mHr = line.match(/(\d+)\s*h\s*(?:(\d+)\s*m)?/i);
+      const mMin = line.match(/(?:^|\s|-)(\d+(?:\.\d+)?)\s*(?:m|min|دقيقة|د)\b/i);
+      const mSec = line.match(/(?:^|\s|-)(\d+)\s*(?:s|sec|ثانية|ث)\b/i);
+      const mKm = line.match(/(?:^|\s|-)(\d+(?:\.\d+)?)\s*km\b/i);
+      const mMtr = line.match(/(?:^|\s|-)(\d+)\s*(?:mtr|meters)\b/i);
+
+      if(mComb) durMin = parseInt(mComb[1], 10) + parseInt(mComb[2], 10) / 60;
+      else if(mHr) durMin = parseInt(mHr[1], 10) * 60 + (mHr[2] ? parseInt(mHr[2], 10) : 0);
+      else if(mMin) durMin = parseFloat(mMin[1]);
+      else if(mSec) durMin = parseInt(mSec[1], 10) / 60;
+      else if(mKm) durMin = (parseFloat(mKm[1]) / Math.max(3, s)) * 60;
+      else if(mMtr) durMin = ((parseInt(mMtr[1], 10) / 1000) / Math.max(3, s)) * 60;
+
+      if(!(durMin > 0)) continue;
+
+      // استخراج الميل إن وجد مثل incline 3% أو slope 2% أو ميل 4%
+      let inc = cfg.defInc || 0;
+      const mInc = line.match(/(?:incline|grade|slope|hill|ميل)\s*[:=]?\s*(\d+(?:\.\d+)?)\s*%?/i);
+      if(mInc) inc = parseFloat(mInc[1]);
+
+      const stepObj = {m: clampMin(durMin), pct, i: clampInc(inc)};
+      if(pendingReps > 1) repBlock.push(stepObj);
+      else steps.push(stepObj);
+    }
+    flushBlock();
+    return steps;
+  }
+
+  // تحليل بنية workout_doc.steps الخاصة بواجهة Intervals.icu API
+  function parseIntervalsWorkoutDoc(doc, refSpd){
+    const out = [];
+    function walk(arr){
+      if(!Array.isArray(arr)) return;
+      arr.forEach(st => {
+        if(!st) return;
+        const reps = st.reps && st.reps > 1 ? Math.min(30, st.reps) : 1;
+        if(Array.isArray(st.steps) && st.steps.length){
+          for(let r = 0; r < reps; r++) walk(st.steps);
+          return;
+        }
+        let pct = 0.75;
+        const target = st.pace || st.power || st.hr;
+        if(target && typeof target === 'object'){
+          const val = target.value != null ? Number(target.value)
+            : (target.start != null && target.end != null ? (Number(target.start) + Number(target.end)) / 2 : Number(target.start || 75));
+          if(val > 3 && val <= 200) pct = val / 100;
+          else if(val > 0 && val <= 2.5) pct = val;
+        }
+        let durMin = 0;
+        if(st.duration > 0) durMin = st.duration / 60;
+        else if(st.distance > 0){
+          const spd = Math.max(3, refSpd * pct);
+          durMin = ((st.distance / 1000) / spd) * 60;
+        }
+        if(durMin > 0){
+          out.push({m: clampMin(durMin), pct: Math.round(pct * 1000) / 1000, i: clampInc(cfg.defInc || 0)});
+        }
+      });
+    }
+    if(doc && Array.isArray(doc.steps)) walk(doc.steps);
+    return out;
+  }
+
+  // ---------- محلل ملفات Zwift (.zwo XML) و (.mrc/.erg) و (.json) ----------
+  function parseZwoXml(xmlText){
+    const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+    const nameEl = doc.querySelector('workout_file > name, name');
+    const name = (nameEl && nameEl.textContent.trim()) || 'تمرين Zwift ZWO';
+    const wk = doc.querySelector('workout');
+    if(!wk) return null;
+    const steps = [];
+    const attrNum = (el, keys, defVal) => {
+      for(const k of keys){
+        const v = el.getAttribute(k) ?? el.getAttribute(k.toLowerCase());
+        if(v !== null && v !== '' && !isNaN(parseFloat(v))) return parseFloat(v);
+      }
+      return defVal;
+    };
+    const toDurMin = (el, keys, defSec) => {
+      const raw = attrNum(el, keys, defSec);
+      // بعض ملفات الجري في ZWO تضع المسافة بالأمتار (مثل 400 أو 1000) أو الزمن بالثواني
+      return clampMin(raw > 15 ? raw / 60 : raw);
+    };
+
+    Array.from(wk.children).forEach(el => {
+      const tag = el.tagName.toLowerCase();
+      const inc = clampInc(attrNum(el, ['Incline', 'Grade', 'Slope'], cfg.defInc || 0));
+      if(tag === 'steadystate' || tag === 'freeride' || tag === 'maxeffort'){
+        const m = toDurMin(el, ['Duration'], 300);
+        const p = attrNum(el, ['Power', 'Pace', 'PowerLow'], tag === 'maxeffort' ? 1.10 : 0.75);
+        steps.push({m, pct: p > 3 ? p / 100 : p, i: inc});
+      } else if(tag === 'warmup' || tag === 'cooldown' || tag === 'ramp'){
+        const totM = toDurMin(el, ['Duration'], 300);
+        const pL = attrNum(el, ['PowerLow', 'PaceLow', 'Power'], tag === 'cooldown' ? 0.75 : 0.55);
+        const pH = attrNum(el, ['PowerHigh', 'PaceHigh', 'Power'], tag === 'cooldown' ? 0.55 : 0.80);
+        const slices = totM >= 4 ? 3 : 2;
+        for(let k = 0; k < slices; k++){
+          const f = slices === 1 ? 0.5 : k / (slices - 1);
+          const p = pL + (pH - pL) * f;
+          steps.push({m: clampMin(totM / slices), pct: p > 3 ? p / 100 : p, i: inc});
+        }
+      } else if(tag === 'intervalst'){
+        const reps = Math.max(1, Math.min(30, Math.round(attrNum(el, ['Repeat'], 4))));
+        const onM = toDurMin(el, ['OnDuration'], 120);
+        const offM = toDurMin(el, ['OffDuration'], 60);
+        const onP = attrNum(el, ['OnPower', 'PowerOnHigh', 'OnPace'], 0.95);
+        const offP = attrNum(el, ['OffPower', 'PowerOffLow', 'OffPace'], 0.55);
+        for(let r = 0; r < reps; r++){
+          steps.push({m: onM, pct: onP > 3 ? onP / 100 : onP, i: inc});
+          steps.push({m: offM, pct: offP > 3 ? offP / 100 : offP, i: clampInc(cfg.defInc || 0)});
+        }
+      }
+    });
+    return steps.length ? [{id: 'imp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), src: 'ملف ZWO', name: name.slice(0, 42), steps}] : null;
+  }
+
+  function parseMrcErg(text, fallbackName){
+    const lines = String(text || '').split(/\r?\n/);
+    let inData = false, name = fallbackName || 'تمرين MRC/ERG', ftp = 250;
+    const pts = [];
+    for(const raw of lines){
+      const l = raw.trim();
+      if(!l) continue;
+      if(/^DESCRIPTION\s*=/i.test(l)) name = l.split('=')[1].trim() || name;
+      if(/^FILE NAME\s*=/i.test(l) && !fallbackName) name = l.split('=')[1].trim() || name;
+      if(/^FTP\s*=/i.test(l)) ftp = parseFloat(l.split('=')[1]) || 250;
+      if(/^\[COURSE DATA\]/i.test(l)){ inData = true; continue; }
+      if(/^\[END COURSE DATA\]/i.test(l)){ inData = false; continue; }
+      if(inData){
+        const p = l.split(/[\s\t,]+/).map(Number);
+        if(p.length >= 2 && !isNaN(p[0]) && !isNaN(p[1])) pts.push({t: p[0], v: p[1]});
+      }
+    }
+    const steps = [];
+    for(let k = 0; k < pts.length - 1; k++){
+      const dt = pts[k + 1].t - pts[k].t;
+      if(dt <= 0.1) continue;
+      const avgV = (pts[k].v + pts[k + 1].v) / 2;
+      const pct = avgV > 140 ? (avgV / ftp) : (avgV / 100);
+      steps.push({m: clampMin(dt), pct: Math.max(0.4, Math.min(1.4, pct)), i: clampInc(cfg.defInc || 0)});
+    }
+    return steps.length ? [{id: 'imp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), src: 'MRC/ERG', name: name.slice(0, 42), steps}] : null;
+  }
+
+  function parseAnyWorkoutPayload(rawText, fileName){
+    const txt = String(rawText || '').trim();
+    if(!txt) return [];
+    const baseName = (fileName || 'تمرين مستورد').replace(/\.[^.]+$/, '').slice(0, 42);
+
+    // 1. فحص XML / ZWO
+    if(txt.startsWith('<') || /<workout_file|<SteadyState|<IntervalsT/i.test(txt)){
+      const z = parseZwoXml(txt);
+      if(z) return z;
+    }
+    // 2. فحص MRC / ERG
+    if(/\[COURSE DATA\]/i.test(txt)){
+      const m = parseMrcErg(txt, baseName);
+      if(m) return m;
+    }
+    // 3. فحص JSON (يدعم Kettler JSON، وOpen-Workout JSON، ومصفوفات المراحل، وworkout_doc)
+    if(txt.startsWith('{') || txt.startsWith('[')){
+      try{
+        const j = JSON.parse(txt);
+        const out = [];
+        const addOne = (nm, arr, srcTag) => {
+          const steps = [];
+          (arr || []).forEach(g => {
+            if(!g) return;
+            const m = g.m ?? (g.duration ? g.duration / 60 : (g.restSeconds ? g.restSeconds / 60 : 2));
+            const s = g.s ?? g.speed ?? null;
+            const pct = g.pct ?? (g.power && typeof g.power === 'number' ? (g.power > 3 ? g.power / 100 : g.power) : null);
+            const i = g.i ?? g.incline ?? (cfg.defInc || 0);
+            if(s != null) steps.push({m: clampMin(m), s: clampSpd(s), i: clampInc(i)});
+            else steps.push({m: clampMin(m), pct: pct || 0.75, i: clampInc(i)});
+          });
+          if(steps.length){
+            out.push({
+              id: 'imp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+              src: srcTag || 'JSON',
+              name: String(nm || baseName).slice(0, 42),
+              steps
+            });
+          }
+        };
+
+        if(Array.isArray(j)){
+          if(j.length && (j[0].m != null || j[0].duration != null || j[0].s != null)){
+            addOne(baseName, j, 'JSON');
+          } else {
+            j.forEach((item, idx) => {
+              if(item && Array.isArray(item.steps || item.segs || item.segments)){
+                addOne(item.name || item.title || (baseName + ' ' + (idx + 1)), item.steps || item.segs || item.segments, 'JSON');
+              }
+            });
+          }
+        } else if(j && typeof j === 'object'){
+          if(j.workout && Array.isArray(j.workout.exercises || j.workout.steps)){
+            addOne(j.workout.name || baseName, j.workout.exercises || j.workout.steps, 'Open-Workout');
+          } else if(Array.isArray(j.steps || j.segs || j.segments)){
+            addOne(j.name || j.title || baseName, j.steps || j.segs || j.segments, 'JSON');
+          } else if(j.workout_doc && Array.isArray(j.workout_doc.steps)){
+            const st = parseIntervalsWorkoutDoc(j.workout_doc, cfg.refSpd || 10);
+            if(st.length) out.push({id: 'imp_' + Date.now(), src: 'ICU JSON', name: (j.name || baseName).slice(0, 42), steps: st});
+          } else {
+            Object.keys(j).forEach(k => {
+              if(Array.isArray(j[k]) && j[k].length && j[k][0].m != null){
+                addOne(k, j[k], 'JSON');
+              }
+            });
+          }
+        }
+        if(out.length) return out;
+      }catch(_){}
+    }
+    // 4. فحص نص Intervals.icu Builder
+    const st = parseIntervalsText(txt, cfg.refSpd || 10);
+    if(st.length){
+      return [{id: 'imp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), src: 'نص ICU', name: baseName, steps: st}];
+    }
+    return [];
+  }
+
+  // ---------- الاتصال المباشر بواجهة Intervals.icu API (الخيار 2) ----------
+  function fmtIsoDate(d){
+    const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + day;
+  }
+
+  async function syncIntervalsIcu(){
+    const stEl = $id('icuStatusMsg');
+    const ath = ($id('icuAthId') ? $id('icuAthId').value.trim() : cfg.athId) || '0';
+    const key = ($id('icuApiKey') ? $id('icuApiKey').value.trim() : cfg.apiKey) || '';
+    const days = parseInt(($id('icuDays') && $id('icuDays').value) || cfg.days || 7, 10);
+
+    cfg.athId = ath; cfg.apiKey = key; cfg.days = days;
+    saveCfg();
+
+    if(!key){
+      if(stEl) stEl.innerHTML = '⚠️ أدخل مفتاح <b>API Key</b> الخاص بحسابك في Intervals.icu أولاً (من Settings → Developer Settings).';
+      try{ pgSet('tools'); const h = $id('extWorkoutHub'); if(h) h.open = true; }catch(_){}
+      try{ toast('🔑 أدخل مفتاح API Key الخاص بـ Intervals.icu في قسم المصدر'); }catch(_){}
+      return;
+    }
+
+    const now = new Date();
+    const oldest = fmtIsoDate(now);
+    const endD = new Date(now.getTime() + days * 86400000);
+    const newest = fmtIsoDate(endD);
+
+    if(stEl) stEl.textContent = '⏳ جارٍ الاتصال بـ Intervals.icu وجلب تمارين الفترة (' + oldest + ' إلى ' + newest + ')...';
+    try{
+      const url = 'https://intervals.icu/api/v1/athlete/' + encodeURIComponent(ath) + '/events?oldest=' + oldest + '&newest=' + newest;
+      const auth = btoa('API_KEY:' + key);
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Basic ' + auth,
+          'Accept': 'application/json'
+        }
+      });
+      if(!res.ok){
+        throw new Error('HTTP ' + res.status + (res.status === 401 || res.status === 403 ? ' (تأكد من صحة مفتاح API Key ومعرف الرياضي)' : ''));
+      }
+      const events = await res.json();
+      const refSpd = Math.max(4, Math.min(20, Number(cfg.refSpd) || 10));
+      const fetched = [];
+
+      (Array.isArray(events) ? events : []).forEach(ev => {
+        if(!ev || (ev.category && ev.category !== 'WORKOUT')) return;
+        let steps = [];
+        if(ev.workout_doc && Array.isArray(ev.workout_doc.steps) && ev.workout_doc.steps.length){
+          steps = parseIntervalsWorkoutDoc(ev.workout_doc, refSpd);
+        }
+        if(!steps.length && ev.description){
+          steps = parseIntervalsText(ev.description, refSpd);
+        }
+        if(!steps.length) return;
+        const dStr = String(ev.start_date_local || '').slice(0, 10);
+        const isToday = dStr === oldest;
+        fetched.push({
+          id: 'icu_' + (ev.id || dStr + '_' + fetched.length),
+          cat: 'icu',
+          src: isToday ? 'تمرين اليوم WOD' : 'Intervals.icu',
+          dateStr: isToday ? 'اليوم (WOD)' : dStr.slice(5),
+          name: ((isToday ? '⭐ ' : '') + (ev.name || 'تمرين ' + dStr)).slice(0, 42),
+          steps
+        });
+      });
+
+      if(!fetched.length){
+        if(stEl) stEl.textContent = 'ℹ️ تم الاتصال بنجاح، لكن لا توجد تمارين مجدولة تحتوي على مراحل في تقويمك خلال هذه الفترة.';
+        try{ toast('📅 لا توجد تمارين مجدولة في تقويم Intervals.icu لهذه الفترة'); }catch(_){}
+        return;
+      }
+
+      icuList = fetched;
+      saveIcu();
+      curCat = 'icu';
+      document.querySelectorAll('#extCatBar .ext-cat').forEach(b => b.classList.toggle('on', b.dataset.ecat === 'icu'));
+      renderCards();
+      previewItemInSchedule(fetched[0]);
+      if(stEl) stEl.textContent = '✅ تم جلب ' + fetched.length + ' تمرين من Intervals.icu واقتراح «' + fetched[0].name + '» في الجدول.';
+      try{ toast('✅ تم جلب ' + fetched.length + ' تمرين من Intervals.icu'); }catch(_){}
+    }catch(err){
+      if(stEl) stEl.textContent = '❌ تعذر الجلب من Intervals.icu: ' + (err && err.message ? err.message : err);
+      try{ toast('❌ خطأ في الاتصال بـ Intervals.icu'); }catch(_){}
+    }
+  }
+
+  function initExtHub(){
+    loadState();
+    const rInp = $id('extRefSpd'), iInp = $id('extDefInc'), aInp = $id('icuAthId'), kInp = $id('icuApiKey'), dSel = $id('icuDays');
+    if(rInp){
+      rInp.value = cfg.refSpd || 10;
+      rInp.addEventListener('input', () => {
+        cfg.refSpd = Math.max(4, Math.min(20, parseFloat(rInp.value) || 10));
+        saveCfg();
+        updateRefPaceLabel();
+        renderCards();
+        if(activeId){
+          const found = allItems().find(x => x.id === activeId);
+          if(found) previewItemInSchedule(found);
+        }
+      });
+    }
+    if(iInp){
+      iInp.value = cfg.defInc || 0;
+      iInp.addEventListener('input', () => {
+        cfg.defInc = clampInc(parseFloat(iInp.value) || 0);
+        saveCfg();
+        renderCards();
+      });
+    }
+    if(aInp){ aInp.value = cfg.athId || '0'; aInp.addEventListener('change', () => { cfg.athId = aInp.value.trim() || '0'; saveCfg(); }); }
+    if(kInp){ kInp.value = cfg.apiKey || ''; kInp.addEventListener('change', () => { cfg.apiKey = kInp.value.trim(); saveCfg(); }); }
+    if(dSel){ dSel.value = String(cfg.days || 7); dSel.addEventListener('change', () => { cfg.days = parseInt(dSel.value, 10) || 7; saveCfg(); }); }
+
+    updateRefPaceLabel();
+    renderCards();
+
+    // أزرار الفلترة حسب الفئة
+    document.querySelectorAll('#extCatBar .ext-cat').forEach(btn => {
+      btn.addEventListener('click', () => {
+        curCat = btn.dataset.ecat || 'all';
+        document.querySelectorAll('#extCatBar .ext-cat').forEach(b => b.classList.toggle('on', b === btn));
+        renderCards();
+      });
+    });
+
+    const openBtn = $id('extOpenHubBtn');
+    if(openBtn) openBtn.onclick = () => {
+      pgSet('tools');
+      const h = $id('extWorkoutHub');
+      if(h){ h.open = true; setTimeout(() => { try{ h.scrollIntoView({behavior: 'smooth', block: 'start'}); }catch(_){} }, 60); }
+    };
+
+    const qSyncBtn = $id('extQuickSyncBtn');
+    if(qSyncBtn) qSyncBtn.onclick = () => syncIntervalsIcu();
+
+    const syncBtn = $id('icuSyncBtn');
+    if(syncBtn) syncBtn.onclick = () => syncIntervalsIcu();
+
+    const demoBtn = $id('icuTestDemoBtn');
+    if(demoBtn) demoBtn.onclick = () => {
+      const det = $id('icuTextDetails'), rt = $id('icuRawText'), rn = $id('icuRawName');
+      if(det) det.open = true;
+      if(rn && !rn.value) rn.value = 'تمرين Intervals.icu تجريبي (5×2 د)';
+      if(rt && !rt.value.trim()){
+        rt.value = '- 5m 60% Pace\n5x\n- 2m 95% Pace incline 2%\n- 1m 55% Pace\n- 4m 55% Pace';
+      }
+      if($id('icuParseBtn')) $id('icuParseBtn').click();
+    };
+
+    const parseBtn = $id('icuParseBtn');
+    if(parseBtn) parseBtn.onclick = () => {
+      const txt = ($id('icuRawText') ? $id('icuRawText').value : '').trim();
+      const nm = ($id('icuRawName') && $id('icuRawName').value.trim()) || ('تمرين ICU ' + (impList.length + 1));
+      const parsed = parseAnyWorkoutPayload(txt, nm);
+      if(!parsed.length){
+        if($id('icuStatusMsg')) $id('icuStatusMsg').textContent = '⚠️ لم يُعثر على مراحل صالحة في النص — تأكد من الصيغة مثل: - 5m 80% Pace';
+        try{ toast('⚠️ صيغة النص غير واضحة'); }catch(_){}
+        return;
+      }
+      parsed.forEach(p => { p.cat = 'icu'; icuList.unshift(p); });
+      saveIcu();
+      curCat = 'icu';
+      document.querySelectorAll('#extCatBar .ext-cat').forEach(b => b.classList.toggle('on', b.dataset.ecat === 'icu'));
+      renderCards();
+      pgSet('run');
+      previewItemInSchedule(parsed[0]);
+      try{ toast('✅ تم تحويل التمرين واقتراحه في الجدول'); }catch(_){}
+    };
+
+    const urlBtn = $id('extFetchUrlBtn');
+    if(urlBtn) urlBtn.onclick = async () => {
+      const u = ($id('extUrlInp') ? $id('extUrlInp').value : '').trim();
+      const stEl = $id('extImpStatusMsg');
+      if(!u){ if(stEl) stEl.textContent = '⚠️ الصق رابط ملف التمرين (.zwo أو .json أو .mrc) أولاً.'; return; }
+      if(stEl) stEl.textContent = '⏳ جارٍ جلب ملف التمرين من الرابط...';
+      try{
+        const r = await fetch(u);
+        if(!r.ok) throw new Error('HTTP ' + r.status);
+        const t = await r.text();
+        const fn = u.split('/').pop().split('?')[0] || 'تمرين من رابط';
+        const items = parseAnyWorkoutPayload(t, fn);
+        if(!items.length) throw new Error('لم يُعثر على مراحل صالحة داخل الملف');
+        items.forEach(x => impList.unshift(x));
+        saveImp();
+        curCat = 'imp';
+        document.querySelectorAll('#extCatBar .ext-cat').forEach(b => b.classList.toggle('on', b.dataset.ecat === 'imp'));
+        renderCards();
+        pgSet('run');
+        previewItemInSchedule(items[0]);
+        if(stEl) stEl.textContent = '✅ تم استيراد ' + items.length + ' تمرين من الرابط واقتراحه في الجدول.';
+        try{ toast('✅ تم استيراد التمرين واقتراحه في الجدول'); }catch(_){}
+      }catch(e){
+        if(stEl) stEl.textContent = '❌ تعذر الجلب من الرابط: ' + (e && e.message ? e.message : e);
+        try{ toast('❌ تعذر جلب الرابط'); }catch(_){}
+      }
+    };
+
+    const fPick = $id('extFilePickBtn'), fInp = $id('extFileInp');
+    if(fPick && fInp){
+      fPick.onclick = () => fInp.click();
+      fInp.onchange = async () => {
+        const files = Array.from(fInp.files || []);
+        if(!files.length) return;
+        let added = [];
+        for(const f of files){
+          try{
+            const txt = await f.text();
+            const items = parseAnyWorkoutPayload(txt, f.name);
+            items.forEach(x => { impList.unshift(x); added.push(x); });
+          }catch(_){}
+        }
+        fInp.value = '';
+        const stEl = $id('extImpStatusMsg');
+        if(!added.length){
+          if(stEl) stEl.textContent = '⚠️ لم يُعثر على مراحل صالحة في الملف المختار.';
+          try{ toast('⚠️ الملف لا يحتوي على مراحل صالحة'); }catch(_){}
+          return;
+        }
+        saveImp();
+        curCat = 'imp';
+        document.querySelectorAll('#extCatBar .ext-cat').forEach(b => b.classList.toggle('on', b.dataset.ecat === 'imp'));
+        renderCards();
+        pgSet('run');
+        previewItemInSchedule(added[0]);
+        if(stEl) stEl.textContent = '✅ تم استيراد ' + added.length + ' تمرين من الملف واقتراحه في الجدول.';
+        try{ toast('✅ تم استيراد ' + added.length + ' تمرين إلى الجدول'); }catch(_){}
+      };
+    }
+
+    const clrBtn = $id('extClearImpBtn');
+    if(clrBtn) clrBtn.onclick = () => {
+      icuList = []; impList = [];
+      saveIcu(); saveImp();
+      curCat = 'all';
+      document.querySelectorAll('#extCatBar .ext-cat').forEach(b => b.classList.toggle('on', b.dataset.ecat === 'all'));
+      renderCards();
+      if($id('extImpStatusMsg')) $id('extImpStatusMsg').textContent = '🗑️ تم مسح البرامج المستوردة والإبقاء على القوالب العالمية الثمانية.';
+      try{ toast('🗑️ تم مسح البرامج المستوردة'); }catch(_){}
+    };
+
+    const svBtn = $id('extSaveToProgsBtn');
+    if(svBtn) svBtn.onclick = () => {
+      const n = ($id('progName') && $id('progName').value.trim()) || 'برنامج مقترح';
+      const s = readSegs();
+      if(!s.length){ try{ info('لا توجد مراحل لحفظها'); }catch(_){} return; }
+      progs[n] = s;
+      storeProgs();
+      fillSel(n);
+      try{ pgCards(); }catch(_){}
+      try{ toast('💾 تم حفظ «' + n + '» في قائمة برامجك'); }catch(_){}
+      try{ info('تم حفظ البرنامج «' + n + '» في برامجك المعتمدة'); }catch(_){}
+    };
+
+    const edBtn = $id('extJumpEditBtn');
+    if(edBtn) edBtn.onclick = () => pgSet('edit');
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initExtHub);
+  else initExtHub();
 })();
 
 </script>
