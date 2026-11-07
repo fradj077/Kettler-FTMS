@@ -2301,8 +2301,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 #ytFloat.fs .yt-box{display:block!important;flex:1;aspect-ratio:auto;height:auto}
 #ytFloat.fs .yt-bar{padding-top:calc(env(safe-area-inset-top,0px) + 4px)}
 #ytLib .yt-item{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--line,#2a3352)}
-#ytLib .yt-item .yt-name{flex:1;font-size:13px;font-weight:700;min-width:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.4;word-break:break-word}
-#ytLib .yt-thumb{width:84px;height:47px;flex:none;border-radius:8px;object-fit:cover;background:#111a26;border:1px solid var(--line,#2a3352);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer}
+#ytLib .yt-item .yt-name{flex:1;font-size:13px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #ytLib .yt-item button{min-width:40px;min-height:38px;padding:0 6px}
 #ytLib .yt-item.linked .yt-name{color:#34d399}
 /* ===== صفحة البرامج: تبويبات فرعية + بطاقات + مخطط جديد ===== */
@@ -2355,24 +2354,6 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 #chTip button{min-height:34px;padding:0 10px;font-size:12px}
 .seg.flash{box-shadow:0 0 0 2px #38bdf8}
 .seg .dup{color:#e2e8f0;background:#243142;border-color:var(--line-light)}
-/* UI9: simple compact table, buttons under the table */
-.seghead2,#segs .seg{display:grid!important;grid-template-columns:24px 1fr 1fr 1fr 34px;gap:5px;align-items:center}
-.seghead2{font-size:11px;color:var(--dim);text-align:center;font-weight:700;padding:0 6px;margin-bottom:4px}
-#segs .seg{padding:3px 6px!important;margin-bottom:4px!important;border-radius:10px}
-#segs .seg-n{text-align:center;font-size:12px;font-weight:800;color:#38bdf8}
-#segs .seg-n::before{content:counter(sg)}
-#segs .seg input{min-height:38px!important;font-size:15px;padding:2px 4px;min-width:0}
-#segs .seg input::-webkit-inner-spin-button,#segs .seg input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
-#segs .seg input{-moz-appearance:textfield}
-#segs .seg .del{min-height:32px!important;width:34px;min-width:0;padding:0!important;font-size:13px}
-.pg-edit{padding-bottom:12px!important}
-.pg-add{margin:4px 0 8px}
-.pg-runrow{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:8px}
-.pg-runrow button{min-height:54px;font-size:16px;font-weight:800}
-.pg-sticky{position:static!important;left:auto!important;right:auto!important;bottom:auto!important;z-index:auto;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin-bottom:6px}
-#programsPanel #runPanel{border:0!important;background:none!important;padding:0!important;margin:0!important;box-shadow:none!important}
-#programsPanel .pg-strip{margin-bottom:8px}
-#programsPanel .pg-strip b{font-size:17px}
 </style>
 </head>
 <body>
@@ -2395,7 +2376,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI12 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI11 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -2740,27 +2721,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 
   <div data-pane="run">
     <div class="pg-cards" id="pgCards"></div>
-    <div class="panel" id="runPanel">
-
-  <div class="cp-fs-actions">
-    <button type="button" class="go" onclick="$('runProg').click()">▶ بدء البرنامج</button>
-    <button type="button" onclick="$('pauseProg').click()">⏸ إيقاف مؤقت</button>
-    <button type="button" class="stop" style="min-height:42px;font-size:13px" onclick="$('stopProg').click()">⏹ إيقاف</button>
-  </div>
-
-  <div class="rlive pg-strip">
-    <div><b id="curSteps">0</b><span>خطوة</span></div>
-    <div><b id="curCadence" style="color:var(--accent)">0 SPM</b><span>إيقاع الحركة</span></div>
-    <div><b id="curSym">100%</b><span>تناسق الخطى</span></div>
-    <div class="tmini" id="tmRun"><b class="tmv">--</b><span class="tml">حرارة المحرك والتيار</span></div>
-  </div>
-  <details open class="pg-chart">
-    <summary>📈 مخطط البرنامج (السرعة والميل)</summary>
-    <div id="chart"></div>
-    <div class="ch-leg"><i style="background:#22c55e"></i>سهل<i style="background:#eab308"></i>متوسط<i style="background:#f97316"></i>قوي<i style="background:#ef4444"></i>شديد<i class="m"></i>الميل (الجبل)</div>
-    <div id="chTip">المس أي مرحلة في المخطط لعرض تفاصيلها</div>
-  </details>
-  <div class="pg-ctl">
+    <div class="pg-ctl">
       <button class="go" id="runProg" disabled>بدء البرنامج</button>
       <button type="button" id="pgYtBtn" title="مكتبة الفيديو" aria-label="مكتبة الفيديو">📺</button>
     </div>
@@ -2770,58 +2731,14 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
       <button id="stopProg" disabled>إيقاف</button>
     </div>
     <div id="pgLinkedVid"></div>
-
-  <div id="rMsg" style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;text-align:center"></div>
-  <div class="bar"><i id="rBar"></i></div>
-  <div class="rlive">
-    <div><b id="rSeg">--</b><span>المرحلة</span></div>
-    <div><b id="rSegLeft">--</b><span>متبقي في المرحلة</span></div>
-    <div><b id="rTotLeft">--</b><span>متبقي في البرنامج</span></div>
-    <div><b id="rSpd">--</b><span>السرعة (كم/س)</span></div>
-    <div><b id="rInc">--</b><span>الميل (٪)</span></div>
-    <div><b id="rEl">--</b><span>المنقضي</span></div>
-  </div>
-  <div id="rNext" style="font-size:13px;font-weight:700;color:#38bdf8;margin:6px 0;text-align:center"></div>
-
-  <div class="cp-quick-bar">
-    <button type="button" id="cpQMin" onclick="cpQuickMod('addMin')">⏱ +1 د للمرحلة</button>
-    <button type="button" id="cpQEase" onclick="cpQuickMod('ease')">🔉 تخفيف 10%</button>
-    <button type="button" id="cpQBoost" onclick="cpQuickMod('boost')">🔥 تعزيز 10%</button>
-    <button type="button" id="cpQSkip" onclick="cpQuickMod('skip')">⏭ تخطِّ المرحلة</button>
-  </div>
-
-
-  <div hidden>
-  <details>
-    <summary>📋 جدول المراحل</summary>
-    <div class="pl" id="pl"></div>
-  </details>
-  <details>
-    <summary>👟 صوت الخطوات</summary>
-  <div class="cp-cadence-bar">
-    <button type="button" class="cp-cad-toggle" id="cpCadBtn" onclick="toggleCadenceBeat()">👟 صوت الخطوات: إيقاف</button>
-    <div class="cp-cad-feet">
-      <span>يمين</span><i class="cp-foot-dot" id="cpFootR"></i>
-      <i class="cp-foot-dot" id="cpFootL"></i><span>يسار</span>
-      <b id="cpCadSpm" style="color:var(--amber);margin-right:6px;direction:ltr">160 خطوة/د</b>
-    </div>
-  </div>
-  </details>
-  </div>
-</div>
   </div>
 
   <div data-pane="edit" class="pg-edit">
     <div class="row r2"><select id="progSel" aria-label="البرنامج"></select><input id="progName" placeholder="اسم البرنامج"></div>
-    <div class="seghead2"><span>#</span><span>المدة (د)</span><span>السرعة (كم/س)</span><span>الميل (٪)</span><span></span></div>
- <div id="segs"></div>
+    <div id="segs"></div>
     <button type="button" id="addSeg" class="pg-add">مرحلة جديدة</button>
-    <div class="pg-runrow">
- <button type="button" class="go" id="epRun">بدء البرنامج</button>
- <button type="button" class="stop" id="epStop">إيقاف</button>
- </div>
- <div class="pg-sticky">
-      <button class="primary" id="applyProg">تطبيق وحفظ</button>
+    <div class="pg-sticky">
+      <button class="primary" id="applyProg">✓ تطبيق وحفظ</button>
       <button id="saveProg">حفظ</button>
       <button id="delProg">حذف</button>
     </div>
@@ -2835,6 +2752,8 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
     <div id="ytLinkInfo" style="font-size:12px;color:var(--dim);min-height:16px;margin-bottom:4px"></div>
     <div id="ytList"></div>
     <label style="display:block;margin-top:8px"><input type="checkbox" id="ytAuto" checked> تشغيل الفيديو المرتبط تلقائياً عند بدء البرنامج</label>
+    <label style="display:block;margin-top:4px"><input type="checkbox" id="ytVcAuto" checked> كتم الأوامر الصوتية (الميكروفون) تلقائياً أثناء الفيديو وإعادتها عند توقفه</label>
+    <label style="display:block;margin-top:4px"><input type="checkbox" id="ytMute" checked> كتم نطق ونغمات البرنامج أثناء الفيديو (إشعار واهتزاز فقط) — يمنع توقف الفيديو</label>
     <div style="font-size:11px;color:var(--dim);line-height:1.8;margin-top:6px">زر 🔗 يربط الفيديو بالبرنامج المختار في القائمة أعلاه. المشغّل عائم ويبقى ظاهراً في كل التبويبات. يحتاج إنترنت، وبعض الفيديوهات يمنع أصحابها تضمينها.</div>
   </details>
   <details><summary>⚙️ خيارات الجلسة (صوت، تدرّج، هدف)</summary>
@@ -2876,7 +2795,56 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
   </div>
 </div>
 
+<div class="panel" id="runPanel">
 
+  <div class="cp-fs-actions">
+    <button type="button" class="go" onclick="$('runProg').click()">▶ بدء البرنامج</button>
+    <button type="button" onclick="$('pauseProg').click()">⏸ إيقاف مؤقت</button>
+    <button type="button" class="stop" style="min-height:42px;font-size:13px" onclick="$('stopProg').click()">⏹ إيقاف</button>
+  </div>
+
+  <div id="rMsg" style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;text-align:center"></div>
+  <div class="bar"><i id="rBar"></i></div>
+  <div class="rlive">
+    <div><b id="rSeg">--</b><span>المرحلة</span></div>
+    <div><b id="rSegLeft">--</b><span>متبقي في المرحلة</span></div>
+    <div><b id="rTotLeft">--</b><span>متبقي في البرنامج</span></div>
+    <div><b id="rSpd">--</b><span>السرعة (كم/س)</span></div>
+    <div><b id="rInc">--</b><span>الميل (٪)</span></div>
+    <div><b id="rEl">--</b><span>المنقضي</span></div>
+    <div class="tmini" id="tmRun"><b class="tmv">--</b><span class="tml">حرارة المحرك والتيار</span></div>
+  </div>
+  <div id="rNext" style="font-size:13px;font-weight:700;color:#38bdf8;margin:6px 0;text-align:center"></div>
+
+  <div class="cp-quick-bar">
+    <button type="button" id="cpQMin" onclick="cpQuickMod('addMin')">⏱ +1 د للمرحلة</button>
+    <button type="button" id="cpQEase" onclick="cpQuickMod('ease')">🔉 تخفيف 10%</button>
+    <button type="button" id="cpQBoost" onclick="cpQuickMod('boost')">🔥 تعزيز 10%</button>
+    <button type="button" id="cpQSkip" onclick="cpQuickMod('skip')">⏭ تخطِّ المرحلة</button>
+  </div>
+
+  <details open class="pg-chart">
+    <summary>📈 مخطط البرنامج (السرعة والميل)</summary>
+    <div id="chart"></div>
+    <div class="ch-leg"><i style="background:#22c55e"></i>سهل<i style="background:#eab308"></i>متوسط<i style="background:#f97316"></i>قوي<i style="background:#ef4444"></i>شديد<i class="m"></i>الميل (الجبل)</div>
+    <div id="chTip">المس أي مرحلة في المخطط لعرض تفاصيلها</div>
+  </details>
+  <details>
+    <summary>📋 جدول المراحل</summary>
+    <div class="pl" id="pl"></div>
+  </details>
+  <details>
+    <summary>👟 صوت الخطوات</summary>
+  <div class="cp-cadence-bar">
+    <button type="button" class="cp-cad-toggle" id="cpCadBtn" onclick="toggleCadenceBeat()">👟 صوت الخطوات: إيقاف</button>
+    <div class="cp-cad-feet">
+      <span>يمين</span><i class="cp-foot-dot" id="cpFootR"></i>
+      <i class="cp-foot-dot" id="cpFootL"></i><span>يسار</span>
+      <b id="cpCadSpm" style="color:var(--amber);margin-right:6px;direction:ltr">160 خطوة/د</b>
+    </div>
+  </div>
+  </details>
+</div>
 
 <div class="panel" style="display:none!important">
   <h2>سجل التمارين (المسافة بالكيلومتر، آخر 7 أيام)</h2>
@@ -3038,7 +3006,20 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
       <span class="m-tile-sub"><span>المرجع المعاير:</span> <b id="dspBLDisplay">1.38A</b></span>
     </div>
 
-    <!-- 5. إجمالي ساعات العمل والتمارين -->
+  <!-- 4. الخطوات (اضغط على المربع لتصفيرها) + السعرات والمسافة -->
+  <div class="m-tile" id="stepsTile" role="button" tabindex="0" style="cursor:pointer" title="اضغط لتصفير الخطوات">
+  <div class="m-tile-lbl">👟 الخطوات — اضغط للتصفير</div>
+  <b class="m-tile-val"><span id="curSteps">0</span> <small style="font-size:11.5px;font-weight:normal">خطوة</small></b>
+  <span class="m-tile-sub"><span>تناسق الخطى:</span> <b id="curSym">100%</b> <span id="curCadence" style="color:var(--accent);margin-right:6px">0 SPM</span></span>
+  </div>
+
+  <div class="m-tile">
+  <div class="m-tile-lbl">🔥 السعرات والمسافة</div>
+  <b class="m-tile-val"><span id="mtKcal">0</span> <small style="font-size:11.5px;font-weight:normal">kcal</small></b>
+  <span class="m-tile-sub"><span>📍 المسافة:</span> <b id="mtDist">0.00</b> <span>كم</span></span>
+  </div>
+
+  <!-- 5. إجمالي ساعات العمل والتمارين -->
     <div class="m-tile">
       <div class="m-tile-lbl">عمر المشاية الإجمالي</div>
       <b class="m-tile-val" id="mhH">0.0 ساعة</b>
@@ -3992,7 +3973,6 @@ function onCPraw(ev){
   const op = d.getUint8(1), res = d.getUint8(2);
   log((OPS[op] || ('أمر ' + op)) + ': ' + (RESULT[res] || res));
   if(op === 0 && res === 1){ ready = true; lock(false); }
-  if(res === 5 && op !== 0){ ready = false; try{ send([0x00]); }catch(_){} }   // التحكم انتقل لتطبيق آخر (Kinomap): نطلبه من جديد
 }
 
 // Treadmill Data: fields appear in flag-bit order.
@@ -4004,13 +3984,18 @@ function resetSession(){
   resetLocal(); lt.devBase = lt.lastDev;
   cur.i = 0; tel.d = 0; tel.k = 0;
   $('lvTime').textContent = '00:00'; $('lvIncl').textContent = '0.0'; $('lvKcal').textContent = '0'; $('lvDist').textContent = '0.00';
+  if($('mtKcal')) $('mtKcal').textContent = '0'; if($('mtDist')) $('mtDist').textContent = '0.00';
+  try{ if(typeof tRx !== 'undefined' ? tRx : window.tRx) resetStepsNow(false); }catch(_){}
   refreshPick();
 }
 // Estimate (ACSM walking/running equations, gross kcal): depends on speed, incline and the weight you enter
 function kcalPerMin(kmh, grade){
   const w = Math.min(250, Math.max(30, parseFloat($('optWeight').value) || 75));
   const S = kmh*1000/60, G = Math.max(0, grade)/100;
-  const vo2 = kmh < 7 ? 0.1*S + 1.8*S*G + 3.5 : 0.2*S + 0.9*S*G + 3.5;
+  // معادلتا ACSM للمشي والجري، مع مزج خطي بين 6 و8 كم/س لتجنّب القفزة المفاجئة عند 7 كم/س
+  const walk = 0.1*S + 1.8*S*G + 3.5, run = 0.2*S + 0.9*S*G + 3.5;
+  const k = kmh <= 6 ? 0 : kmh >= 8 ? 1 : (kmh - 6)/2;
+  const vo2 = walk*(1 - k) + run*k;
   return vo2*w/1000*5;
 }
 function onTDraw(ev){
@@ -4021,7 +4006,7 @@ function onTDraw(ev){
   if(f & 0x002) o += 2;                                   // average speed
   if(f & 0x004){ devD = (d.getUint8(o) | d.getUint8(o+1) << 8 | d.getUint8(o+2) << 16)/1000; o += 3; }
   if(f & 0x008){                                          // inclination + ramp angle
-    const ic = d.getInt16(o,true)/10; if(ic >= -5 && ic <= 40) $('lvIncl').textContent = ic.toFixed(1); o += 4;
+    const ic = d.getInt16(o,true)/10; if(ic >= -5 && ic <= 40){ $('lvIncl').textContent = ic.toFixed(1); tel.inc = ic; } o += 4;
   }
   if(f & 0x010) o += 4;                                   // elevation gain
   if(f & 0x020) o += 1;                                   // instantaneous pace
@@ -4038,7 +4023,6 @@ function onTDraw(ev){
   }
   const now = Date.now();
   tel.s = spd; tel.t = now;
-  try{ beltWatch(spd, now); }catch(_){}
   // الوسيط لا يرى سرعة المشاية إلا إذا كان متصلاً بها؛ عند الاتصال المباشر بالهاتف نمرّر له السرعة ليعمل درع الأمان
   try{
     if(dev && dev !== tDev && (now - (window._tsSentAt || 0)) >= 700 && (typeof tRx !== 'undefined' ? tRx : window.tRx)){
@@ -4046,7 +4030,7 @@ function onTDraw(ev){
       Promise.resolve(tRxWrite('TS' + spd.toFixed(2) + '\n')).catch(() => {});
     }
   }catch(_){}
-  if(lt.last && spd > 0.05){ const dt = (now - lt.last)/1000; if(dt < 5){ lt.t += dt; lt.d += spd*dt/3600; lt.k += kcalPerMin(spd, cur.i)*dt/60; } }
+  if(lt.last && spd > 0.05){ const dt = (now - lt.last)/1000; if(dt < 5){ lt.t += dt; lt.d += spd*dt/3600; lt.k += kcalPerMin(spd, (tel.inc != null ? tel.inc : cur.i))*dt/60; } }
   lt.last = now;
   $('lvTime').textContent = fmt(Math.floor(lt.t));
   if(devD + 0.005 < lt.lastDev){
@@ -4060,45 +4044,13 @@ function onTDraw(ev){
   tel.d = Math.max(dd, lt.d);
   $('lvDist').textContent = tel.d.toFixed(2);
   tel.k = Math.round(lt.k); $('lvKcal').textContent = tel.k;
+  if($('mtKcal')) $('mtKcal').textContent = tel.k;
+  if($('mtDist')) $('mtDist').textContent = tel.d.toFixed(2);
   // belt idle for a while after a session (e.g. stopped from the treadmill itself): reset, unless paused on purpose
   if(spd <= 0.05){ if(!lt.idle) lt.idle = now; else if(now - lt.idle > 8000 && lt.t > 0 && !running && !manPause) resetSession(); }
   else lt.idle = 0;
 }
 
-// ---- توقف المشاية أثناء البرنامج (عطل، انزلاق، نزول عن السير، إيقاف من الكونسول): يتجمد البرنامج ويكمل عند العودة ----
-function beltStopPause(){
-  if(!running || paused || abort || reconnecting) return;
-  window.savedDismountSpeed = (cur && cur.s > 0.5) ? cur.s : 4.0;
-  manPause = true; paused = true; window._beltPaused = true;
-  try{ $('pauseProg').textContent = '▶ استئناف البرنامج'; }catch(_){}
-  try{ msg('⏸️ توقفت المشاية — البرنامج مجمّد وسيكمل من نفس النقطة'); }catch(_){}
-  try{ buzz([300, 100, 300]); say('توقفت المشاية. البرنامج متوقف مؤقتاً'); }catch(_){}
-  window._resumeReason = 'توقفت المشاية — تم تجميد البرنامج';
-  showResumeModal(true);
-}
-async function beltAutoResume(){
-  window._beltPaused = false; window._moveSince = 0;
-  if(!running || abort) return;
-  showResumeModal(false);
-  manPause = false; paused = false;
-  try{ $('pauseProg').textContent = 'إيقاف مؤقت'; }catch(_){}
-  try{ msg('▶ عادت المشاية للدوران — يُستأنف البرنامج'); }catch(_){}
-  try{ await sleep(900); await send(speedCmd(cur.s)); await sleep(200); await send(inclCmd(cur.i)); }catch(_){}
-}
-function beltWatch(spd, now){
-  if(!running || abort || !RUN){ window._zeroSince = 0; window._moveSince = 0; window._beltPaused = false; return; }
-  if(spd > 0.3) RUN._moved = true;
-  if(window._beltPaused && paused){
-    if(spd > 0.5){ if(!window._moveSince) window._moveSince = now; else if(now - window._moveSince > 1500) beltAutoResume(); }
-    else window._moveSince = 0;
-    return;
-  }
-  if(paused || reconnecting || !RUN._moved){ window._zeroSince = 0; return; }
-  if(spd <= 0.05){
-    if(!window._zeroSince) window._zeroSince = now;
-    else if(now - window._zeroSince > 3000){ window._zeroSince = 0; beltStopPause(); }
-  }else window._zeroSince = 0;
-}
 function onCP(ev){ try{ onCPraw(ev); }catch(_){} }
 function onTD(ev){ try{ onTDraw(ev); }catch(_){} }
 
@@ -4137,7 +4089,7 @@ async function readLimits(svc){
 async function onDrop(){
   cp = null; setState(false, 'انقطع الاتصال');
   if(!running || abort || reconnecting) return;
-  reconnecting = true; paused = true; say('انقطع الاتصال');
+  reconnecting = true; paused = true; say('انقطع الاتصال', false, true);
   for(let a = 1; a <= 10 && running && !abort; a++){
     msg('انقطع الاتصال — محاولة ' + a + '/10. إن لم ينجح أوقف الحزام بزر المشاية أو مفتاح الأمان');
     buzz([300, 100, 300]);
@@ -4337,7 +4289,7 @@ function enforceTemp(t){
       lastStop = Date.now();
       abort = true; paused = false; manPause = false;
       if(cp) send([0x08, 0x01]);
-      try{ say('ارتفعت حرارة المحرك. تم إيقاف المشاية'); }catch(_){}
+      try{ say('ارتفعت حرارة المحرك. تم إيقاف المشاية', false, true); }catch(_){}
     }
   }else if(tempLock && t < T_WARN){
     tempLock = false; lastStop = 0; lockMsg();
@@ -4636,7 +4588,7 @@ function showResumeModal(show){
     el.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:99999;width:92%;max-width:390px;background:linear-gradient(135deg,rgba(15,23,42,0.96),rgba(30,41,59,0.98));border:2px solid var(--accent);border-radius:18px;padding:18px;box-shadow:0 12px 36px rgba(0,0,0,0.7);text-align:center;backdrop-filter:blur(10px)';
     el.innerHTML = `
       <div style="font-size:30px;margin-bottom:6px">⏸️</div>
-      <div id="resumeTitle" style="font-weight:800;font-size:16px;color:#fff;margin-bottom:4px">البرنامج متوقف مؤقتاً لخروجك من السير</div>
+      <div style="font-weight:800;font-size:16px;color:#fff;margin-bottom:4px">البرنامج متوقف مؤقتاً لخروجك من السير</div>
       <div style="font-size:12.5px;color:var(--dim);margin-bottom:14px;line-height:1.6">
         تم تجميد الوقت والمسافة والمرحلة الحالية بدقة. اصعد فوق السير واضغط للاستمرار من نفس النقطة دون العودة للبداية.
       </div>
@@ -4652,8 +4604,6 @@ function showResumeModal(show){
     document.body.appendChild(el);
   }
   if(el) el.style.display = show ? 'block' : 'none';
-  if(el && show){ const tt = el.querySelector('#resumeTitle'); if(tt) tt.textContent = window._resumeReason || 'البرنامج متوقف مؤقتاً لخروجك من السير'; }
-  window._resumeReason = null;
 }
 
 window.savedDismountSpeed = 4.0;
@@ -4688,7 +4638,6 @@ async function autoPauseWorkoutOnDismount(){
 }
 
 async function resumeProgramDirect(){
-  window._beltPaused = false; window._moveSince = 0;
   showResumeModal(false);
   if(blockedByTemp()) return;
   manPause = false;
@@ -4991,13 +4940,7 @@ function withTimeout(p, ms, what){
 function onTDisc(){
   oCtl = oDat = null; try{ otaUi(); }catch(_){}
   tempOff('انقطع الاتصال بالحساس — إعادة المحاولة...');
-  try{
-    if(running && !abort && !paused && dev === tDev){
-      paused = true; window._linkPaused = true;
-      msg('انقطع الاتصال باللوحة — يُعاد الاتصال تلقائياً ثم يُستأنف البرنامج');
-    }
-  }catch(_){}
-  tSched(1200);
+  tSched(2500);
   try{ $('mhBadge').className = 'mh-badge l0'; $('mhLvl').textContent = 'انقطع الحساس'; $('mhWhy').textContent = 'تُعاد المحاولة تلقائيًا'; }catch(_){}
 }
 
@@ -5116,7 +5059,6 @@ async function openTemp(){
     lock(true);
   }
 
-  try{ afterLinkRestored(); }catch(_){}
   await sleep(150);
   try{ cfgForceRead = true; await bridgeCmd('KQ'); }catch(_){}
   try{ await saveSafetyConfigToBoard(true); }catch(_){}
@@ -5127,21 +5069,6 @@ async function openTemp(){
   setTimeout(mhOnConnect, 1500);
 }
 
-async function afterLinkRestored(){
-  if(!window._linkPaused) return;
-  window._linkPaused = false;
-  if(!running || abort){ paused = false; return; }
-  for(let w = 0; w < 40 && !ready; w++) await sleep(200);
-  await sleep(1500);
-  if(Date.now() - tel.t < 3000 && tel.s > 0.3){
-    paused = false; manPause = false;
-    try{ $('pauseProg').textContent = 'إيقاف مؤقت'; }catch(_){}
-    try{ await send(speedCmd(cur.s)); await sleep(200); await send(inclCmd(cur.i)); }catch(_){}
-    msg('أُعيد الاتصال واستُؤنف البرنامج');
-  }else{
-    paused = false; beltStopPause();
-  }
-}
 async function reTemp(){
   if(!tDev || tBusy || (tDev.gatt && tDev.gatt.connected)) return;
   tBusy = true;
@@ -5151,7 +5078,7 @@ async function reTemp(){
   }catch(e){
     try{ if(tDev && tDev.gatt) tDev.gatt.disconnect(); }catch(_){}
     tempOff('تعذر الاتصال — إعادة المحاولة...');
-    tSched(2500);
+    tSched(4000);
   }finally{
     tBusy = false;
   }
@@ -5769,9 +5696,23 @@ function showProg(){
 }
 function addRow(g = {m:5,s:5,i:0}, afterEl){
   const r = document.createElement('div'); r.className = 'seg';
-  const cell = (mn, mx, st, v) => '<input type="number" min="'+mn+'" max="'+mx+'" step="'+st+'" inputmode="decimal" value="'+v+'" onfocus="this.select()">';
-  r.innerHTML = '<span class="seg-n"></span>' + cell(0.5, 120, 0.5, g.m) + cell(1, MAX_SPEED, 0.5, g.s) + cell(0, MAX_INCL, 1, g.i) + '<button type="button" class="del" aria-label="حذف المرحلة">✕</button>';
+  const cell = (lab, mn, mx, st, v) => '<div class="sg-c"><small>'+lab+'</small><div class="stp"><button type="button" class="dn" tabindex="-1" aria-label="إنقاص">−</button><input type="number" min="'+mn+'" max="'+mx+'" step="'+st+'" inputmode="decimal" value="'+v+'"><button type="button" class="up" tabindex="-1" aria-label="زيادة">+</button></div></div>';
+  r.innerHTML = '<div class="seg-h"><span class="seg-n"></span><span class="seg-sp"></span><button type="button" class="dup" aria-label="نسخ المرحلة">⧉</button><button type="button" class="del" aria-label="حذف المرحلة">✕</button></div>' +
+    '<div class="seg-g">' + cell('المدة (د)', 0.5, 120, 0.5, g.m) + cell('السرعة (كم/س)', 1, MAX_SPEED, 0.5, g.s) + cell('الميل (٪)', 0, MAX_INCL, 1, g.i) + '</div>';
+  const ins = [...r.querySelectorAll('input')], steps = [1, SSTEP || 0.5, ISTEP || 1];
+  r.querySelectorAll('.stp').forEach((box, n) => {
+    const inp = ins[n];
+    const bump = d => {
+      const mn = parseFloat(inp.min), mx = parseFloat(inp.max);
+      let v = parseFloat(inp.value); if(!(v >= 0)) v = mn;
+      v = Math.round((v + d*steps[n]) * 100) / 100; v = Math.max(mn, Math.min(mx, v));
+      inp.value = v; inp.dispatchEvent(new Event('input', {bubbles: true}));
+    };
+    box.querySelector('.dn').onclick = () => bump(-1);
+    box.querySelector('.up').onclick = () => bump(1);
+  });
   r.querySelector('.del').onclick = () => { r.remove(); total(); };
+  r.querySelector('.dup').onclick = () => { const [m, s2, i2] = ins.map(x => parseFloat(x.value)); addRow({m: m || 5, s: s2 || 5, i: i2 || 0}, r); total(); };
   if(afterEl && afterEl.nodeType === 1) afterEl.after(r); else $('segs').appendChild(r);
   return r;
 }
@@ -6637,9 +6578,17 @@ setCockpitMode(CP_STATE.mode);
 requestAnimationFrame(cpRenderFrame);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function arVoices(){ try{ return speechSynthesis.getVoices().filter(v => /^ar/i.test(v.lang)); }catch(_){ return []; } }
-function say(t, force){
+function say(t, force, crit){
   if(!force && !$('optVoice').checked) return;
-  const md = $('optMode').value; if(md === 'n') return; if(md === 'b'){ beep(); return; }
+  const md = $('optMode').value; if(md === 'n') return;
+  // أثناء تشغيل فيديو YouTube: النطق والنغمات تسحب تركيز الصوت من أندرويد فيتوقف الفيديو؛ نكتفي بإشعار واهتزاز (إلا التنبيهات الحرجة)
+  try{
+    if(!crit && window.ytIsPlaying && window.ytIsPlaying() && $('ytMute') && $('ytMute').checked){
+      toast('🔔 ' + t); try{ if(navigator.vibrate) navigator.vibrate([150, 80, 150]); }catch(_){}
+      return;
+    }
+  }catch(_){}
+  if(md === 'b'){ beep(); return; }
   try{
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(t), v = arVoices()[0];
@@ -6890,6 +6839,23 @@ renderLog();
 $('runProg').onclick = runProg;
 $('stopProg').onclick = async () => { if(RT.active) routeStop('أُوقف الطريق'); abort = true; paused = false; await send([0x08, 0x01]); };
 booted = true; fillSel(); preview();
+// ---------- تصفير الخطوات: تلقائياً مع نهاية الجلسة، أو بالضغط على مربع الخطوات ----------
+async function resetStepsNow(manual){
+  const ok = await bridgeCmd('IS');
+  if(ok){
+    window._prevStepVal = 0; window._calcSpm = 0; window._lastStepChangeMs = 0;
+    if($('curSteps')) $('curSteps').textContent = '0';
+    if($('curCadence')) $('curCadence').textContent = '0 SPM';
+    if(manual){ try{ toast('👟 تم تصفير عداد الخطوات'); }catch(_){} try{ if(navigator.vibrate) navigator.vibrate(40); }catch(_){} }
+  }
+  return ok;
+}
+window.resetStepsNow = resetStepsNow;
+(function(){ const t = $('stepsTile'); if(!t) return;
+  t.addEventListener('click', () => resetStepsNow(true));
+  t.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); resetStepsNow(true); } });
+})();
+
 // ---------- صفحة البرامج: تبويبات فرعية، بطاقات البرامج، تفاصيل المراحل من المخطط ----------
 window.pgCur = 'run';
 function pgSet(k){
@@ -6970,15 +6936,6 @@ $('pgYtBtn').onclick = () => {
 try{ const sv = localStorage.getItem('kettler_pg_tab'); if(sv === 'run' || sv === 'edit' || sv === 'tools') window.pgCur = sv; }catch(_){}
 pgSet(window.pgCur);
 pgCards();
-(function(){
-  [['epRun','runProg'],['epStop','stopProg']].forEach(([a, b]) => {
-    const A = $(a), B = $(b); if(!A || !B) return;
-    const sync = () => { A.disabled = B.disabled; };
-    sync();
-    try{ new MutationObserver(sync).observe(B, {attributes: true, attributeFilter: ['disabled']}); }catch(_){}
-    A.onclick = () => B.click();
-  });
-})();
 
 // ---------- مكتبة YouTube + مشغل عائم + ربط الفيديو بالبرنامج ----------
 (function(){
@@ -6999,24 +6956,77 @@ pgCards();
   }
   function src(it){
     return it.t==='p'
-      ? 'https://www.youtube-nocookie.com/embed/videoseries?list='+encodeURIComponent(it.id)+'&autoplay=1&playsinline=1&rel=0'
-      : 'https://www.youtube-nocookie.com/embed/'+encodeURIComponent(it.id)+'?autoplay=1&playsinline=1&rel=0';
+      ? 'https://www.youtube-nocookie.com/embed/videoseries?list='+encodeURIComponent(it.id)+'&autoplay=1&playsinline=1&rel=0&enablejsapi=1&origin='+encodeURIComponent(location.origin)
+      : 'https://www.youtube-nocookie.com/embed/'+encodeURIComponent(it.id)+'?autoplay=1&playsinline=1&rel=0&enablejsapi=1&origin='+encodeURIComponent(location.origin);
   }
   function play(it){
     if(!it) return;
     if(!navigator.onLine){ try{ toast('📺 لا يوجد اتصال بالإنترنت'); }catch(_){} return; }
     const f=$e('ytFloat'), box=$e('ytFBox');
+    const pkey=it.t+':'+it.id;
+    if(box.querySelector('iframe') && box.dataset.key===pkey){ f.classList.remove('min'); f.classList.add('show'); return; }
+    box.dataset.key=pkey;
     box.innerHTML='';
     const ifr=document.createElement('iframe');
     ifr.src=src(it);
     ifr.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
     ifr.setAttribute('allowfullscreen','');
     ifr.referrerPolicy='strict-origin-when-cross-origin';
+    ytState=-1; ytApiSeen=false;
+    ifr.addEventListener('load',()=>{ try{
+      const w=ifr.contentWindow;
+      w.postMessage(JSON.stringify({event:'listening',id:1,channel:'widget'}),'*');
+      w.postMessage(JSON.stringify({event:'command',func:'addEventListener',args:['onStateChange'],id:1,channel:'widget'}),'*');
+    }catch(_){} });
     box.appendChild(ifr);
     $e('ytFTitle').textContent='📺 '+(it.title||'YouTube');
     f.classList.remove('min'); f.classList.add('show');
   }
-  function closeP(){ setFs(false); const f=$e('ytFloat'); f.classList.remove('show'); $e('ytFBox').innerHTML=''; }
+  function closeP(){ setFs(false); const f=$e('ytFloat'); f.classList.remove('show'); $e('ytFBox').innerHTML=''; delete $e('ytFBox').dataset.key; ytState=-1; ytApiSeen=false; }
+  let ytState=-1, ytApiSeen=false, vcMuted=false, vcStopSince=0;
+  // 1=يعمل، 3=تحميل مؤقت (نعدّه يعمل)، غير ذلك = متوقف/منتهي. إن لم تصل رسائل المشغّل نعدّ الفتح تشغيلاً.
+  function playingNow(){ if(!window.ytIsOpen()) return false; return ytApiSeen ? (ytState===1 || ytState===3) : true; }
+  window.ytIsPlaying=playingNow;
+  window.addEventListener('message',e=>{
+    try{
+      if(typeof e.data!=='string' || String(e.origin).indexOf('youtube')<0) return;
+      const d=JSON.parse(e.data); let st=null;
+      if(d.event==='onStateChange' && typeof d.info==='number') st=d.info;
+      else if(d.event==='infoDelivery' && d.info && typeof d.info.playerState==='number') st=d.info.playerState;
+      if(st!==null){ ytApiSeen=true; ytState=st; }
+    }catch(_){}
+  });
+  function vcMute(){
+    try{
+      if(vcMuted || typeof voiceFrActive==='undefined' || !voiceFrActive) return;
+      vcMuted=true; voiceFrActive=false;
+      if(voiceFrRestartTimer) clearTimeout(voiceFrRestartTimer);
+      try{ if(voiceFrRec) voiceFrRec.stop(); }catch(_){}
+      try{ setVoiceFrStatus('⏸ موقوفة أثناء الفيديو (تعود تلقائياً)','var(--amber)'); }catch(_){}
+      try{ toast('🎙️ كُتمت الأوامر الصوتية أثناء الفيديو وتعود بعد توقفه'); }catch(_){}
+    }catch(_){}
+  }
+  function vcResume(){
+    try{
+      if(!vcMuted) return; vcMuted=false;
+      const chk=document.getElementById('voiceFrEn');
+      if(!chk || !chk.checked) return;
+      voiceFrActive=true;
+      try{ setVoiceFrStatus('⏳ جارٍ فتح الميكروفون...','var(--amber)'); }catch(_){}
+      try{ if(!voiceFrRec) voiceFrRec = initFrenchVoiceRecognition(); voiceFrRec.lang=voiceCurLang; voiceFrRec.start(); }catch(_){ try{ setVoiceFrStatus('🟢 يستمع (FR+AR)...','var(--ok)'); }catch(__){} }
+      try{ toast('🎙️ عادت الأوامر الصوتية'); }catch(_){}
+    }catch(_){}
+  }
+  setInterval(()=>{
+    const au=document.getElementById('ytVcAuto');
+    if(au && !au.checked){ if(vcMuted) vcResume(); return; }
+    if(playingNow()){ vcStopSince=0; vcMute(); }
+    else if(vcMuted){
+      if(!vcStopSince) vcStopSince=Date.now();
+      else if(Date.now()-vcStopSince>1500) vcResume();
+    }
+  },1000);
+  window.ytIsOpen=()=>{ const f=$e('ytFloat'); return !!(f && f.classList.contains('show') && f.querySelector('iframe')); };
   let fsApi=false;
   function setFs(on){
     const f=$e('ytFloat'); if(!f) return;
@@ -7080,14 +7090,7 @@ pgCards();
     lib.forEach((it,i)=>{
       const key=it.t+':'+it.id;
       const row=document.createElement('div'); row.className='yt-item'+(lk===key?' linked':'');
-      const nm=document.createElement('div'); nm.className='yt-name'; nm.textContent=(it.t==='p'?'📑 ':'')+(it.title||it.id);
-      let th;
-      if(it.t==='v'){
-        th=document.createElement('img'); th.className='yt-thumb'; th.loading='lazy'; th.alt='';
-        th.src='https://i.ytimg.com/vi/'+encodeURIComponent(it.id)+'/mqdefault.jpg';
-        th.onerror=()=>{ const ph=document.createElement('div'); ph.className='yt-thumb'; ph.textContent='🎬'; ph.onclick=()=>play(it); th.replaceWith(ph); };
-      }else{ th=document.createElement('div'); th.className='yt-thumb'; th.textContent='📑'; }
-      th.onclick=()=>play(it);
+      const nm=document.createElement('div'); nm.className='yt-name'; nm.textContent=(it.t==='p'?'📑 ':'🎬 ')+(it.title||it.id);
       const bp=document.createElement('button'); bp.type='button'; bp.textContent='▶'; bp.onclick=()=>play(it);
       const bl=document.createElement('button'); bl.type='button'; bl.textContent=lk===key?'✔':'🔗';
       bl.title='ربط بالبرنامج المختار';
@@ -7102,7 +7105,7 @@ pgCards();
         Object.keys(map).forEach(p=>{ if(map[p]===key) delete map[p]; });
         save(); render();
       };
-      row.append(th,nm,bp,bl,bd); box.appendChild(row);
+      row.append(nm,bp,bl,bd); box.appendChild(row);
     });
     if(!lib.length){ box.innerHTML='<div style="font-size:12px;color:var(--dim);padding:6px 0">المكتبة فارغة — الصق رابطاً وأضفه.</div>'; }
     const info=$e('ytLinkInfo'), li=linkedItem();
@@ -7132,6 +7135,10 @@ pgCards();
       else if(f.classList.contains('sz1')){ f.classList.remove('sz1'); f.classList.add('sz2'); }
       else f.classList.add('sz1');
     };
+    const yv=$e('ytVcAuto');
+    if(yv){ try{ const v=localStorage.getItem('kettler_yt_vcauto'); if(v!==null) yv.checked = v==='1'; }catch(_){} yv.addEventListener('change',()=>{ try{ localStorage.setItem('kettler_yt_vcauto', yv.checked?'1':'0'); }catch(_){} }); }
+    const ym=$e('ytMute');
+    if(ym){ try{ const v=localStorage.getItem('kettler_yt_mute'); if(v!==null) ym.checked = v==='1'; }catch(_){} ym.addEventListener('change',()=>{ try{ localStorage.setItem('kettler_yt_mute', ym.checked?'1':'0'); }catch(_){} }); }
     const ps=$e('progSel'); if(ps) ps.addEventListener('change',render);
     const ap=$e('applyProg'), sp=$e('saveProg'), dp=$e('delProg');
     [ap,sp,dp].forEach(b=>{ if(b) b.addEventListener('click',()=>setTimeout(render,50)); });
@@ -8103,7 +8110,7 @@ function curOnLine(t){
         if(running){
           abort = true;
           if(cp) await send([0x08, 0x01]);
-          try{ say('تم رصد نزول عن السير. تم إيقاف المشاية للأمان'); }catch(_){}
+          try{ say('تم رصد نزول عن السير. تم إيقاف المشاية للأمان', false, true); }catch(_){}
           log('🛡️ توقف أمان تلقائي: تم رصد نزول المتدرب عن السير');
           if(bStepOff) bStepOff.textContent = '🛡️ تم إيقاف المشاية تلقائياً للأمان بعد رصد النزول!';
         }
@@ -8222,7 +8229,7 @@ addEventListener('online', netSync); addEventListener('offline', netSync); netSy
 const ICO = {play:'<polygon points="6 4 20 12 6 20"/>', stop:'<rect x="6" y="6" width="12" height="12" rx="2"/>', plus:'<path d="M12 5v14M5 12h14"/>', save:'<path d="M5 4h11l3 3v13H5zM8 4v5h7M8 20v-6h8v6"/>', trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>', dl:'<path d="M12 4v12M6 11l6 6 6-6M5 21h14"/>', up:'<path d="M6 15l6-6 6 6"/>', dn:'<path d="M6 9l6 6 6-6"/>',
   sl:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>', rt:'<circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a3 3 0 000-6h-4a3 3 0 010-6h6"/>', ls:'<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>', th:'<path d="M10 14V5a2 2 0 014 0v9a4 4 0 11-4 0z"/>', ch:'<path d="M5 20V10M12 20V4M19 20v-7"/>'};
 const ic = k => '<svg class="ic" viewBox="0 0 24 24">' + ICO[k] + '</svg>';
-Object.entries({btnStart:'play', rtStart:'play', runProg:'play', rtStop:'stop', stopProg:'stop', fab:'stop', rmStop:'stop', rtSm:'dn', rtSp:'up', csvBtn:'dl', clrLog:'trash'}).forEach(([id, k]) => { const b = $(id); if(b) b.insertAdjacentHTML('afterbegin', ic(k)); });
+Object.entries({btnStart:'play', rtStart:'play', runProg:'play', rtStop:'stop', stopProg:'stop', fab:'stop', rmStop:'stop', rtSm:'dn', rtSp:'up', addSeg:'plus', saveProg:'save', delProg:'trash', csvBtn:'dl', clrLog:'trash'}).forEach(([id, k]) => { const b = $(id); if(b) b.insertAdjacentHTML('afterbegin', ic(k)); });
 [...$('tabs').children].forEach((b, i) => b.insertAdjacentHTML('afterbegin', ic(['sl', 'rt', 'ls', 'th', 'ch'][i])));
 // ---- full backup (everything the app stores on this phone) ----
 const BK_SKIP = ['kettler_tab'];
@@ -9356,13 +9363,6 @@ function matchSingleWordToNum(w){
 
 function parseFrenchVoiceCommand(rawText){
   if(!rawText) return null;
-  // رقم عشري مثل 6.5 أو 8,5 أو "ست فاصل خمسة": التطبيع يحذف الفاصلة فيحوّله إلى 65 فيُرفض
-  const _pre = String(rawText).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/٫/g, '.');
-  const _dm = _pre.match(/(?:^|[^\d])(\d{1,2})\s*(?:[.,]|فاصل|فاصله|virgule|point)\s*(\d)(?!\d)/i);
-  if(_dm){
-    const v = parseInt(_dm[1], 10) + parseInt(_dm[2], 10) / 10;
-    if(v >= 1 && v <= 20) return { type: 'speed', value: Math.round(v * 2) / 2, raw: rawText.trim() };
-  }
   let txt = vtNormalizePhrase(rawText);
   if(!txt) return null;
 
@@ -9376,23 +9376,6 @@ function parseFrenchVoiceCommand(rawText){
   // 1. فحص أمر الإيقاف الفوري بالفرنسية والعربية (Stop / Arrêt / توقف / ستوب / حبس / قف)
   if(/\b(stop|stoper|stopper|arret|arrête|arrete|arrêter|arreter|halte|stob)\b/i.test(txt) || /(^|\s)(ستوب|توقف|قف|ايقاف|اوقف|حبس|بلاص|سطوب)(\s|$)/.test(txt)){
     return { type: 'stop', raw: rawText.trim() };
-  }
-
-  // استئناف البرنامج المتوقف
-  if(/(^|\s)(كمل|كمله|كملي|استئناف|استيناف|استانف|استئنف|استمر|واصل|reprendre|reprends|continue|continuer|resume)(\s|$)/i.test(txt)){
-    return { type: 'resume', raw: rawText.trim() };
-  }
-  // أوامر نسبية: زيد / نقص (مع رقم اختياري: "زيد اثنين")
-  const _fast = /(^|\s)(زيد|زد|زياده|ارفع|اسرع|عجل|plus vite|accelere|accélère|accélérer|augmente|monte|faster)(\s|$)/i.test(txt);
-  const _slow = /(^|\s)(نقص|انقص|خفف|اخفض|ابطئ|بطئ|هدي|نزل|moins vite|ralentis|ralentir|diminue|baisse|descends|slower)(\s|$)/i.test(txt);
-  if(_fast || _slow){
-    let amt = 1;
-    for(const w of txt.split(' ')){
-      if(/^(نص|نصف|demi)$/.test(w)){ amt = 0.5; break; }
-      const nn = matchSingleWordToNum(w);
-      if(nn !== null && nn >= 1 && nn <= 5 && w.length > 1){ amt = nn; break; }
-    }
-    return { type: 'delta', value: _slow && !_fast ? -amt : amt, raw: rawText.trim() };
   }
 
   // إزالة الكلمات البادئة الشائعة بالفرنسية أو العربية
@@ -9491,30 +9474,6 @@ function parseFrenchVoiceCommand(rawText){
     }
   }
 
-  // 7. رقم داخل جملة أطول مثل "اجعل السرعة ثمانية" أو "خلي ست ونص"
-  const toks = txt.split(' ').filter(Boolean);
-  const ctxW = /(سرعه|vitesse|خلي|اجعل|ضع|حط|ردها|مشي|ركض|كم|km|passe|mets)/.test(txt);
-  if(toks.length <= 5 || ctxW){
-    const look = ph => {
-      const h = checkCustomMapMatch(ph, vtCustomMapByLang['fr-FR']) || checkCustomMapMatch(ph, vtCustomMapByLang['ar-DZ']);
-      if(h && h.type === 'speed') return h.value;
-      if(/^\d{1,2}$/.test(ph)){ const n = parseInt(ph, 10); return (n >= 1 && n <= 20) ? n : null; }
-      if(ph.length < 3) return null;
-      if(Object.prototype.hasOwnProperty.call(AR_RAW_TO_NUM, ph)) return AR_RAW_TO_NUM[ph];
-      if(Object.prototype.hasOwnProperty.call(FR_WORD_TO_NUM, ph)) return FR_WORD_TO_NUM[ph];
-      return null;
-    };
-    for(let n = Math.min(3, toks.length); n >= 1; n--){
-      for(let k = 0; k + n <= toks.length; k++){
-        let v = look(toks.slice(k, k + n).join(' '));
-        if(v === null) continue;
-        const nx = toks[k + n] || '', nx2 = toks[k + n + 1] || '';
-        if(/^(ونص|ونصف|نص|نصف|demi|demie)$/.test(nx) || (nx === 'و' && /^(نص|نصف)$/.test(nx2)) || (nx === 'et' && /^(demi|demie)$/.test(nx2))) v += 0.5;
-        if(v >= 1 && v <= 20) return { type: 'speed', value: v, raw: rawText.trim() };
-      }
-    }
-  }
-
   return null;
 }
 
@@ -9528,7 +9487,7 @@ function setVoiceFrStatus(text, color){
 async function executeFrenchVoiceCommand(cmd, isFinal){
   if(!cmd) return;
   const now = Date.now();
-  const key = cmd.type === 'stop' ? 'STOP' : (cmd.type === 'resume' ? 'RESUME' : (cmd.type + '_' + cmd.value.toFixed(1)));
+  const key = cmd.type === 'stop' ? 'STOP' : ('SPD_' + cmd.value.toFixed(1));
 
   if(key === lastVoiceCmdKey && (now - lastVoiceCmdMs) < 1500){
     return;
@@ -9546,19 +9505,6 @@ async function executeFrenchVoiceCommand(cmd, isFinal){
     return;
   }
 
-  if(cmd.type === 'resume'){
-    setVoiceFrStatus('▶ استئناف (' + cmd.raw + ')', 'var(--ok)');
-    try{ if(typeof playGripSuccessTone === 'function') playGripSuccessTone(true); }catch(_){}
-    if(running && paused){
-      if(window._beltPaused || manPause) resumeProgramDirect(); else $('pauseProg').click();
-      toast('🎙️ أمر صوتي: استئناف البرنامج');
-    }else toast('🎙️ لا يوجد برنامج متوقف للاستئناف');
-    return;
-  }
-  if(cmd.type === 'delta'){
-    const base0 = (running && cur && cur.s > 0) ? cur.s : ((Date.now() - tel.t < 3000 && tel.s > 0.05) ? tel.s : (parseFloat($('lvSpeed').textContent) || (cur && cur.s) || 1));
-    cmd = Object.assign({}, cmd, { type: 'speed', value: base0 + cmd.value });
-  }
   if(cmd.type === 'speed'){
     const maxSpd = (typeof MAX_SPEED === 'number' && MAX_SPEED > 0) ? MAX_SPEED : 20;
     const targetSpd = Math.min(maxSpd, Math.max(1.0, cmd.value));
@@ -9638,13 +9584,7 @@ function initFrenchVoiceRecognition(){
           }
         }
         if(matchedCmd){
-          clearTimeout(window._vtIntTimer); window._vtIntTimer = null;
-          if(isFinal || matchedCmd.type === 'stop'){
-            executeFrenchVoiceCommand(matchedCmd, isFinal);
-          }else{
-            const _mc = matchedCmd;
-            window._vtIntTimer = setTimeout(() => { window._vtIntTimer = null; executeFrenchVoiceCommand(_mc, false); }, 900);
-          }
+          executeFrenchVoiceCommand(matchedCmd, isFinal);
           break;
         } else if(isFinal && heardAlts[0]){
           const heard = heardAlts[0];
@@ -10782,12 +10722,13 @@ window.copyRawData = copyRawData;
   const KEY = 'kettler_hand_on';
   const W = 40, H = 30, DIFF_THR = 18, MIN_F = 0.05, MAX_F = 0.95; // تحسين الحساسية والتقاط الإشارة بدقة أعلى
   const MIN_SPAN = 0.30, MIN_MS = 90, MAX_MS = 900, MIN_AVG_F = 0.07;
-  const COOLDOWN = 1000, QUIET_MS = 350, QUIET_F = 0.03;
+  const COOLDOWN = 1000, QUIET_MS = 350, QUIET_F = 0.03, REARM_MS = 2200;  // REARM_MS: إعادة التسليح بالوقت حتى لو ظلّ في الصورة حركة مستمرة (جسمك أثناء الجري)
   const tg = document.getElementById('hdToggle'), stat = document.getElementById('hdStat');
   const setStat = on => { if(stat){ stat.textContent = on ? 'يعمل' : 'مغلق'; stat.style.color = on ? 'var(--ok)' : 'var(--dim)'; } };
   if(!tg) return;
   let stream = null, vid = null, cv = null, c2 = null, timer = null, prev = null, pts = [];
   let armed = true, quietSince = 0, lastFire = 0, wakeH = null, starting = false;
+  let hLastCT = -1, hLastAt = Date.now(), lastRestart = 0;
 
   function flash(msg){
     try{
@@ -10835,7 +10776,7 @@ window.copyRawData = copyRawData;
   function onFrame(f, col, n, now){
     if(f < QUIET_F){ if(!quietSince) quietSince = now; } else quietSince = 0;
     if(!armed){
-      if(now - lastFire >= COOLDOWN && quietSince && now - quietSince >= QUIET_MS){ armed = true; pts = []; }
+      if(now - lastFire >= COOLDOWN && ((quietSince && now - quietSince >= QUIET_MS) || now - lastFire >= REARM_MS)){ armed = true; pts = []; }
       return;
     }
     if(f < MIN_F || f > MAX_F){
@@ -10897,6 +10838,8 @@ window.copyRawData = copyRawData;
       cv = document.createElement('canvas'); cv.width = W; cv.height = H;
       c2 = cv.getContext('2d', {willReadFrequently: true});
       prev = null; pts = []; armed = true; quietSince = 0; lastFire = 0;
+      hLastCT = -1; hLastAt = Date.now();
+      try{ stream.getVideoTracks().forEach(t => t.addEventListener('ended', () => { if(tg.checked) setTimeout(() => restartCam(), 500); })); }catch(_){}
       timer = setInterval(tick, 50);
       setStat(true);
       lockScreen();
@@ -10912,10 +10855,29 @@ window.copyRawData = copyRawData;
     if(tg.checked) startCam();
     else{ stopCam(); try{ localStorage.setItem(KEY, '0'); }catch(_){} }
   });
+  function restartCam(){
+    const now = Date.now(); if(now - lastRestart < 4000) return; lastRestart = now;
+    stopCam(); flash('👋 أُعيد تشغيل الكاميرا'); startCam();
+  }
+  // مراقبة الصحة كل ثانيتين: الكاميرا قد تتجمّد أو تتوقف بعد مدة (أندرويد يعلّقها) دون أي حدث ظاهر
+  function health(){
+    if(!tg.checked || starting || document.hidden) return;
+    if(!stream){ restartCam(); return; }
+    const trs = stream.getVideoTracks();
+    if(!trs.length || trs.every(t => t.readyState === 'ended')){ restartCam(); return; }
+    if(vid){
+      if(vid.paused){ try{ vid.play(); }catch(_){} }
+      const now = Date.now();
+      if(vid.currentTime !== hLastCT){ hLastCT = vid.currentTime; hLastAt = now; }
+      else if(now - hLastAt > 4000){ hLastAt = now; restartCam(); return; }
+    }
+    lockScreen();
+  }
+  setInterval(health, 2000);
   document.addEventListener('visibilitychange', () => {
     if(document.hidden || !tg.checked) return;
     const dead = !stream || stream.getVideoTracks().every(t => t.readyState === 'ended');
-    if(dead){ stopCam(); startCam(); } else lockScreen();
+    if(dead){ stopCam(); startCam(); } else { hLastAt = Date.now(); lockScreen(); }
   });
   try{ if(localStorage.getItem(KEY) === '1'){ tg.checked = true; setTimeout(startCam, 1500); } }catch(_){}
 })();
