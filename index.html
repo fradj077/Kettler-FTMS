@@ -2370,6 +2370,8 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 .pg-runrow button{min-height:54px;font-size:16px;font-weight:800}
 .pg-sticky{position:static!important;left:auto!important;right:auto!important;bottom:auto!important;z-index:auto;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin-bottom:6px}
 #programsPanel #runPanel{border:0!important;background:none!important;padding:0!important;margin:0!important;box-shadow:none!important}
+#programsPanel .pg-strip{margin-bottom:8px}
+#programsPanel .pg-strip b{font-size:17px}
 </style>
 </head>
 <body>
@@ -2392,7 +2394,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI10 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI11 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -2745,6 +2747,12 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
     <button type="button" class="stop" style="min-height:42px;font-size:13px" onclick="$('stopProg').click()">⏹ إيقاف</button>
   </div>
 
+  <div class="rlive pg-strip">
+    <div><b id="curSteps">0</b><span>خطوة</span></div>
+    <div><b id="curCadence" style="color:var(--accent)">0 SPM</b><span>إيقاع الحركة</span></div>
+    <div><b id="curSym">100%</b><span>تناسق الخطى</span></div>
+    <div class="tmini" id="tmRun"><b class="tmv">--</b><span class="tml">حرارة المحرك والتيار</span></div>
+  </div>
   <details open class="pg-chart">
     <summary>📈 مخطط البرنامج (السرعة والميل)</summary>
     <div id="chart"></div>
@@ -2771,7 +2779,6 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
     <div><b id="rSpd">--</b><span>السرعة (كم/س)</span></div>
     <div><b id="rInc">--</b><span>الميل (٪)</span></div>
     <div><b id="rEl">--</b><span>المنقضي</span></div>
-    <div class="tmini" id="tmRun"><b class="tmv">--</b><span class="tml">حرارة المحرك والتيار</span></div>
   </div>
   <div id="rNext" style="font-size:13px;font-weight:700;color:#38bdf8;margin:6px 0;text-align:center"></div>
 
@@ -2783,6 +2790,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
   </div>
 
 
+  <div hidden>
   <details>
     <summary>📋 جدول المراحل</summary>
     <div class="pl" id="pl"></div>
@@ -2798,6 +2806,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
     </div>
   </div>
   </details>
+  </div>
 </div>
   </div>
 
@@ -3026,13 +3035,6 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
       <div class="m-tile-lbl">سحب السير الفارغ</div>
       <b class="m-tile-val" id="curEmpty">-- A</b>
       <span class="m-tile-sub"><span>المرجع المعاير:</span> <b id="dspBLDisplay">1.38A</b></span>
-    </div>
-
-    <!-- 4. الخطوات الميكانيكية وإيقاع الجري والتناسق (بدون وزن) -->
-    <div class="m-tile">
-      <div class="m-tile-lbl">الخطوات وإيقاع الحركة</div>
-      <b class="m-tile-val"><span id="curSteps">0</span> <small style="font-size:11.5px;font-weight:normal">خطوة</small> (<span id="curCadence" style="color:var(--accent)">0 SPM</span>)</b>
-      <span class="m-tile-sub"><span>تناسق وتطابق الخطى:</span> <b id="curSym">100%</b></span>
     </div>
 
     <!-- 5. إجمالي ساعات العمل والتمارين -->
@@ -3989,6 +3991,7 @@ function onCPraw(ev){
   const op = d.getUint8(1), res = d.getUint8(2);
   log((OPS[op] || ('أمر ' + op)) + ': ' + (RESULT[res] || res));
   if(op === 0 && res === 1){ ready = true; lock(false); }
+  if(res === 5 && op !== 0){ ready = false; try{ send([0x00]); }catch(_){} }   // التحكم انتقل لتطبيق آخر (Kinomap): نطلبه من جديد
 }
 
 // Treadmill Data: fields appear in flag-bit order.
@@ -4034,6 +4037,7 @@ function onTDraw(ev){
   }
   const now = Date.now();
   tel.s = spd; tel.t = now;
+  try{ beltWatch(spd, now); }catch(_){}
   // الوسيط لا يرى سرعة المشاية إلا إذا كان متصلاً بها؛ عند الاتصال المباشر بالهاتف نمرّر له السرعة ليعمل درع الأمان
   try{
     if(dev && dev !== tDev && (now - (window._tsSentAt || 0)) >= 700 && (typeof tRx !== 'undefined' ? tRx : window.tRx)){
@@ -4060,6 +4064,40 @@ function onTDraw(ev){
   else lt.idle = 0;
 }
 
+// ---- توقف المشاية أثناء البرنامج (عطل، انزلاق، نزول عن السير، إيقاف من الكونسول): يتجمد البرنامج ويكمل عند العودة ----
+function beltStopPause(){
+  if(!running || paused || abort || reconnecting) return;
+  window.savedDismountSpeed = (cur && cur.s > 0.5) ? cur.s : 4.0;
+  manPause = true; paused = true; window._beltPaused = true;
+  try{ $('pauseProg').textContent = '▶ استئناف البرنامج'; }catch(_){}
+  try{ msg('⏸️ توقفت المشاية — البرنامج مجمّد وسيكمل من نفس النقطة'); }catch(_){}
+  try{ buzz([300, 100, 300]); say('توقفت المشاية. البرنامج متوقف مؤقتاً'); }catch(_){}
+  window._resumeReason = 'توقفت المشاية — تم تجميد البرنامج';
+  showResumeModal(true);
+}
+async function beltAutoResume(){
+  window._beltPaused = false; window._moveSince = 0;
+  if(!running || abort) return;
+  showResumeModal(false);
+  manPause = false; paused = false;
+  try{ $('pauseProg').textContent = 'إيقاف مؤقت'; }catch(_){}
+  try{ msg('▶ عادت المشاية للدوران — يُستأنف البرنامج'); }catch(_){}
+  try{ await sleep(900); await send(speedCmd(cur.s)); await sleep(200); await send(inclCmd(cur.i)); }catch(_){}
+}
+function beltWatch(spd, now){
+  if(!running || abort || !RUN){ window._zeroSince = 0; window._moveSince = 0; window._beltPaused = false; return; }
+  if(spd > 0.3) RUN._moved = true;
+  if(window._beltPaused && paused){
+    if(spd > 0.5){ if(!window._moveSince) window._moveSince = now; else if(now - window._moveSince > 1500) beltAutoResume(); }
+    else window._moveSince = 0;
+    return;
+  }
+  if(paused || reconnecting || !RUN._moved){ window._zeroSince = 0; return; }
+  if(spd <= 0.05){
+    if(!window._zeroSince) window._zeroSince = now;
+    else if(now - window._zeroSince > 3000){ window._zeroSince = 0; beltStopPause(); }
+  }else window._zeroSince = 0;
+}
 function onCP(ev){ try{ onCPraw(ev); }catch(_){} }
 function onTD(ev){ try{ onTDraw(ev); }catch(_){} }
 
@@ -4597,7 +4635,7 @@ function showResumeModal(show){
     el.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:99999;width:92%;max-width:390px;background:linear-gradient(135deg,rgba(15,23,42,0.96),rgba(30,41,59,0.98));border:2px solid var(--accent);border-radius:18px;padding:18px;box-shadow:0 12px 36px rgba(0,0,0,0.7);text-align:center;backdrop-filter:blur(10px)';
     el.innerHTML = `
       <div style="font-size:30px;margin-bottom:6px">⏸️</div>
-      <div style="font-weight:800;font-size:16px;color:#fff;margin-bottom:4px">البرنامج متوقف مؤقتاً لخروجك من السير</div>
+      <div id="resumeTitle" style="font-weight:800;font-size:16px;color:#fff;margin-bottom:4px">البرنامج متوقف مؤقتاً لخروجك من السير</div>
       <div style="font-size:12.5px;color:var(--dim);margin-bottom:14px;line-height:1.6">
         تم تجميد الوقت والمسافة والمرحلة الحالية بدقة. اصعد فوق السير واضغط للاستمرار من نفس النقطة دون العودة للبداية.
       </div>
@@ -4613,6 +4651,8 @@ function showResumeModal(show){
     document.body.appendChild(el);
   }
   if(el) el.style.display = show ? 'block' : 'none';
+  if(el && show){ const tt = el.querySelector('#resumeTitle'); if(tt) tt.textContent = window._resumeReason || 'البرنامج متوقف مؤقتاً لخروجك من السير'; }
+  window._resumeReason = null;
 }
 
 window.savedDismountSpeed = 4.0;
@@ -4647,6 +4687,7 @@ async function autoPauseWorkoutOnDismount(){
 }
 
 async function resumeProgramDirect(){
+  window._beltPaused = false; window._moveSince = 0;
   showResumeModal(false);
   if(blockedByTemp()) return;
   manPause = false;
@@ -4949,7 +4990,13 @@ function withTimeout(p, ms, what){
 function onTDisc(){
   oCtl = oDat = null; try{ otaUi(); }catch(_){}
   tempOff('انقطع الاتصال بالحساس — إعادة المحاولة...');
-  tSched(2500);
+  try{
+    if(running && !abort && !paused && dev === tDev){
+      paused = true; window._linkPaused = true;
+      msg('انقطع الاتصال باللوحة — يُعاد الاتصال تلقائياً ثم يُستأنف البرنامج');
+    }
+  }catch(_){}
+  tSched(1200);
   try{ $('mhBadge').className = 'mh-badge l0'; $('mhLvl').textContent = 'انقطع الحساس'; $('mhWhy').textContent = 'تُعاد المحاولة تلقائيًا'; }catch(_){}
 }
 
@@ -5068,6 +5115,7 @@ async function openTemp(){
     lock(true);
   }
 
+  try{ afterLinkRestored(); }catch(_){}
   await sleep(150);
   try{ cfgForceRead = true; await bridgeCmd('KQ'); }catch(_){}
   try{ await saveSafetyConfigToBoard(true); }catch(_){}
@@ -5078,6 +5126,21 @@ async function openTemp(){
   setTimeout(mhOnConnect, 1500);
 }
 
+async function afterLinkRestored(){
+  if(!window._linkPaused) return;
+  window._linkPaused = false;
+  if(!running || abort){ paused = false; return; }
+  for(let w = 0; w < 40 && !ready; w++) await sleep(200);
+  await sleep(1500);
+  if(Date.now() - tel.t < 3000 && tel.s > 0.3){
+    paused = false; manPause = false;
+    try{ $('pauseProg').textContent = 'إيقاف مؤقت'; }catch(_){}
+    try{ await send(speedCmd(cur.s)); await sleep(200); await send(inclCmd(cur.i)); }catch(_){}
+    msg('أُعيد الاتصال واستُؤنف البرنامج');
+  }else{
+    paused = false; beltStopPause();
+  }
+}
 async function reTemp(){
   if(!tDev || tBusy || (tDev.gatt && tDev.gatt.connected)) return;
   tBusy = true;
@@ -5087,7 +5150,7 @@ async function reTemp(){
   }catch(e){
     try{ if(tDev && tDev.gatt) tDev.gatt.disconnect(); }catch(_){}
     tempOff('تعذر الاتصال — إعادة المحاولة...');
-    tSched(4000);
+    tSched(2500);
   }finally{
     tBusy = false;
   }
@@ -9285,6 +9348,13 @@ function matchSingleWordToNum(w){
 
 function parseFrenchVoiceCommand(rawText){
   if(!rawText) return null;
+  // رقم عشري مثل 6.5 أو 8,5 أو "ست فاصل خمسة": التطبيع يحذف الفاصلة فيحوّله إلى 65 فيُرفض
+  const _pre = String(rawText).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/٫/g, '.');
+  const _dm = _pre.match(/(?:^|[^\d])(\d{1,2})\s*(?:[.,]|فاصل|فاصله|virgule|point)\s*(\d)(?!\d)/i);
+  if(_dm){
+    const v = parseInt(_dm[1], 10) + parseInt(_dm[2], 10) / 10;
+    if(v >= 1 && v <= 20) return { type: 'speed', value: Math.round(v * 2) / 2, raw: rawText.trim() };
+  }
   let txt = vtNormalizePhrase(rawText);
   if(!txt) return null;
 
@@ -9298,6 +9368,23 @@ function parseFrenchVoiceCommand(rawText){
   // 1. فحص أمر الإيقاف الفوري بالفرنسية والعربية (Stop / Arrêt / توقف / ستوب / حبس / قف)
   if(/\b(stop|stoper|stopper|arret|arrête|arrete|arrêter|arreter|halte|stob)\b/i.test(txt) || /(^|\s)(ستوب|توقف|قف|ايقاف|اوقف|حبس|بلاص|سطوب)(\s|$)/.test(txt)){
     return { type: 'stop', raw: rawText.trim() };
+  }
+
+  // استئناف البرنامج المتوقف
+  if(/(^|\s)(كمل|كمله|كملي|استئناف|استيناف|استانف|استئنف|استمر|واصل|reprendre|reprends|continue|continuer|resume)(\s|$)/i.test(txt)){
+    return { type: 'resume', raw: rawText.trim() };
+  }
+  // أوامر نسبية: زيد / نقص (مع رقم اختياري: "زيد اثنين")
+  const _fast = /(^|\s)(زيد|زد|زياده|ارفع|اسرع|عجل|plus vite|accelere|accélère|accélérer|augmente|monte|faster)(\s|$)/i.test(txt);
+  const _slow = /(^|\s)(نقص|انقص|خفف|اخفض|ابطئ|بطئ|هدي|نزل|moins vite|ralentis|ralentir|diminue|baisse|descends|slower)(\s|$)/i.test(txt);
+  if(_fast || _slow){
+    let amt = 1;
+    for(const w of txt.split(' ')){
+      if(/^(نص|نصف|demi)$/.test(w)){ amt = 0.5; break; }
+      const nn = matchSingleWordToNum(w);
+      if(nn !== null && nn >= 1 && nn <= 5 && w.length > 1){ amt = nn; break; }
+    }
+    return { type: 'delta', value: _slow && !_fast ? -amt : amt, raw: rawText.trim() };
   }
 
   // إزالة الكلمات البادئة الشائعة بالفرنسية أو العربية
@@ -9396,6 +9483,30 @@ function parseFrenchVoiceCommand(rawText){
     }
   }
 
+  // 7. رقم داخل جملة أطول مثل "اجعل السرعة ثمانية" أو "خلي ست ونص"
+  const toks = txt.split(' ').filter(Boolean);
+  const ctxW = /(سرعه|vitesse|خلي|اجعل|ضع|حط|ردها|مشي|ركض|كم|km|passe|mets)/.test(txt);
+  if(toks.length <= 5 || ctxW){
+    const look = ph => {
+      const h = checkCustomMapMatch(ph, vtCustomMapByLang['fr-FR']) || checkCustomMapMatch(ph, vtCustomMapByLang['ar-DZ']);
+      if(h && h.type === 'speed') return h.value;
+      if(/^\d{1,2}$/.test(ph)){ const n = parseInt(ph, 10); return (n >= 1 && n <= 20) ? n : null; }
+      if(ph.length < 3) return null;
+      if(Object.prototype.hasOwnProperty.call(AR_RAW_TO_NUM, ph)) return AR_RAW_TO_NUM[ph];
+      if(Object.prototype.hasOwnProperty.call(FR_WORD_TO_NUM, ph)) return FR_WORD_TO_NUM[ph];
+      return null;
+    };
+    for(let n = Math.min(3, toks.length); n >= 1; n--){
+      for(let k = 0; k + n <= toks.length; k++){
+        let v = look(toks.slice(k, k + n).join(' '));
+        if(v === null) continue;
+        const nx = toks[k + n] || '', nx2 = toks[k + n + 1] || '';
+        if(/^(ونص|ونصف|نص|نصف|demi|demie)$/.test(nx) || (nx === 'و' && /^(نص|نصف)$/.test(nx2)) || (nx === 'et' && /^(demi|demie)$/.test(nx2))) v += 0.5;
+        if(v >= 1 && v <= 20) return { type: 'speed', value: v, raw: rawText.trim() };
+      }
+    }
+  }
+
   return null;
 }
 
@@ -9409,7 +9520,7 @@ function setVoiceFrStatus(text, color){
 async function executeFrenchVoiceCommand(cmd, isFinal){
   if(!cmd) return;
   const now = Date.now();
-  const key = cmd.type === 'stop' ? 'STOP' : ('SPD_' + cmd.value.toFixed(1));
+  const key = cmd.type === 'stop' ? 'STOP' : (cmd.type === 'resume' ? 'RESUME' : (cmd.type + '_' + cmd.value.toFixed(1)));
 
   if(key === lastVoiceCmdKey && (now - lastVoiceCmdMs) < 1500){
     return;
@@ -9427,6 +9538,19 @@ async function executeFrenchVoiceCommand(cmd, isFinal){
     return;
   }
 
+  if(cmd.type === 'resume'){
+    setVoiceFrStatus('▶ استئناف (' + cmd.raw + ')', 'var(--ok)');
+    try{ if(typeof playGripSuccessTone === 'function') playGripSuccessTone(true); }catch(_){}
+    if(running && paused){
+      if(window._beltPaused || manPause) resumeProgramDirect(); else $('pauseProg').click();
+      toast('🎙️ أمر صوتي: استئناف البرنامج');
+    }else toast('🎙️ لا يوجد برنامج متوقف للاستئناف');
+    return;
+  }
+  if(cmd.type === 'delta'){
+    const base0 = (running && cur && cur.s > 0) ? cur.s : ((Date.now() - tel.t < 3000 && tel.s > 0.05) ? tel.s : (parseFloat($('lvSpeed').textContent) || (cur && cur.s) || 1));
+    cmd = Object.assign({}, cmd, { type: 'speed', value: base0 + cmd.value });
+  }
   if(cmd.type === 'speed'){
     const maxSpd = (typeof MAX_SPEED === 'number' && MAX_SPEED > 0) ? MAX_SPEED : 20;
     const targetSpd = Math.min(maxSpd, Math.max(1.0, cmd.value));
@@ -9506,7 +9630,13 @@ function initFrenchVoiceRecognition(){
           }
         }
         if(matchedCmd){
-          executeFrenchVoiceCommand(matchedCmd, isFinal);
+          clearTimeout(window._vtIntTimer); window._vtIntTimer = null;
+          if(isFinal || matchedCmd.type === 'stop'){
+            executeFrenchVoiceCommand(matchedCmd, isFinal);
+          }else{
+            const _mc = matchedCmd;
+            window._vtIntTimer = setTimeout(() => { window._vtIntTimer = null; executeFrenchVoiceCommand(_mc, false); }, 900);
+          }
           break;
         } else if(isFinal && heardAlts[0]){
           const heard = heardAlts[0];
