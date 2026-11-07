@@ -2369,6 +2369,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 .pg-runrow{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:8px}
 .pg-runrow button{min-height:54px;font-size:16px;font-weight:800}
 .pg-sticky{position:static!important;left:auto!important;right:auto!important;bottom:auto!important;z-index:auto;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin-bottom:6px}
+#programsPanel #runPanel{border:0!important;background:none!important;padding:0!important;margin:0!important;box-shadow:none!important}
 </style>
 </head>
 <body>
@@ -2391,7 +2392,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI9 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI10 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -2736,7 +2737,21 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 
   <div data-pane="run">
     <div class="pg-cards" id="pgCards"></div>
-    <div class="pg-ctl">
+    <div class="panel" id="runPanel">
+
+  <div class="cp-fs-actions">
+    <button type="button" class="go" onclick="$('runProg').click()">▶ بدء البرنامج</button>
+    <button type="button" onclick="$('pauseProg').click()">⏸ إيقاف مؤقت</button>
+    <button type="button" class="stop" style="min-height:42px;font-size:13px" onclick="$('stopProg').click()">⏹ إيقاف</button>
+  </div>
+
+  <details open class="pg-chart">
+    <summary>📈 مخطط البرنامج (السرعة والميل)</summary>
+    <div id="chart"></div>
+    <div class="ch-leg"><i style="background:#22c55e"></i>سهل<i style="background:#eab308"></i>متوسط<i style="background:#f97316"></i>قوي<i style="background:#ef4444"></i>شديد<i class="m"></i>الميل (الجبل)</div>
+    <div id="chTip">المس أي مرحلة في المخطط لعرض تفاصيلها</div>
+  </details>
+  <div class="pg-ctl">
       <button class="go" id="runProg" disabled>بدء البرنامج</button>
       <button type="button" id="pgYtBtn" title="مكتبة الفيديو" aria-label="مكتبة الفيديو">📺</button>
     </div>
@@ -2746,6 +2761,44 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
       <button id="stopProg" disabled>إيقاف</button>
     </div>
     <div id="pgLinkedVid"></div>
+
+  <div id="rMsg" style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;text-align:center"></div>
+  <div class="bar"><i id="rBar"></i></div>
+  <div class="rlive">
+    <div><b id="rSeg">--</b><span>المرحلة</span></div>
+    <div><b id="rSegLeft">--</b><span>متبقي في المرحلة</span></div>
+    <div><b id="rTotLeft">--</b><span>متبقي في البرنامج</span></div>
+    <div><b id="rSpd">--</b><span>السرعة (كم/س)</span></div>
+    <div><b id="rInc">--</b><span>الميل (٪)</span></div>
+    <div><b id="rEl">--</b><span>المنقضي</span></div>
+    <div class="tmini" id="tmRun"><b class="tmv">--</b><span class="tml">حرارة المحرك والتيار</span></div>
+  </div>
+  <div id="rNext" style="font-size:13px;font-weight:700;color:#38bdf8;margin:6px 0;text-align:center"></div>
+
+  <div class="cp-quick-bar">
+    <button type="button" id="cpQMin" onclick="cpQuickMod('addMin')">⏱ +1 د للمرحلة</button>
+    <button type="button" id="cpQEase" onclick="cpQuickMod('ease')">🔉 تخفيف 10%</button>
+    <button type="button" id="cpQBoost" onclick="cpQuickMod('boost')">🔥 تعزيز 10%</button>
+    <button type="button" id="cpQSkip" onclick="cpQuickMod('skip')">⏭ تخطِّ المرحلة</button>
+  </div>
+
+
+  <details>
+    <summary>📋 جدول المراحل</summary>
+    <div class="pl" id="pl"></div>
+  </details>
+  <details>
+    <summary>👟 صوت الخطوات</summary>
+  <div class="cp-cadence-bar">
+    <button type="button" class="cp-cad-toggle" id="cpCadBtn" onclick="toggleCadenceBeat()">👟 صوت الخطوات: إيقاف</button>
+    <div class="cp-cad-feet">
+      <span>يمين</span><i class="cp-foot-dot" id="cpFootR"></i>
+      <i class="cp-foot-dot" id="cpFootL"></i><span>يسار</span>
+      <b id="cpCadSpm" style="color:var(--amber);margin-right:6px;direction:ltr">160 خطوة/د</b>
+    </div>
+  </div>
+  </details>
+</div>
   </div>
 
   <div data-pane="edit" class="pg-edit">
@@ -2813,56 +2866,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
   </div>
 </div>
 
-<div class="panel" id="runPanel">
 
-  <div class="cp-fs-actions">
-    <button type="button" class="go" onclick="$('runProg').click()">▶ بدء البرنامج</button>
-    <button type="button" onclick="$('pauseProg').click()">⏸ إيقاف مؤقت</button>
-    <button type="button" class="stop" style="min-height:42px;font-size:13px" onclick="$('stopProg').click()">⏹ إيقاف</button>
-  </div>
-
-  <div id="rMsg" style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;text-align:center"></div>
-  <div class="bar"><i id="rBar"></i></div>
-  <div class="rlive">
-    <div><b id="rSeg">--</b><span>المرحلة</span></div>
-    <div><b id="rSegLeft">--</b><span>متبقي في المرحلة</span></div>
-    <div><b id="rTotLeft">--</b><span>متبقي في البرنامج</span></div>
-    <div><b id="rSpd">--</b><span>السرعة (كم/س)</span></div>
-    <div><b id="rInc">--</b><span>الميل (٪)</span></div>
-    <div><b id="rEl">--</b><span>المنقضي</span></div>
-    <div class="tmini" id="tmRun"><b class="tmv">--</b><span class="tml">حرارة المحرك والتيار</span></div>
-  </div>
-  <div id="rNext" style="font-size:13px;font-weight:700;color:#38bdf8;margin:6px 0;text-align:center"></div>
-
-  <div class="cp-quick-bar">
-    <button type="button" id="cpQMin" onclick="cpQuickMod('addMin')">⏱ +1 د للمرحلة</button>
-    <button type="button" id="cpQEase" onclick="cpQuickMod('ease')">🔉 تخفيف 10%</button>
-    <button type="button" id="cpQBoost" onclick="cpQuickMod('boost')">🔥 تعزيز 10%</button>
-    <button type="button" id="cpQSkip" onclick="cpQuickMod('skip')">⏭ تخطِّ المرحلة</button>
-  </div>
-
-  <details open class="pg-chart">
-    <summary>📈 مخطط البرنامج (السرعة والميل)</summary>
-    <div id="chart"></div>
-    <div class="ch-leg"><i style="background:#22c55e"></i>سهل<i style="background:#eab308"></i>متوسط<i style="background:#f97316"></i>قوي<i style="background:#ef4444"></i>شديد<i class="m"></i>الميل (الجبل)</div>
-    <div id="chTip">المس أي مرحلة في المخطط لعرض تفاصيلها</div>
-  </details>
-  <details>
-    <summary>📋 جدول المراحل</summary>
-    <div class="pl" id="pl"></div>
-  </details>
-  <details>
-    <summary>👟 صوت الخطوات</summary>
-  <div class="cp-cadence-bar">
-    <button type="button" class="cp-cad-toggle" id="cpCadBtn" onclick="toggleCadenceBeat()">👟 صوت الخطوات: إيقاف</button>
-    <div class="cp-cad-feet">
-      <span>يمين</span><i class="cp-foot-dot" id="cpFootR"></i>
-      <i class="cp-foot-dot" id="cpFootL"></i><span>يسار</span>
-      <b id="cpCadSpm" style="color:var(--amber);margin-right:6px;direction:ltr">160 خطوة/د</b>
-    </div>
-  </div>
-  </details>
-</div>
 
 <div class="panel" style="display:none!important">
   <h2>سجل التمارين (المسافة بالكيلومتر، آخر 7 أيام)</h2>
