@@ -2301,7 +2301,8 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 #ytFloat.fs .yt-box{display:block!important;flex:1;aspect-ratio:auto;height:auto}
 #ytFloat.fs .yt-bar{padding-top:calc(env(safe-area-inset-top,0px) + 4px)}
 #ytLib .yt-item{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--line,#2a3352)}
-#ytLib .yt-item .yt-name{flex:1;font-size:13px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#ytLib .yt-item .yt-name{flex:1;font-size:13px;font-weight:700;min-width:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.4;word-break:break-word}
+#ytLib .yt-thumb{width:84px;height:47px;flex:none;border-radius:8px;object-fit:cover;background:#111a26;border:1px solid var(--line,#2a3352);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer}
 #ytLib .yt-item button{min-width:40px;min-height:38px;padding:0 6px}
 #ytLib .yt-item.linked .yt-name{color:#34d399}
 /* ===== صفحة البرامج: تبويبات فرعية + بطاقات + مخطط جديد ===== */
@@ -2394,7 +2395,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI11 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI12 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -7079,7 +7080,14 @@ pgCards();
     lib.forEach((it,i)=>{
       const key=it.t+':'+it.id;
       const row=document.createElement('div'); row.className='yt-item'+(lk===key?' linked':'');
-      const nm=document.createElement('div'); nm.className='yt-name'; nm.textContent=(it.t==='p'?'📑 ':'🎬 ')+(it.title||it.id);
+      const nm=document.createElement('div'); nm.className='yt-name'; nm.textContent=(it.t==='p'?'📑 ':'')+(it.title||it.id);
+      let th;
+      if(it.t==='v'){
+        th=document.createElement('img'); th.className='yt-thumb'; th.loading='lazy'; th.alt='';
+        th.src='https://i.ytimg.com/vi/'+encodeURIComponent(it.id)+'/mqdefault.jpg';
+        th.onerror=()=>{ const ph=document.createElement('div'); ph.className='yt-thumb'; ph.textContent='🎬'; ph.onclick=()=>play(it); th.replaceWith(ph); };
+      }else{ th=document.createElement('div'); th.className='yt-thumb'; th.textContent='📑'; }
+      th.onclick=()=>play(it);
       const bp=document.createElement('button'); bp.type='button'; bp.textContent='▶'; bp.onclick=()=>play(it);
       const bl=document.createElement('button'); bl.type='button'; bl.textContent=lk===key?'✔':'🔗';
       bl.title='ربط بالبرنامج المختار';
@@ -7094,7 +7102,7 @@ pgCards();
         Object.keys(map).forEach(p=>{ if(map[p]===key) delete map[p]; });
         save(); render();
       };
-      row.append(nm,bp,bl,bd); box.appendChild(row);
+      row.append(th,nm,bp,bl,bd); box.appendChild(row);
     });
     if(!lib.length){ box.innerHTML='<div style="font-size:12px;color:var(--dim);padding:6px 0">المكتبة فارغة — الصق رابطاً وأضفه.</div>'; }
     const info=$e('ytLinkInfo'), li=linkedItem();
