@@ -2354,6 +2354,21 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 #chTip button{min-height:34px;padding:0 10px;font-size:12px}
 .seg.flash{box-shadow:0 0 0 2px #38bdf8}
 .seg .dup{color:#e2e8f0;background:#243142;border-color:var(--line-light)}
+/* UI9: simple compact table, buttons under the table */
+.seghead2,#segs .seg{display:grid!important;grid-template-columns:24px 1fr 1fr 1fr 34px;gap:5px;align-items:center}
+.seghead2{font-size:11px;color:var(--dim);text-align:center;font-weight:700;padding:0 6px;margin-bottom:4px}
+#segs .seg{padding:3px 6px!important;margin-bottom:4px!important;border-radius:10px}
+#segs .seg-n{text-align:center;font-size:12px;font-weight:800;color:#38bdf8}
+#segs .seg-n::before{content:counter(sg)}
+#segs .seg input{min-height:38px!important;font-size:15px;padding:2px 4px;min-width:0}
+#segs .seg input::-webkit-inner-spin-button,#segs .seg input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+#segs .seg input{-moz-appearance:textfield}
+#segs .seg .del{min-height:32px!important;width:34px;min-width:0;padding:0!important;font-size:13px}
+.pg-edit{padding-bottom:12px!important}
+.pg-add{margin:4px 0 8px}
+.pg-runrow{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:8px}
+.pg-runrow button{min-height:54px;font-size:16px;font-weight:800}
+.pg-sticky{position:static!important;left:auto!important;right:auto!important;bottom:auto!important;z-index:auto;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -2376,7 +2391,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI8 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI9 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -2735,10 +2750,15 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 
   <div data-pane="edit" class="pg-edit">
     <div class="row r2"><select id="progSel" aria-label="البرنامج"></select><input id="progName" placeholder="اسم البرنامج"></div>
-    <div id="segs"></div>
+    <div class="seghead2"><span>#</span><span>المدة (د)</span><span>السرعة (كم/س)</span><span>الميل (٪)</span><span></span></div>
+ <div id="segs"></div>
     <button type="button" id="addSeg" class="pg-add">مرحلة جديدة</button>
-    <div class="pg-sticky">
-      <button class="primary" id="applyProg">✓ تطبيق وحفظ</button>
+    <div class="pg-runrow">
+ <button type="button" class="go" id="epRun">بدء البرنامج</button>
+ <button type="button" class="stop" id="epStop">إيقاف</button>
+ </div>
+ <div class="pg-sticky">
+      <button class="primary" id="applyProg">تطبيق وحفظ</button>
       <button id="saveProg">حفظ</button>
       <button id="delProg">حذف</button>
     </div>
@@ -5681,23 +5701,9 @@ function showProg(){
 }
 function addRow(g = {m:5,s:5,i:0}, afterEl){
   const r = document.createElement('div'); r.className = 'seg';
-  const cell = (lab, mn, mx, st, v) => '<div class="sg-c"><small>'+lab+'</small><div class="stp"><button type="button" class="dn" tabindex="-1" aria-label="إنقاص">−</button><input type="number" min="'+mn+'" max="'+mx+'" step="'+st+'" inputmode="decimal" value="'+v+'"><button type="button" class="up" tabindex="-1" aria-label="زيادة">+</button></div></div>';
-  r.innerHTML = '<div class="seg-h"><span class="seg-n"></span><span class="seg-sp"></span><button type="button" class="dup" aria-label="نسخ المرحلة">⧉</button><button type="button" class="del" aria-label="حذف المرحلة">✕</button></div>' +
-    '<div class="seg-g">' + cell('المدة (د)', 0.5, 120, 0.5, g.m) + cell('السرعة (كم/س)', 1, MAX_SPEED, 0.5, g.s) + cell('الميل (٪)', 0, MAX_INCL, 1, g.i) + '</div>';
-  const ins = [...r.querySelectorAll('input')], steps = [1, SSTEP || 0.5, ISTEP || 1];
-  r.querySelectorAll('.stp').forEach((box, n) => {
-    const inp = ins[n];
-    const bump = d => {
-      const mn = parseFloat(inp.min), mx = parseFloat(inp.max);
-      let v = parseFloat(inp.value); if(!(v >= 0)) v = mn;
-      v = Math.round((v + d*steps[n]) * 100) / 100; v = Math.max(mn, Math.min(mx, v));
-      inp.value = v; inp.dispatchEvent(new Event('input', {bubbles: true}));
-    };
-    box.querySelector('.dn').onclick = () => bump(-1);
-    box.querySelector('.up').onclick = () => bump(1);
-  });
+  const cell = (mn, mx, st, v) => '<input type="number" min="'+mn+'" max="'+mx+'" step="'+st+'" inputmode="decimal" value="'+v+'" onfocus="this.select()">';
+  r.innerHTML = '<span class="seg-n"></span>' + cell(0.5, 120, 0.5, g.m) + cell(1, MAX_SPEED, 0.5, g.s) + cell(0, MAX_INCL, 1, g.i) + '<button type="button" class="del" aria-label="حذف المرحلة">✕</button>';
   r.querySelector('.del').onclick = () => { r.remove(); total(); };
-  r.querySelector('.dup').onclick = () => { const [m, s2, i2] = ins.map(x => parseFloat(x.value)); addRow({m: m || 5, s: s2 || 5, i: i2 || 0}, r); total(); };
   if(afterEl && afterEl.nodeType === 1) afterEl.after(r); else $('segs').appendChild(r);
   return r;
 }
@@ -6896,6 +6902,15 @@ $('pgYtBtn').onclick = () => {
 try{ const sv = localStorage.getItem('kettler_pg_tab'); if(sv === 'run' || sv === 'edit' || sv === 'tools') window.pgCur = sv; }catch(_){}
 pgSet(window.pgCur);
 pgCards();
+(function(){
+  [['epRun','runProg'],['epStop','stopProg']].forEach(([a, b]) => {
+    const A = $(a), B = $(b); if(!A || !B) return;
+    const sync = () => { A.disabled = B.disabled; };
+    sync();
+    try{ new MutationObserver(sync).observe(B, {attributes: true, attributeFilter: ['disabled']}); }catch(_){}
+    A.onclick = () => B.click();
+  });
+})();
 
 // ---------- مكتبة YouTube + مشغل عائم + ربط الفيديو بالبرنامج ----------
 (function(){
@@ -8132,7 +8147,7 @@ addEventListener('online', netSync); addEventListener('offline', netSync); netSy
 const ICO = {play:'<polygon points="6 4 20 12 6 20"/>', stop:'<rect x="6" y="6" width="12" height="12" rx="2"/>', plus:'<path d="M12 5v14M5 12h14"/>', save:'<path d="M5 4h11l3 3v13H5zM8 4v5h7M8 20v-6h8v6"/>', trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>', dl:'<path d="M12 4v12M6 11l6 6 6-6M5 21h14"/>', up:'<path d="M6 15l6-6 6 6"/>', dn:'<path d="M6 9l6 6 6-6"/>',
   sl:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>', rt:'<circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a3 3 0 000-6h-4a3 3 0 010-6h6"/>', ls:'<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>', th:'<path d="M10 14V5a2 2 0 014 0v9a4 4 0 11-4 0z"/>', ch:'<path d="M5 20V10M12 20V4M19 20v-7"/>'};
 const ic = k => '<svg class="ic" viewBox="0 0 24 24">' + ICO[k] + '</svg>';
-Object.entries({btnStart:'play', rtStart:'play', runProg:'play', rtStop:'stop', stopProg:'stop', fab:'stop', rmStop:'stop', rtSm:'dn', rtSp:'up', addSeg:'plus', saveProg:'save', delProg:'trash', csvBtn:'dl', clrLog:'trash'}).forEach(([id, k]) => { const b = $(id); if(b) b.insertAdjacentHTML('afterbegin', ic(k)); });
+Object.entries({btnStart:'play', rtStart:'play', runProg:'play', rtStop:'stop', stopProg:'stop', fab:'stop', rmStop:'stop', rtSm:'dn', rtSp:'up', csvBtn:'dl', clrLog:'trash'}).forEach(([id, k]) => { const b = $(id); if(b) b.insertAdjacentHTML('afterbegin', ic(k)); });
 [...$('tabs').children].forEach((b, i) => b.insertAdjacentHTML('afterbegin', ic(['sl', 'rt', 'ls', 'th', 'ch'][i])));
 // ---- full backup (everything the app stores on this phone) ----
 const BK_SKIP = ['kettler_tab'];
