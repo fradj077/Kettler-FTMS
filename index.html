@@ -2376,7 +2376,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 <div class="compact-cockpit-bar">
   <div class="ccb-brand">
     <span>🏃 Kettler S2</span>
-    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI11 🔄</span>
+    <span class="ccb-ver" onclick="forceAppUpdate()" style="cursor:pointer" title="اضغط لتحديث النسخة">v114.1-UI12 🔄</span>
   </div>
   <span class="bclk" title="ساعة اللوحة الفعلية"></span>
   <div class="ccb-status">
@@ -2803,6 +2803,13 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
     <button type="button" class="stop" style="min-height:42px;font-size:13px" onclick="$('stopProg').click()">⏹ إيقاف</button>
   </div>
 
+  <details open class="pg-chart">
+    <summary>📈 مخطط البرنامج (السرعة والميل)</summary>
+    <div id="chart"></div>
+    <div class="ch-leg"><i style="background:#22c55e"></i>سهل<i style="background:#eab308"></i>متوسط<i style="background:#f97316"></i>قوي<i style="background:#ef4444"></i>شديد<i class="m"></i>الميل (الجبل)</div>
+    <div id="chTip">المس أي مرحلة في المخطط لعرض تفاصيلها</div>
+  </details>
+
   <div id="rMsg" style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;text-align:center"></div>
   <div class="bar"><i id="rBar"></i></div>
   <div class="rlive">
@@ -2823,12 +2830,6 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
     <button type="button" id="cpQSkip" onclick="cpQuickMod('skip')">⏭ تخطِّ المرحلة</button>
   </div>
 
-  <details open class="pg-chart">
-    <summary>📈 مخطط البرنامج (السرعة والميل)</summary>
-    <div id="chart"></div>
-    <div class="ch-leg"><i style="background:#22c55e"></i>سهل<i style="background:#eab308"></i>متوسط<i style="background:#f97316"></i>قوي<i style="background:#ef4444"></i>شديد<i class="m"></i>الميل (الجبل)</div>
-    <div id="chTip">المس أي مرحلة في المخطط لعرض تفاصيلها</div>
-  </details>
   <details>
     <summary>📋 جدول المراحل</summary>
     <div class="pl" id="pl"></div>
