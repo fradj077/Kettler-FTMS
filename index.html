@@ -2760,7 +2760,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
       <div class="ext-sug-hd">
         <span class="ext-sug-ttl">🌐 مقترحات الجدول (Intervals.icu + قوالب عالمية)</span>
         <div class="ext-sug-acts">
-          <button type="button" id="extQuickSyncBtn" title="جلب تمرين اليوم وجدول الأسبوع من Intervals.icu">🔄 مزامنة</button>
+          <button type="button" id="extQuickSyncBtn" title="جلب تمرين اليوم وجدول الأسبوع من Intervals.icu (أو تعبئة التقويم تلقائياً إن كان فارغاً)">🔄 مزامنة</button>
           <button type="button" id="extOpenHubBtn" title="إعدادات الربط واستيراد القوالب">⚙️ المصدر</button>
         </div>
       </div>
@@ -2809,7 +2809,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 
     <div class="ext-hub-sec">
       <h4><span>📅 الخيار 2: الربط المباشر مع تقويم Intervals.icu</span><a href="https://intervals.icu" target="_blank" rel="noopener" style="font-size:11px;color:#a78bfa;text-decoration:none">intervals.icu ↗</a></h4>
-      <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.6">أدخل مفتاح <b>API Key</b> من حسابك في <code>Intervals.icu → Settings → Developer Settings</code> (اترك معرف الرياضي <code>0</code> ليستخدم حساب المفتاح تلقائياً).</div>
+      <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.6">أدخل مفتاح <b>API Key</b> من حسابك في <code>Intervals.icu → Settings → Developer Settings</code>. إن كان تقويمك في الموقع فارغاً، سيقوم التطبيق تلقائياً برفع خطة جري أسبوعية متكاملة (7 أيام) إلى حسابك في الموقع وسحبها إلى جدولك!</div>
       <div class="row r2">
         <label style="font-size:12px">معرف الرياضي (Athlete ID)<input id="icuAthId" type="text" value="0" placeholder="0 أو i123456" dir="ltr" autocomplete="off"></label>
         <label style="font-size:12px">نطاق الجلب من التقويم<select id="icuDays"><option value="7" selected>أسبوع (7 أيام)</option><option value="14">أسبوعان (14 يوماً)</option><option value="30">شهر (30 يوماً)</option></select></label>
@@ -2817,9 +2817,9 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
       <label style="font-size:12px;display:block;margin-top:4px">مفتاح API Key (يُحفظ في متصفحك فقط)<input id="icuApiKey" type="password" placeholder="أدخل مفتاح API_KEY الخاص بـ Intervals.icu" dir="ltr" autocomplete="off"></label>
       <div class="row r2" style="margin-top:6px">
         <button type="button" class="primary" id="icuSyncBtn">🔄 جلب تمرين اليوم وجدول الأسبوع</button>
-        <button type="button" id="icuTestDemoBtn">🧪 تجربة تحليلي لنص تمرين</button>
+        <button type="button" id="icuSeedPlanBtn" class="btn-save">📅 تعبئة تقويم الموقع بخطة أسبوعية</button>
       </div>
-      <div id="icuStatusMsg" class="ext-stat">جاهز للربط — يمكنك جلب جدولك من Intervals.icu أو تحويل نص التمرين بالأسفل.</div>
+      <div id="icuStatusMsg" class="ext-stat">جاهز للربط — اضغط «جلب تمرين اليوم» أو «تعبئة تقويم الموقع بخطة أسبوعية» لرفع جدول 7 أيام إلى حسابك في Intervals.icu فوراً.</div>
       <details id="icuTextDetails" style="margin-top:6px">
         <summary style="font-size:12px;color:#cbd5e1">📝 لصق أو كتابة نص تمرين بصيغة باني التمارين (Intervals.icu Builder)</summary>
         <input id="icuRawName" type="text" placeholder="اسم التمرين المقترح (اختياري)" style="margin-top:6px">
@@ -11191,7 +11191,7 @@ window.copyRawData = copyRawData;
     box.innerHTML = '';
     const items = allItems().filter(x => curCat === 'all' || x.cat === curCat);
     if(!items.length){
-      box.innerHTML = '<div style="font-size:12px;color:var(--dim);padding:8px 4px">لا توجد برامج في هذا التصنيف حالياً — اضغط «⚙️ المصدر» للربط أو الاستيراد.</div>';
+      box.innerHTML = '<div style="font-size:12px;color:var(--dim);padding:8px 4px">لا توجد برامج في هذا التصنيف حالياً — اضغط «🔄 مزامنة» أو «⚙️ المصدر».</div>';
       return;
     }
     items.forEach(it => {
@@ -11397,7 +11397,6 @@ window.copyRawData = copyRawData;
     };
     const toDurMin = (el, keys, defSec) => {
       const raw = attrNum(el, keys, defSec);
-      // بعض ملفات الجري في ZWO تضع المسافة بالأمتار (مثل 400 أو 1000) أو الزمن بالثواني
       return clampMin(raw > 15 ? raw / 60 : raw);
     };
 
@@ -11466,17 +11465,14 @@ window.copyRawData = copyRawData;
     if(!txt) return [];
     const baseName = (fileName || 'تمرين مستورد').replace(/\.[^.]+$/, '').slice(0, 42);
 
-    // 1. فحص XML / ZWO
     if(txt.startsWith('<') || /<workout_file|<SteadyState|<IntervalsT/i.test(txt)){
       const z = parseZwoXml(txt);
       if(z) return z;
     }
-    // 2. فحص MRC / ERG
     if(/\[COURSE DATA\]/i.test(txt)){
       const m = parseMrcErg(txt, baseName);
       if(m) return m;
     }
-    // 3. فحص JSON (يدعم Kettler JSON، وOpen-Workout JSON، ومصفوفات المراحل، وworkout_doc)
     if(txt.startsWith('{') || txt.startsWith('[')){
       try{
         const j = JSON.parse(txt);
@@ -11531,7 +11527,6 @@ window.copyRawData = copyRawData;
         if(out.length) return out;
       }catch(_){}
     }
-    // 4. فحص نص Intervals.icu Builder
     const st = parseIntervalsText(txt, cfg.refSpd || 10);
     if(st.length){
       return [{id: 'imp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), src: 'نص ICU', name: baseName, steps: st}];
@@ -11539,13 +11534,107 @@ window.copyRawData = copyRawData;
     return [];
   }
 
-  // ---------- الاتصال المباشر بواجهة Intervals.icu API (الخيار 2) ----------
+  // ---------- الاتصال المباشر بواجهة Intervals.icu API + التعبئة التلقائية للخطة الأسبوعية (الطريقة 2) ----------
   function fmtIsoDate(d){
     const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
     return y + '-' + m + '-' + day;
   }
 
-  async function syncIntervalsIcu(){
+  // خطة أسبوعية متكاملة (7 أيام) تُرفع تلقائياً إلى تقويم المستخدم في Intervals.icu عبر POST /events/bulk?upsert=true
+  const WEEKLY_ICU_PLAN_SPEC = [
+    {
+      dayOffset: 0,
+      name: 'اليوم 1: حرق دهون مستقر (Zone 2 Base)',
+      desc: '- 5m 60% Pace\n- 20m 75% Pace incline 1%\n- 5m 55% Pace'
+    },
+    {
+      dayOffset: 1,
+      name: 'اليوم 2: فترات بيلات 6×1 د (VO2max HIIT)',
+      desc: '- 5m 60% Pace\n6x\n- 1m 105% Pace incline 1%\n- 1m 55% Pace\n- 4m 55% Pace'
+    },
+    {
+      dayOffset: 2,
+      name: 'اليوم 3: مشي جبلي لحرق الدهون (Incline Walk)',
+      desc: '- 3m 45% Pace incline 2%\n- 5m 52% Pace incline 6%\n- 5m 54% Pace incline 9%\n- 5m 54% Pace incline 11%\n- 4m 52% Pace incline 6%\n- 3m 45% Pace incline 1%'
+    },
+    {
+      dayOffset: 3,
+      name: 'اليوم 4: تيمبو العتبة 3×6 د (Threshold)',
+      desc: '- 5m 60% Pace\n3x\n- 6m 90% Pace incline 1%\n- 2m 60% Pace\n- 5m 55% Pace'
+    },
+    {
+      dayOffset: 4,
+      name: 'اليوم 5: فارتلك سويدي متغير (Speed Play)',
+      desc: '- 4m 60% Pace\n- 3m 85% Pace incline 1%\n- 2m 65% Pace\n- 2m 95% Pace incline 1%\n- 90s 60% Pace\n- 1m 105% Pace incline 2%\n- 90s 60% Pace\n- 3m 88% Pace incline 1%\n- 4m 55% Pace'
+    },
+    {
+      dayOffset: 5,
+      name: 'اليوم 6: تلال القوة المتدرجة (Hill Repeats)',
+      desc: '- 4m 60% Pace\n- 2m 80% Pace incline 4%\n- 90s 58% Pace\n- 2m 80% Pace incline 6%\n- 90s 58% Pace\n- 2m 80% Pace incline 8%\n- 90s 58% Pace\n- 2m 82% Pace incline 6%\n- 4m 55% Pace'
+    },
+    {
+      dayOffset: 6,
+      name: 'اليوم 7: هرم السرعة 5K (1-2-3-2-1 د)',
+      desc: '- 4m 60% Pace\n- 1m 100% Pace incline 1%\n- 1m 60% Pace\n- 2m 95% Pace incline 1%\n- 1m 60% Pace\n- 3m 90% Pace incline 1%\n- 90s 60% Pace\n- 2m 95% Pace incline 1%\n- 1m 60% Pace\n- 1m 102% Pace incline 1%\n- 4m 55% Pace'
+    }
+  ];
+
+  async function seedIntervalsWeeklyPlan(silentBeforeSync){
+    const stEl = $id('icuStatusMsg');
+    const ath = ($id('icuAthId') ? $id('icuAthId').value.trim() : cfg.athId) || '0';
+    const key = ($id('icuApiKey') ? $id('icuApiKey').value.trim() : cfg.apiKey) || '';
+    cfg.athId = ath; cfg.apiKey = key;
+    saveCfg();
+
+    if(!key){
+      if(stEl) stEl.innerHTML = '⚠️ أدخل مفتاح <b>API Key</b> الخاص بحسابك في Intervals.icu أولاً.';
+      try{ pgSet('tools'); const h = $id('extWorkoutHub'); if(h) h.open = true; }catch(_){}
+      try{ toast('🔑 أدخل مفتاح API Key أولاً'); }catch(_){}
+      return false;
+    }
+
+    const now = new Date();
+    const payload = WEEKLY_ICU_PLAN_SPEC.map(item => {
+      const d = new Date(now.getTime() + item.dayOffset * 86400000);
+      const dStr = fmtIsoDate(d);
+      return {
+        category: 'WORKOUT',
+        start_date_local: dStr + 'T00:00:00',
+        type: 'Run',
+        name: item.name,
+        description: item.desc,
+        external_id: 'kettler-s2-plan-' + dStr
+      };
+    });
+
+    if(stEl) stEl.textContent = '⏳ جارٍ رفع خطة الجري الأسبوعية (7 أيام) إلى تقويمك في موقع Intervals.icu...';
+    try{
+      const url = 'https://intervals.icu/api/v1/athlete/' + encodeURIComponent(ath) + '/events/bulk?upsert=true';
+      const auth = btoa('API_KEY:' + key);
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Basic ' + auth,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      if(!res.ok){
+        throw new Error('HTTP ' + res.status);
+      }
+      if(!silentBeforeSync){
+        await syncIntervalsIcu(true);
+      }
+      return true;
+    }catch(err){
+      if(stEl) stEl.textContent = '❌ تعذر رفع الخطة إلى Intervals.icu: ' + (err && err.message ? err.message : err);
+      try{ toast('❌ تعذر رفع الخطة إلى Intervals.icu'); }catch(_){}
+      return false;
+    }
+  }
+
+  async function syncIntervalsIcu(skipAutoSeed){
     const stEl = $id('icuStatusMsg');
     const ath = ($id('icuAthId') ? $id('icuAthId').value.trim() : cfg.athId) || '0';
     const key = ($id('icuApiKey') ? $id('icuApiKey').value.trim() : cfg.apiKey) || '';
@@ -11606,9 +11695,18 @@ window.copyRawData = copyRawData;
         });
       });
 
+      // إن كان تقويم المستخدم في الموقع فارغاً، نعبئه تلقائياً بخطة الـ 7 أيام ثم نعيد الجلب فوراً!
+      if(!fetched.length && !skipAutoSeed){
+        const seeded = await seedIntervalsWeeklyPlan(true);
+        if(seeded){
+          await syncIntervalsIcu(true);
+          return;
+        }
+      }
+
       if(!fetched.length){
-        if(stEl) stEl.textContent = 'ℹ️ تم الاتصال بنجاح، لكن لا توجد تمارين مجدولة تحتوي على مراحل في تقويمك خلال هذه الفترة.';
-        try{ toast('📅 لا توجد تمارين مجدولة في تقويم Intervals.icu لهذه الفترة'); }catch(_){}
+        if(stEl) stEl.textContent = 'ℹ️ لا توجد تمارين مجدولة حالياً — اضغط «📅 تعبئة تقويم الموقع بخطة أسبوعية» لإنشائها تلقائياً.';
+        try{ toast('📅 اضغط «تعبئة تقويم الموقع بخطة أسبوعية»'); }catch(_){}
         return;
       }
 
@@ -11617,9 +11715,10 @@ window.copyRawData = copyRawData;
       curCat = 'icu';
       document.querySelectorAll('#extCatBar .ext-cat').forEach(b => b.classList.toggle('on', b.dataset.ecat === 'icu'));
       renderCards();
+      pgSet('run');
       previewItemInSchedule(fetched[0]);
-      if(stEl) stEl.textContent = '✅ تم جلب ' + fetched.length + ' تمرين من Intervals.icu واقتراح «' + fetched[0].name + '» في الجدول.';
-      try{ toast('✅ تم جلب ' + fetched.length + ' تمرين من Intervals.icu'); }catch(_){}
+      if(stEl) stEl.textContent = '✅ تم جلب ' + fetched.length + ' تمرين من تقويمك في Intervals.icu واقتراح «' + fetched[0].name + '» في الجدول.';
+      try{ toast('✅ تم جلب ' + fetched.length + ' تمرين من Intervals.icu إلى الجدول'); }catch(_){}
     }catch(err){
       if(stEl) stEl.textContent = '❌ تعذر الجلب من Intervals.icu: ' + (err && err.message ? err.message : err);
       try{ toast('❌ خطأ في الاتصال بـ Intervals.icu'); }catch(_){}
@@ -11657,7 +11756,6 @@ window.copyRawData = copyRawData;
     updateRefPaceLabel();
     renderCards();
 
-    // أزرار الفلترة حسب الفئة
     document.querySelectorAll('#extCatBar .ext-cat').forEach(btn => {
       btn.addEventListener('click', () => {
         curCat = btn.dataset.ecat || 'all';
@@ -11674,21 +11772,13 @@ window.copyRawData = copyRawData;
     };
 
     const qSyncBtn = $id('extQuickSyncBtn');
-    if(qSyncBtn) qSyncBtn.onclick = () => syncIntervalsIcu();
+    if(qSyncBtn) qSyncBtn.onclick = () => syncIntervalsIcu(false);
 
     const syncBtn = $id('icuSyncBtn');
-    if(syncBtn) syncBtn.onclick = () => syncIntervalsIcu();
+    if(syncBtn) syncBtn.onclick = () => syncIntervalsIcu(false);
 
-    const demoBtn = $id('icuTestDemoBtn');
-    if(demoBtn) demoBtn.onclick = () => {
-      const det = $id('icuTextDetails'), rt = $id('icuRawText'), rn = $id('icuRawName');
-      if(det) det.open = true;
-      if(rn && !rn.value) rn.value = 'تمرين Intervals.icu تجريبي (5×2 د)';
-      if(rt && !rt.value.trim()){
-        rt.value = '- 5m 60% Pace\n5x\n- 2m 95% Pace incline 2%\n- 1m 55% Pace\n- 4m 55% Pace';
-      }
-      if($id('icuParseBtn')) $id('icuParseBtn').click();
-    };
+    const seedBtn = $id('icuSeedPlanBtn');
+    if(seedBtn) seedBtn.onclick = () => seedIntervalsWeeklyPlan(false);
 
     const parseBtn = $id('icuParseBtn');
     if(parseBtn) parseBtn.onclick = () => {
