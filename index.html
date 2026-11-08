@@ -2354,7 +2354,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 #chTip button{min-height:34px;padding:0 10px;font-size:12px}
 .seg.flash{box-shadow:0 0 0 2px #38bdf8}
 .seg .dup{color:#e2e8f0;background:#243142;border-color:var(--line-light)}
-/* ===== v114.1-EXT: ربط المستودع العالمي QDomyos-Zwift + Intervals.icu (بدون أي برامج محلية مؤلفة) ===== */
+/* ===== v114.1-EXT: ربط المستودعات العالمية المفتوحة على GitHub (QDomyos-Zwift + Zwift ZWO) ===== */
 .ext-sug-box{margin-top:8px;padding:10px;border-radius:12px;background:rgba(15,23,42,.65);border:1px solid var(--line,#263248)}
 .ext-sug-hd{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;margin-bottom:8px}
 .ext-sug-ttl{font-size:13px;font-weight:800;color:#38bdf8;display:flex;align-items:center;gap:5px}
@@ -2364,10 +2364,11 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 .ext-cat{flex:0 0 auto;min-height:28px!important;padding:2px 10px!important;font-size:11.5px!important;font-weight:700;border-radius:999px;border:1px solid var(--line,#263248);background:var(--panel-card,#131c2a);color:var(--dim,#94a3b8)}
 .ext-cat.on{background:rgba(56,189,248,.18);color:#38bdf8;border-color:#38bdf8}
 .ext-cards{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
-.ext-card{flex:0 0 auto;min-width:152px;max-width:215px;min-height:68px!important;padding:8px 10px!important;text-align:right;border-radius:11px;border:1px solid var(--line,#263248);background:var(--panel-card,#131c2a);color:var(--text,#f1f5f9);scroll-snap-align:start;display:flex!important;flex-direction:column;justify-content:space-between}
+.ext-card{flex:0 0 auto;min-width:155px;max-width:220px;min-height:68px!important;padding:8px 10px!important;text-align:right;border-radius:11px;border:1px solid var(--line,#263248);background:var(--panel-card,#131c2a);color:var(--text,#f1f5f9);scroll-snap-align:start;display:flex!important;flex-direction:column;justify-content:space-between}
 .ext-card.on{border-color:#10b981;box-shadow:0 0 0 1px #10b981 inset;background:rgba(16,185,129,.11)}
 .ext-card-top{display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:10px;font-weight:800;color:#38bdf8;margin-bottom:2px}
-.ext-card-top .bdg-icu{color:#a78bfa}
+.ext-card-top .bdg-zw1{color:#a78bfa}
+.ext-card-top .bdg-zw2{color:#34d399}
 .ext-card-top .bdg-imp{color:#f59e0b}
 .ext-card b{display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff;direction:ltr;text-align:right}
 .ext-card span{display:block;font-size:11px;color:var(--dim,#94a3b8);margin-top:3px;font-weight:600}
@@ -2758,16 +2759,17 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
     <div id="pgLinkedVid"></div>
     <div class="ext-sug-box" id="extSugBox">
       <div class="ext-sug-hd">
-        <span class="ext-sug-ttl">🌐 برامج المستودع العالمي (QDomyos-Zwift + Intervals.icu)</span>
+        <span class="ext-sug-ttl">🌍 برامج المستودعات العالمية (<span id="extTotalCount">0</span> برنامج)</span>
         <div class="ext-sug-acts">
-          <button type="button" id="extQuickQdzBtn" title="سحب البرامج الحقيقية مباشرة من مستودع QDomyos-Zwift العالمي على GitHub">🌍 جلب المستودع العالمي</button>
-          <button type="button" id="extOpenHubBtn" title="إعدادات المصدر والربط">⚙️ المصدر</button>
+          <button type="button" id="extQuickQdzBtn" title="تحديث وسحب جميع البرامج الحقيقية من مستودعات GitHub العالمية">🔄 تحديث المستودعات</button>
+          <button type="button" id="extOpenHubBtn" title="إعدادات المستودعات والسرعة المرجعية والاستيراد">⚙️ المصدر</button>
         </div>
       </div>
       <div class="ext-cats" id="extCatBar">
         <button type="button" class="ext-cat on" data-ecat="all">الكل</button>
-        <button type="button" class="ext-cat" data-ecat="qdz">🌍 مستودع QDomyos-Zwift</button>
-        <button type="button" class="ext-cat" data-ecat="icu">📅 حساب Intervals.icu</button>
+        <button type="button" class="ext-cat" data-ecat="qdz">🏃 QDomyos-Zwift</button>
+        <button type="button" class="ext-cat" data-ecat="zwift1">⚡ Zwift Workouts</button>
+        <button type="button" class="ext-cat" data-ecat="zwift2">🔥 Zones & Intervals</button>
         <button type="button" class="ext-cat" data-ecat="imp">📂 ملفات مستوردة</button>
       </div>
       <div class="ext-cards" id="extSugCards"></div>
@@ -2794,10 +2796,10 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 
   <div data-pane="tools">
   <details id="extWorkoutHub">
-    <summary>🌐 ربط المستودع العالمي QDomyos-Zwift + Intervals.icu + استيراد ZWO/XML</summary>
+    <summary>🌍 ربط المستودعات العالمية (QDomyos-Zwift + Zwift ZWO) واستيراد الملفات</summary>
     <div class="ext-hub-sec">
       <h4><span>🎯 السرعة المرجعية لحساب النسب المئوية (% Pace / ZWO / HR Zone)</span><small id="extRefPaceLbl" style="color:#10b981;font-weight:700" dir="ltr">6:00 /km</small></h4>
-      <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.6">البرامج التي تحتوي على سرعة صريحة (<code>speed="8.0"</code>) تُؤخذ سرعتها كما هي من الملف الأصلي، أما البرامج المكتوبة كنسبة مئوية أو منطقة نبض فتُحسب بناءً على سرعتك المرجعية هنا.</div>
+      <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.6">البرامج التي تحتوي على سرعة صريحة (<code>speed="8.0"</code>) تُؤخذ سرعتها كما هي من الملف الأصلي، أما ملفات <code>.zwo</code> المكتوبة كنسبة من الجهد فتُحسب سرعتها تلقائياً بناءً على سرعتك المرجعية هنا.</div>
       <div class="row r2" style="align-items:center">
         <label style="font-size:12px">السرعة المرجعية (100% = كم/س)<input id="extRefSpd" type="number" min="4" max="20" step="0.5" value="10" inputmode="decimal"></label>
         <label style="font-size:12px">الميل الافتراضي إن لم يُذكر (%)<input id="extDefInc" type="number" min="0" max="15" step="1" value="0" inputmode="numeric"></label>
@@ -2805,39 +2807,27 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
     </div>
 
     <div class="ext-hub-sec">
-      <h4><span>🌍 1. المستودع العالمي المفتوح لبرامج المشايات (QDomyos-Zwift GitHub)</span><a href="https://github.com/cagnulein/qdomyos-zwift/tree/master/train-programs-examples" target="_blank" rel="noopener" style="font-size:11px;color:#38bdf8;text-decoration:none">فتح المستودع ↗</a></h4>
-      <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.6">يتصل مباشرة بخادم GitHub لسحب جميع ملفات التمارين الحقيقية (<code>.xml</code> و<code>.zwo</code>) المنشورة في مجلد <code>cagnulein/qdomyos-zwift/train-programs-examples</code> بدون أي برامج مؤلفة محلياً.</div>
-      <button type="button" class="primary" id="qdzFetchBtn" style="width:100%">🌍 سحب جميع البرامج الحقيقية من مستودع QDomyos-Zwift الآن</button>
-      <div id="qdzStatusMsg" class="ext-stat">اضغط الزر أعلاه لسحب أحدث ملفات البرامج مباشرة من المستودع العالمي على GitHub.</div>
-    </div>
-
-    <div class="ext-hub-sec">
-      <h4><span>📅 2. الربط المباشر مع حسابك في Intervals.icu (التقويم + المكتبة)</span><a href="https://intervals.icu" target="_blank" rel="noopener" style="font-size:11px;color:#a78bfa;text-decoration:none">intervals.icu ↗</a></h4>
-      <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.6">يسحب فقط التمارين الموجودة فعلياً في تقويمك أو مكتبتك الشخصية (<code>Library 📖</code>) على موقع Intervals.icu دون إضافة أي برامج من خارج حسابك.</div>
-      <div class="row r2">
-        <label style="font-size:12px">معرف الرياضي (Athlete ID)<input id="icuAthId" type="text" value="0" placeholder="0 أو i123456" dir="ltr" autocomplete="off"></label>
-        <label style="font-size:12px">نطاق الجلب من التقويم<select id="icuDays"><option value="7" selected>أسبوع (7 أيام)</option><option value="14">أسبوعان (14 يوماً)</option><option value="30">شهر (30 يوماً)</option></select></label>
+      <h4><span>🌍 1. المستودعات العالمية المفتوحة على GitHub (60 برنامجاً حقيقياً)</span></h4>
+      <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.7">
+        يسحب التطبيق آلياً جميع ملفات التمارين (<code>.xml</code> و<code>.zwo</code>) مباشرة من 4 مستودعات عالمية مفتوحة على GitHub:<br>
+        • <a href="https://github.com/cagnulein/qdomyos-zwift/tree/master/train-programs-examples" target="_blank" rel="noopener" style="color:#38bdf8">cagnulein/qdomyos-zwift</a> (5 برامج XML)<br>
+        • <a href="https://github.com/bdcheung/zwift_workouts" target="_blank" rel="noopener" style="color:#a78bfa">bdcheung/zwift_workouts</a> (39 برنامج ZWO)<br>
+        • <a href="https://github.com/michaelahlers/michaelahlers-zwift-workouts" target="_blank" rel="noopener" style="color:#34d399">michaelahlers/zwift-workouts</a> (12 برنامج ZWO)<br>
+        • <a href="https://github.com/mhanney/zwoparse/tree/master/workouts" target="_blank" rel="noopener" style="color:#34d399">mhanney/zwoparse</a> (4 برامج ZWO)
       </div>
-      <label style="font-size:12px;display:block;margin-top:4px">مفتاح API Key (يُحفظ في متصفحك فقط)<input id="icuApiKey" type="password" placeholder="أدخل مفتاح API_KEY الخاص بـ Intervals.icu" dir="ltr" autocomplete="off"></label>
-      <button type="button" id="icuSyncBtn" style="width:100%;margin-top:6px">🔄 جلب التمارين من تقويمي ومكتبتي في Intervals.icu</button>
-      <div id="icuStatusMsg" class="ext-stat">جاهز لجلب تمارينك ومكتبتك من Intervals.icu (ويحذف تلقائياً أي تمارين تجريبية سابقة).</div>
-      <details id="icuTextDetails" style="margin-top:6px">
-        <summary style="font-size:12px;color:#cbd5e1">📝 لصق نص تمرين من باني التمارين (Intervals.icu Builder)</summary>
-        <input id="icuRawName" type="text" placeholder="اسم التمرين (اختياري)" style="margin-top:6px">
-        <textarea id="icuRawText" dir="ltr" style="height:86px;font-size:12px;margin-top:6px" placeholder="- 10m 70% Pace&#10;4x&#10;- 2m 95% Pace&#10;- 1m 55% Pace"></textarea>
-        <button type="button" id="icuParseBtn" style="width:100%;margin-top:6px">⚡ تحويل النص إلى الجدول</button>
-      </details>
+      <button type="button" class="primary" id="qdzFetchBtn" style="width:100%">🌍 سحب وتحديث جميع البرامج من المستودعات العالمية الآن</button>
+      <div id="qdzStatusMsg" class="ext-stat">يتصل التطبيق آلياً بـ GitHub عند الفتح لسحب الـ 60 برنامجاً وحفظها في الذاكرة.</div>
     </div>
 
     <div class="ext-hub-sec">
-      <h4><span>📂 3. استيراد ملف أو رابط مباشر (.xml / .zwo / .json / .mrc / .erg)</span></h4>
+      <h4><span>📂 2. استيراد ملف تمرين خاص أو رابط مباشر (.xml / .zwo / .json / .mrc / .erg)</span></h4>
       <div class="row r2" style="margin-bottom:6px">
         <input id="extUrlInp" type="url" dir="ltr" placeholder="https://.../workout.xml أو .zwo أو .json">
         <button type="button" id="extFetchUrlBtn">🌐 جلب من الرابط</button>
       </div>
       <div class="row r2">
         <button type="button" id="extFilePickBtn">📂 اختيار ملف (.xml / .zwo / .json / .mrc)</button>
-        <button type="button" id="extClearImpBtn">🗑️ مسح الكاش المستورد</button>
+        <button type="button" id="extClearImpBtn">🗑️ مسح الكاش وإعادة السحب</button>
       </div>
       <input type="file" id="extFileInp" accept=".xml,.zwo,.json,.mrc,.erg,.txt,application/json,text/xml,text/plain" multiple hidden>
       <div id="extImpStatusMsg" class="ext-stat">يدعم ملفات QDomyos-Zwift (<code>.xml</code>) وZwift (<code>.zwo</code>) وJSON.</div>
@@ -10981,41 +10971,61 @@ window.copyRawData = copyRawData;
   try{ if(localStorage.getItem(KEY) === '1'){ tg.checked = true; setTimeout(startCam, 1500); } }catch(_){}
 })();
 
-// ===== v114.1-EXT: ربط المستودع العالمي QDomyos-Zwift + Intervals.icu (بدون أي برامج محلية مؤلفة) =====
+// ===== v114.1-EXT: ربط المستودعات العالمية المفتوحة على GitHub (QDomyos-Zwift + Zwift ZWO — 60 برنامجاً حقيقياً بدون Intervals.icu) =====
 (function(){
-  const K_CFG = 'kettler_ext_wk_cfg_v2';
-  const K_QDZ = 'kettler_ext_qdz_list_v2';
-  const K_ICU = 'kettler_ext_icu_list_v2';
-  const K_IMP = 'kettler_ext_imp_list_v2';
-  const QDZ_API_URL = 'https://api.github.com/repos/cagnulein/qdomyos-zwift/contents/train-programs-examples';
+  const K_CFG = 'kettler_ext_wk_cfg_v3';
+  const K_REPO = 'kettler_ext_repo_list_v3';
+  const K_IMP = 'kettler_ext_imp_list_v3';
   const $id = id => document.getElementById(id);
 
-  let cfg = {refSpd: 10, defInc: 0, athId: '0', apiKey: '', days: 7};
-  let qdzList = [];
-  let icuList = [];
+  // المستودعات العالمية الأربعة على GitHub
+  const GLOBAL_REPOS = [
+    {
+      cat: 'qdz',
+      badge: '🏃 QDomyos-Zwift',
+      apiUrl: 'https://api.github.com/repos/cagnulein/qdomyos-zwift/contents/train-programs-examples'
+    },
+    {
+      cat: 'zwift1',
+      badge: '⚡ Zwift Workouts',
+      apiUrl: 'https://api.github.com/repos/bdcheung/zwift_workouts/contents'
+    },
+    {
+      cat: 'zwift2',
+      badge: '🔥 Zones & ZWO',
+      apiUrl: 'https://api.github.com/repos/michaelahlers/michaelahlers-zwift-workouts/contents'
+    },
+    {
+      cat: 'zwift2',
+      badge: '🔥 ZWO Parse',
+      apiUrl: 'https://api.github.com/repos/mhanney/zwoparse/contents/workouts'
+    }
+  ];
+
+  let cfg = {refSpd: 10, defInc: 0};
+  let repoList = [];
   let impList = [];
   let curCat = 'all';
   let activeId = '';
 
   function loadState(){
-    // تنظيف مفاتيح النسخة التجريبية السابقة التي كانت تحتوي على البرامج المؤلفة محلياً
+    // تنظيف مفاتيح النسخ السابقة (بما فيها Intervals.icu)
+    ['kettler_ext_icu_list_v1', 'kettler_ext_icu_list_v2', 'kettler_ext_qdz_list_v2'].forEach(k => {
+      try{ localStorage.removeItem(k); }catch(_){}
+    });
     try{
-      localStorage.removeItem('kettler_ext_icu_list_v1');
-      const oldCfg = JSON.parse(localStorage.getItem('kettler_ext_wk_cfg_v1') || 'null');
-      if(oldCfg && typeof oldCfg === 'object') cfg = Object.assign(cfg, oldCfg);
+      const c = JSON.parse(localStorage.getItem(K_CFG) || localStorage.getItem('kettler_ext_wk_cfg_v2') || 'null');
+      if(c && typeof c === 'object'){
+        if(c.refSpd) cfg.refSpd = c.refSpd;
+        if(c.defInc != null) cfg.defInc = c.defInc;
+      }
     }catch(_){}
-    try{
-      const c = JSON.parse(localStorage.getItem(K_CFG));
-      if(c && typeof c === 'object') cfg = Object.assign(cfg, c);
-    }catch(_){}
-    try{ qdzList = JSON.parse(localStorage.getItem(K_QDZ)) || []; }catch(_){ qdzList = []; }
-    try{ icuList = JSON.parse(localStorage.getItem(K_ICU)) || []; }catch(_){ icuList = []; }
+    try{ repoList = JSON.parse(localStorage.getItem(K_REPO)) || []; }catch(_){ repoList = []; }
     try{ impList = JSON.parse(localStorage.getItem(K_IMP)) || []; }catch(_){ impList = []; }
   }
   function saveCfg(){ try{ localStorage.setItem(K_CFG, JSON.stringify(cfg)); }catch(_){} }
-  function saveQdz(){ try{ localStorage.setItem(K_QDZ, JSON.stringify(qdzList.slice(0, 80))); }catch(_){} }
-  function saveIcu(){ try{ localStorage.setItem(K_ICU, JSON.stringify(icuList.slice(0, 50))); }catch(_){} }
-  function saveImp(){ try{ localStorage.setItem(K_IMP, JSON.stringify(impList.slice(0, 50))); }catch(_){} }
+  function saveRepo(){ try{ localStorage.setItem(K_REPO, JSON.stringify(repoList.slice(0, 120))); }catch(_){} }
+  function saveImp(){ try{ localStorage.setItem(K_IMP, JSON.stringify(impList.slice(0, 60))); }catch(_){} }
 
   function clampSpd(v){
     const mx = typeof MAX_SPEED === 'number' ? MAX_SPEED : 20;
@@ -11068,19 +11078,21 @@ window.copyRawData = copyRawData;
 
   function allItems(){
     const list = [];
-    qdzList.forEach(x => list.push(Object.assign({}, x, {cat: 'qdz'})));
-    icuList.forEach(x => list.push(Object.assign({}, x, {cat: 'icu'})));
+    repoList.forEach(x => list.push(x));
     impList.forEach(x => list.push(Object.assign({}, x, {cat: 'imp'})));
     return list;
   }
 
   function renderCards(){
     const box = $id('extSugCards');
+    const cntEl = $id('extTotalCount');
+    const all = allItems();
+    if(cntEl) cntEl.textContent = String(all.length);
     if(!box) return;
     box.innerHTML = '';
-    const items = allItems().filter(x => curCat === 'all' || x.cat === curCat);
+    const items = all.filter(x => curCat === 'all' || x.cat === curCat);
     if(!items.length){
-      box.innerHTML = '<div style="font-size:12px;color:var(--dim);padding:8px 4px">لا توجد برامج محمّلة بعد — اضغط زر «🌍 جلب المستودع العالمي» في الأعلى لسحب البرامج الحقيقية مباشرة من GitHub.</div>';
+      box.innerHTML = '<div style="font-size:12px;color:var(--dim);padding:8px 4px">جارٍ سحب البرامج من المستودعات العالمية... (أو اضغط «🔄 تحديث المستودعات» في الأعلى).</div>';
       return;
     }
     items.forEach(it => {
@@ -11091,8 +11103,8 @@ window.copyRawData = copyRawData;
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'ext-card' + (it.id === activeId ? ' on' : '');
-      const topCls = it.cat === 'icu' ? 'bdg-icu' : (it.cat === 'imp' ? 'bdg-imp' : '');
-      const topBadge = it.dateStr ? ('📅 ' + it.dateStr) : (it.src || '🌍 QDomyos-Zwift');
+      const topCls = it.cat === 'zwift1' ? 'bdg-zw1' : (it.cat === 'zwift2' ? 'bdg-zw2' : (it.cat === 'imp' ? 'bdg-imp' : ''));
+      const topBadge = it.src || '🌍 GitHub';
       btn.innerHTML =
         '<div class="ext-card-top"><span class="'+topCls+'">' + esc(topBadge) + '</span><span>' + segs.length + ' مراحل</span></div>' +
         '<b>' + esc(it.name) + '</b>' +
@@ -11153,7 +11165,8 @@ window.copyRawData = copyRawData;
   }
 
   function parseQdomyosXml(xmlText, fileName){
-    const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+    const clean = String(xmlText || '').replace(/^\uFEFF/, '').trim();
+    const doc = new DOMParser().parseFromString(clean, 'text/xml');
     const rowsRoot = doc.querySelector('rows');
     if(!rowsRoot) return null;
     const baseName = String(fileName || 'QDomyos Workout').replace(/\.(xml|zwo)$/i, '');
@@ -11214,169 +11227,44 @@ window.copyRawData = copyRawData;
 
     walkNodes(rowsRoot);
     if(!steps.length) return null;
-    const hasSpeed = xmlText.toLowerCase().includes('speed=');
     return [{
       id: 'qdz_' + baseName.replace(/[^A-Za-z0-9_-]/g, '_'),
       cat: 'qdz',
-      src: hasSpeed ? '🌍 QZ المشاية' : '🌍 QZ XML',
-      name: baseName.slice(0, 42),
+      src: '🏃 QDomyos-Zwift',
+      name: baseName.slice(0, 44),
       steps
     }];
   }
 
-  // ---------- 2. محلل ملفات Zwift (.zwo XML) و (.mrc/.erg) و (.json) ونصوص Intervals.icu ----------
-  function parsePaceStrToKmh(str, refSpd){
-    const mRange = str.match(/(\d+):(\d{2})\s*(?:-\s*(\d+):(\d{2}))?\s*\/km/i);
-    if(mRange){
-      const sec1 = parseInt(mRange[1], 10) * 60 + parseInt(mRange[2], 10);
-      const sec2 = mRange[3] ? (parseInt(mRange[3], 10) * 60 + parseInt(mRange[4], 10)) : sec1;
-      const avgSec = (sec1 + sec2) / 2;
-      if(avgSec > 60) return 3600 / avgSec;
-    }
-    const mKmh = str.match(/(\d+(?:\.\d+)?)\s*(?:km\/h|kmh|kph|كم\/س)/i);
-    if(mKmh) return parseFloat(mKmh[1]);
-    const mPct = str.match(/(\d+(?:\.\d+)?)\s*(?:-\s*(\d+(?:\.\d+)?))?\s*%/);
-    if(mPct){
-      const p1 = parseFloat(mPct[1]), p2 = mPct[2] ? parseFloat(mPct[2]) : p1;
-      return refSpd * ((p1 + p2) / 200);
-    }
-    const mZone = str.match(/\bZ([1-5])\b/i);
-    if(mZone){
-      const zMap = {1: 0.60, 2: 0.74, 3: 0.85, 4: 0.95, 5: 1.06};
-      return refSpd * (zMap[mZone[1]] || 0.75);
-    }
-    return refSpd * 0.75;
-  }
-
-  function parseIntervalsText(text, refSpd){
-    const lines = String(text || '').split(/\r?\n/);
-    const steps = [];
-    let pendingReps = 1;
-    let repBlock = [];
-
-    const flushBlock = () => {
-      if(repBlock.length && pendingReps > 1){
-        for(let r = 0; r < pendingReps; r++){
-          repBlock.forEach(st => steps.push(Object.assign({}, st)));
-        }
-      } else if(repBlock.length){
-        repBlock.forEach(st => steps.push(Object.assign({}, st)));
-      }
-      repBlock = [];
-      pendingReps = 1;
-    };
-
-    for(let rawLine of lines){
-      const line = rawLine.trim();
-      if(!line || line.startsWith('#') || line.startsWith('//')){
-        if(!line && repBlock.length) flushBlock();
-        continue;
-      }
-      const repMatch = line.match(/^(?:[A-Za-z\u0600-\u06FF\s]+)?(\d+)\s*[xX×]\s*$/);
-      if(repMatch){
-        flushBlock();
-        pendingReps = Math.max(1, Math.min(30, parseInt(repMatch[1], 10)));
-        continue;
-      }
-      if(!line.startsWith('-') && !line.startsWith('*') && !/\d+\s*(?:m|min|s|sec|km|mtr)\b/i.test(line)){
-        continue;
-      }
-      const s = parsePaceStrToKmh(line, refSpd);
-      const pct = Math.round((s / refSpd) * 1000) / 1000;
-
-      let durMin = 0;
-      const mComb = line.match(/(\d+)\s*m(?:in)?\s*(\d+)\s*s/i);
-      const mHr = line.match(/(\d+)\s*h\s*(?:(\d+)\s*m)?/i);
-      const mMin = line.match(/(?:^|\s|-)(\d+(?:\.\d+)?)\s*(?:m|min|دقيقة|د)\b/i);
-      const mSec = line.match(/(?:^|\s|-)(\d+)\s*(?:s|sec|ثانية|ث)\b/i);
-      const mKm = line.match(/(?:^|\s|-)(\d+(?:\.\d+)?)\s*km\b/i);
-      const mMtr = line.match(/(?:^|\s|-)(\d+)\s*(?:mtr|meters)\b/i);
-
-      if(mComb) durMin = parseInt(mComb[1], 10) + parseInt(mComb[2], 10) / 60;
-      else if(mHr) durMin = parseInt(mHr[1], 10) * 60 + (mHr[2] ? parseInt(mHr[2], 10) : 0);
-      else if(mMin) durMin = parseFloat(mMin[1]);
-      else if(mSec) durMin = parseInt(mSec[1], 10) / 60;
-      else if(mKm) durMin = (parseFloat(mKm[1]) / Math.max(3, s)) * 60;
-      else if(mMtr) durMin = ((parseInt(mMtr[1], 10) / 1000) / Math.max(3, s)) * 60;
-
-      if(!(durMin > 0)) continue;
-
-      let inc = cfg.defInc || 0;
-      const mInc = line.match(/(?:incline|grade|slope|hill|ميل)\s*[:=]?\s*(\d+(?:\.\d+)?)\s*%?/i);
-      if(mInc) inc = parseFloat(mInc[1]);
-
-      const stepObj = {m: clampMin(durMin), pct, i: clampInc(inc)};
-      if(pendingReps > 1) repBlock.push(stepObj);
-      else steps.push(stepObj);
-    }
-    flushBlock();
-    return steps;
-  }
-
-  function parseIntervalsWorkoutDoc(doc, refSpd){
-    const out = [];
-    function walk(arr){
-      if(!Array.isArray(arr)) return;
-      arr.forEach(st => {
-        if(!st) return;
-        const reps = st.reps && st.reps > 1 ? Math.min(30, st.reps) : 1;
-        if(Array.isArray(st.steps) && st.steps.length){
-          for(let r = 0; r < reps; r++) walk(st.steps);
-          return;
-        }
-        let pct = 0.75;
-        const target = st.pace || st.power || st.hr;
-        if(target && typeof target === 'object'){
-          const val = target.value != null ? Number(target.value)
-            : (target.start != null && target.end != null ? (Number(target.start) + Number(target.end)) / 2 : Number(target.start || 75));
-          if(val > 3 && val <= 200) pct = val / 100;
-          else if(val > 0 && val <= 2.5) pct = val;
-        }
-        let durMin = 0;
-        if(st.duration > 0) durMin = st.duration / 60;
-        else if(st.distance > 0){
-          const spd = Math.max(3, refSpd * pct);
-          durMin = ((st.distance / 1000) / spd) * 60;
-        }
-        if(durMin > 0){
-          out.push({m: clampMin(durMin), pct: Math.round(pct * 1000) / 1000, i: clampInc(cfg.defInc || 0)});
-        }
-      });
-    }
-    if(doc && Array.isArray(doc.steps)) walk(doc.steps);
-    return out;
-  }
-
+  // ---------- 2. محلل ملفات Zwift (.zwo XML) مع دعم احتياطي للملفات التي تحتوي على رموز خاصة في الوصف ----------
   function parseZwoXml(xmlText, fallbackName){
-    const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
-    const nameEl = doc.querySelector('workout_file > name, name');
-    const name = (nameEl && nameEl.textContent.trim()) || (fallbackName ? fallbackName.replace(/\.zwo$/i, '') : 'تمرين ZWO');
-    const wk = doc.querySelector('workout');
-    if(!wk) return null;
+    const clean = String(xmlText || '').replace(/^\uFEFF/, '').trim();
+    const baseFallback = fallbackName ? fallbackName.replace(/\.zwo$/i, '') : 'تمرين ZWO';
     const steps = [];
-    const attrNum = (el, keys, defVal) => {
+
+    // قراءة خصائص الوسم سواء عبر DOMParser أو Regex
+    const extractAttr = (attrObj, keys, defVal) => {
       for(const k of keys){
-        const v = el.getAttribute(k) ?? el.getAttribute(k.toLowerCase());
-        if(v !== null && v !== '' && !isNaN(parseFloat(v))) return parseFloat(v);
+        const v = attrObj[k.toLowerCase()];
+        if(v !== undefined && v !== '' && !isNaN(parseFloat(v))) return parseFloat(v);
       }
       return defVal;
     };
-    const toDurMin = (el, keys, defSec) => {
-      const raw = attrNum(el, keys, defSec);
+    const toDurMin = (attrObj, keys, defSec) => {
+      const raw = extractAttr(attrObj, keys, defSec);
       return clampMin(raw > 15 ? raw / 60 : raw);
     };
 
-    Array.from(wk.children).forEach(el => {
-      const tag = el.tagName.toLowerCase();
-      const inc = clampInc(attrNum(el, ['Incline', 'Grade', 'Slope'], cfg.defInc || 0));
+    const handleTag = (tag, attrObj) => {
+      const inc = clampInc(extractAttr(attrObj, ['incline', 'grade', 'slope'], cfg.defInc || 0));
       if(tag === 'steadystate' || tag === 'freeride' || tag === 'maxeffort'){
-        const m = toDurMin(el, ['Duration'], 300);
-        const p = attrNum(el, ['Power', 'Pace', 'PowerLow'], tag === 'maxeffort' ? 1.10 : 0.75);
+        const m = toDurMin(attrObj, ['duration'], 300);
+        const p = extractAttr(attrObj, ['power', 'pace', 'powerlow', 'powerhigh'], tag === 'maxeffort' ? 1.15 : 0.75);
         steps.push({m, pct: p > 3 ? p / 100 : p, i: inc});
       } else if(tag === 'warmup' || tag === 'cooldown' || tag === 'ramp'){
-        const totM = toDurMin(el, ['Duration'], 300);
-        const pL = attrNum(el, ['PowerLow', 'PaceLow', 'Power'], tag === 'cooldown' ? 0.75 : 0.55);
-        const pH = attrNum(el, ['PowerHigh', 'PaceHigh', 'Power'], tag === 'cooldown' ? 0.55 : 0.80);
+        const totM = toDurMin(attrObj, ['duration'], 300);
+        const pL = extractAttr(attrObj, ['powerlow', 'pacelow', 'power'], tag === 'cooldown' ? 0.75 : 0.55);
+        const pH = extractAttr(attrObj, ['powerhigh', 'pacehigh', 'power'], tag === 'cooldown' ? 0.55 : 0.80);
         const slices = totM >= 4 ? 3 : 2;
         for(let k = 0; k < slices; k++){
           const f = slices === 1 ? 0.5 : k / (slices - 1);
@@ -11384,18 +11272,46 @@ window.copyRawData = copyRawData;
           steps.push({m: clampMin(totM / slices), pct: p > 3 ? p / 100 : p, i: inc});
         }
       } else if(tag === 'intervalst'){
-        const reps = Math.max(1, Math.min(30, Math.round(attrNum(el, ['Repeat'], 4))));
-        const onM = toDurMin(el, ['OnDuration'], 120);
-        const offM = toDurMin(el, ['OffDuration'], 60);
-        const onP = attrNum(el, ['OnPower', 'PowerOnHigh', 'OnPace'], 0.95);
-        const offP = attrNum(el, ['OffPower', 'PowerOffLow', 'OffPace'], 0.55);
+        const reps = Math.max(1, Math.min(30, Math.round(extractAttr(attrObj, ['repeat'], 4))));
+        const onM = toDurMin(attrObj, ['onduration'], 120);
+        const offM = toDurMin(attrObj, ['offduration'], 60);
+        const onP = extractAttr(attrObj, ['onpower', 'poweronhigh', 'onpace'], 0.95);
+        const offP = extractAttr(attrObj, ['offpower', 'powerofflow', 'offpace'], 0.55);
         for(let r = 0; r < reps; r++){
           steps.push({m: onM, pct: onP > 3 ? onP / 100 : onP, i: inc});
           steps.push({m: offM, pct: offP > 3 ? offP / 100 : offP, i: clampInc(cfg.defInc || 0)});
         }
       }
-    });
-    return steps.length ? [{id: 'zwo_' + name.replace(/[^A-Za-z0-9_-]/g, '_'), src: '🌍 ZWO', name: name.slice(0, 42), steps}] : null;
+    };
+
+    // استخراج الاسم من <name>...</name> أو اسم الملف
+    const nameMatch = clean.match(/<name>([\s\S]*?)<\/name>/i);
+    let name = (nameMatch && nameMatch[1].replace(/<!\[CDATA\[|\]\]>/g, '').trim()) || baseFallback;
+    if(baseFallback && (name.length < 3 || /^workout$/i.test(name))) name = baseFallback;
+
+    // استخراج قسم <workout>...</workout> وتحليل الوسوم داخله (يعمل حتى لو كان في <description> رمز & غير مهرب)
+    const wkMatch = clean.match(/<workout\b[^>]*>([\s\S]*?)<\/workout>/i);
+    const bodyStr = wkMatch ? wkMatch[1] : clean;
+    const tagRe = /<(SteadyState|Warmup|Cooldown|Ramp|IntervalsT|FreeRide|MaxEffort)\b([^>]*?)\/?>/gi;
+    let m;
+    while((m = tagRe.exec(bodyStr)) !== null){
+      const tag = m[1].toLowerCase();
+      const attrStr = m[2] || '';
+      const attrObj = {};
+      const attrRe = /([A-Za-z_][\w-]*)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
+      let am;
+      while((am = attrRe.exec(attrStr)) !== null){
+        attrObj[am[1].toLowerCase()] = am[2] !== undefined ? am[2] : am[3];
+      }
+      handleTag(tag, attrObj);
+    }
+
+    return steps.length ? [{
+      id: 'zwo_' + (fallbackName || name).replace(/[^A-Za-z0-9_-]/g, '_'),
+      src: '⚡ Zwift ZWO',
+      name: name.slice(0, 44),
+      steps
+    }] : null;
   }
 
   function parseMrcErg(text, fallbackName){
@@ -11423,30 +11339,26 @@ window.copyRawData = copyRawData;
       const pct = avgV > 140 ? (avgV / ftp) : (avgV / 100);
       steps.push({m: clampMin(dt), pct: Math.max(0.4, Math.min(1.4, pct)), i: clampInc(cfg.defInc || 0)});
     }
-    return steps.length ? [{id: 'imp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), src: 'MRC/ERG', name: name.slice(0, 42), steps}] : null;
+    return steps.length ? [{id: 'imp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), src: 'MRC/ERG', name: name.slice(0, 44), steps}] : null;
   }
 
   function parseAnyWorkoutPayload(rawText, fileName){
-    const txt = String(rawText || '').trim();
+    const txt = String(rawText || '').replace(/^\uFEFF/, '').trim();
     if(!txt) return [];
-    const baseName = (fileName || 'تمرين مستورد').replace(/\.[^.]+$/, '').slice(0, 42);
+    const baseName = (fileName || 'تمرين مستورد').replace(/\.[^.]+$/, '').slice(0, 44);
 
-    // 1. فحص QDomyos-Zwift XML (<rows><row .../></rows>)
     if(/<rows[\s>]/i.test(txt) && /<row[\s>]/i.test(txt)){
       const q = parseQdomyosXml(txt, fileName);
       if(q) return q;
     }
-    // 2. فحص Zwift ZWO XML (<workout_file>...)
-    if(txt.startsWith('<') || /<workout_file|<SteadyState|<IntervalsT/i.test(txt)){
+    if(txt.startsWith('<') || /<workout_file|<SteadyState|<IntervalsT|<Warmup/i.test(txt)){
       const z = parseZwoXml(txt, fileName);
       if(z) return z;
     }
-    // 3. فحص MRC / ERG
     if(/\[COURSE DATA\]/i.test(txt)){
       const m = parseMrcErg(txt, baseName);
       if(m) return m;
     }
-    // 4. فحص JSON
     if(txt.startsWith('{') || txt.startsWith('[')){
       try{
         const j = JSON.parse(txt);
@@ -11466,7 +11378,7 @@ window.copyRawData = copyRawData;
             out.push({
               id: 'imp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
               src: srcTag || 'JSON',
-              name: String(nm || baseName).slice(0, 42),
+              name: String(nm || baseName).slice(0, 44),
               steps
             });
           }
@@ -11487,9 +11399,6 @@ window.copyRawData = copyRawData;
             addOne(j.workout.name || baseName, j.workout.exercises || j.workout.steps, 'Open-Workout');
           } else if(Array.isArray(j.steps || j.segs || j.segments)){
             addOne(j.name || j.title || baseName, j.steps || j.segs || j.segments, 'JSON');
-          } else if(j.workout_doc && Array.isArray(j.workout_doc.steps)){
-            const st = parseIntervalsWorkoutDoc(j.workout_doc, cfg.refSpd || 10);
-            if(st.length) out.push({id: 'imp_' + Date.now(), src: 'ICU JSON', name: (j.name || baseName).slice(0, 42), steps: st});
           } else {
             Object.keys(j).forEach(k => {
               if(Array.isArray(j[k]) && j[k].length && j[k][0].m != null){
@@ -11501,31 +11410,42 @@ window.copyRawData = copyRawData;
         if(out.length) return out;
       }catch(_){}
     }
-    // 5. فحص نص Intervals.icu Builder
-    const st = parseIntervalsText(txt, cfg.refSpd || 10);
-    if(st.length){
-      return [{id: 'imp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), src: 'نص ICU', name: baseName, steps: st}];
-    }
     return [];
   }
 
-  // ---------- 3. الجلب المباشر من المستودع العالمي cagnulein/qdomyos-zwift/train-programs-examples على GitHub ----------
-  async function fetchGlobalQdomyosRepo(autoPreviewFirst){
+  // ---------- 3. الجلب المتوازي الشامل من المستودعات العالمية الأربعة على GitHub ----------
+  async function fetchAllGlobalRepos(autoPreviewFirst){
     const stEl = $id('qdzStatusMsg');
-    if(stEl) stEl.textContent = '⏳ جارٍ الاتصال بمستودع cagnulein/qdomyos-zwift على GitHub وسحب ملفات البرامج الحقيقية...';
-    try{ toast('🌍 جارٍ سحب البرامج من المستودع العالمي...'); }catch(_){}
+    if(stEl) stEl.textContent = '⏳ جارٍ الاتصال بالمستودعات العالمية الأربعة على GitHub وسحب ملفات البرامج (XML + ZWO)...';
+    try{ toast('🌍 جارٍ سحب البرامج من المستودعات العالمية...'); }catch(_){}
     try{
-      const res = await fetch(QDZ_API_URL, {headers: {'Accept': 'application/vnd.github+json'}});
-      if(!res.ok) throw new Error('GitHub API HTTP ' + res.status);
-      const list = await res.json();
-      const workoutFiles = (Array.isArray(list) ? list : []).filter(f => f && f.type === 'file' && /\.(xml|zwo)$/i.test(f.name) && f.download_url);
-      if(!workoutFiles.length) throw new Error('لم يُعثر على ملفات XML/ZWO في المستودع');
+      // 1. جلب قوائم الملفات من المستودعات الأربعة بالتوازي
+      const repoLists = await Promise.all(GLOBAL_REPOS.map(async rp => {
+        try{
+          const res = await fetch(rp.apiUrl, {headers: {'Accept': 'application/vnd.github+json'}});
+          if(!res.ok) return [];
+          const arr = await res.json();
+          return (Array.isArray(arr) ? arr : [])
+            .filter(f => f && f.type === 'file' && /\.(xml|zwo)$/i.test(f.name) && f.download_url)
+            .map(f => ({
+              name: f.name,
+              download_url: f.download_url,
+              cat: rp.cat,
+              badge: rp.badge
+            }));
+        }catch(_){
+          return [];
+        }
+      }));
+
+      const allFiles = [];
+      repoLists.forEach(chunk => chunk.forEach(f => allFiles.push(f)));
+      if(!allFiles.length) throw new Error('تعذر الوصول إلى قوائم المستودعات على GitHub');
 
       const fetchedItems = [];
-      // جلب محتوى ملفات التمارين على دفعات متوازية من raw.githubusercontent.com
-      const batchSize = 8;
-      for(let i = 0; i < workoutFiles.length; i += batchSize){
-        const chunk = workoutFiles.slice(i, i + batchSize);
+      const batchSize = 12;
+      for(let i = 0; i < allFiles.length; i += batchSize){
+        const chunk = allFiles.slice(i, i + batchSize);
         const results = await Promise.all(chunk.map(async f => {
           try{
             const r = await fetch(f.download_url);
@@ -11534,164 +11454,44 @@ window.copyRawData = copyRawData;
             const parsed = parseAnyWorkoutPayload(txt, f.name);
             if(parsed && parsed.length){
               const item = parsed[0];
-              item.id = 'qdz_' + f.name;
-              item.cat = 'qdz';
+              item.id = f.cat + '_' + f.name;
+              item.cat = f.cat;
+              item.src = f.badge;
+              // استخدام اسم الملف الواضح إذا كان الاسم الداخلي عاماً
+              const cleanFn = f.name.replace(/\.(xml|zwo)$/i, '');
+              if(!item.name || item.name.length < 3 || /^workout$/i.test(item.name)){
+                item.name = cleanFn.slice(0, 44);
+              }
               return item;
             }
           }catch(_){}
           return null;
         }));
         results.forEach(it => { if(it) fetchedItems.push(it); });
+        // تحديث البطاقات تدريجياً أثناء التحميل ليرى المستخدم البرامج فوراً
+        repoList = fetchedItems.slice();
+        renderCards();
       }
 
-      if(!fetchedItems.length) throw new Error('تعذر تحليل ملفات المستودع');
+      if(!fetchedItems.length) throw new Error('لم يُعثر على مراحل صالحة في الملفات');
 
-      // ترتيب البرامج بحيث تظهر برامج المشاية ذات السرعة الصريحة (🌍 QZ المشاية) في المقدمة
-      fetchedItems.sort((a, b) => (b.src.includes('المشاية') ? 1 : 0) - (a.src.includes('المشاية') ? 1 : 0));
-
-      qdzList = fetchedItems;
-      saveQdz();
-      curCat = 'qdz';
-      document.querySelectorAll('#extCatBar .ext-cat').forEach(b => b.classList.toggle('on', b.dataset.ecat === 'qdz'));
+      repoList = fetchedItems;
+      saveRepo();
       renderCards();
       if(autoPreviewFirst && fetchedItems[0]){
         previewItemInSchedule(fetchedItems[0]);
       }
-      if(stEl) stEl.textContent = '✅ تم سحب ' + fetchedItems.length + ' برنامجاً حقيقياً مباشرة من مستودع QDomyos-Zwift العالمي على GitHub.';
-      try{ toast('✅ تم سحب ' + fetchedItems.length + ' برنامجاً من المستودع العالمي'); }catch(_){}
+      if(stEl) stEl.textContent = '✅ تم سحب ' + fetchedItems.length + ' برنامجاً حقيقياً مباشرة من المستودعات العالمية الأربعة على GitHub.';
+      try{ toast('✅ تم سحب ' + fetchedItems.length + ' برنامجاً من المستودعات العالمية'); }catch(_){}
     }catch(err){
-      if(stEl) stEl.textContent = '❌ تعذر الجلب من مستودع GitHub: ' + (err && err.message ? err.message : err);
-      try{ toast('❌ خطأ أثناء الاتصال بمستودع GitHub'); }catch(_){}
-    }
-  }
-
-  // ---------- 4. الجلب الصافي من حساب المستخدم في Intervals.icu (التقويم + المكتبة الشخصية، مع حذف التمارين التجريبية السابقة) ----------
-  function fmtIsoDate(d){
-    const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
-    return y + '-' + m + '-' + day;
-  }
-
-  async function syncIntervalsIcu(){
-    const stEl = $id('icuStatusMsg');
-    const ath = ($id('icuAthId') ? $id('icuAthId').value.trim() : cfg.athId) || '0';
-    const key = ($id('icuApiKey') ? $id('icuApiKey').value.trim() : cfg.apiKey) || '';
-    const days = parseInt(($id('icuDays') && $id('icuDays').value) || cfg.days || 7, 10);
-
-    cfg.athId = ath; cfg.apiKey = key; cfg.days = days;
-    saveCfg();
-
-    if(!key){
-      if(stEl) stEl.innerHTML = '⚠️ أدخل مفتاح <b>API Key</b> الخاص بحسابك في Intervals.icu أولاً.';
-      try{ pgSet('tools'); const h = $id('extWorkoutHub'); if(h) h.open = true; }catch(_){}
-      try{ toast('🔑 أدخل مفتاح API Key الخاص بـ Intervals.icu'); }catch(_){}
-      return;
-    }
-
-    const now = new Date();
-    const oldest = fmtIsoDate(now);
-    const endD = new Date(now.getTime() + days * 86400000);
-    const newest = fmtIsoDate(endD);
-
-    if(stEl) stEl.textContent = '⏳ جارٍ فحص تقويمك ومكتبتك الشخصية في Intervals.icu...';
-    try{
-      const auth = btoa('API_KEY:' + key);
-      const headers = {'Authorization': 'Basic ' + auth, 'Accept': 'application/json'};
-
-      // 1) جلب أحداث التقويم
-      const evUrl = 'https://intervals.icu/api/v1/athlete/' + encodeURIComponent(ath) + '/events?oldest=' + oldest + '&newest=' + newest;
-      const evRes = await fetch(evUrl, {method: 'GET', headers});
-      if(!evRes.ok) throw new Error('HTTP ' + evRes.status);
-      const events = await evRes.json();
-
-      const refSpd = Math.max(4, Math.min(20, Number(cfg.refSpd) || 10));
-      const fetched = [];
-
-      for(const ev of (Array.isArray(events) ? events : [])){
-        if(!ev) continue;
-        // حذف أي تمرين تجريبي سبق أن أنشأناه تلقائياً في الخطوة السابقة (kettler-s2-plan-*) حتى يبقى تقويمك نظيفاً تماماً
-        if(ev.external_id && String(ev.external_id).startsWith('kettler-s2-plan-') && ev.id){
-          try{
-            await fetch('https://intervals.icu/api/v1/athlete/' + encodeURIComponent(ath) + '/events/' + encodeURIComponent(ev.id), {
-              method: 'DELETE',
-              headers
-            });
-          }catch(_){}
-          continue;
-        }
-        if(ev.category && ev.category !== 'WORKOUT') continue;
-        let steps = [];
-        if(ev.workout_doc && Array.isArray(ev.workout_doc.steps) && ev.workout_doc.steps.length){
-          steps = parseIntervalsWorkoutDoc(ev.workout_doc, refSpd);
-        }
-        if(!steps.length && ev.description){
-          steps = parseIntervalsText(ev.description, refSpd);
-        }
-        if(!steps.length) continue;
-        const dStr = String(ev.start_date_local || '').slice(0, 10);
-        const isToday = dStr === oldest;
-        fetched.push({
-          id: 'icu_ev_' + (ev.id || dStr + '_' + fetched.length),
-          cat: 'icu',
-          src: isToday ? 'تمرين اليوم WOD' : 'تقويم ICU',
-          dateStr: isToday ? 'اليوم (WOD)' : dStr.slice(5),
-          name: ((isToday ? '⭐ ' : '') + (ev.name || 'تمرين ' + dStr)).slice(0, 42),
-          steps
-        });
-      }
-
-      // 2) جلب مكتبة التمارين المحفوظة في حساب المستخدم (GET /api/v1/athlete/{id}/workouts)
-      try{
-        const wkUrl = 'https://intervals.icu/api/v1/athlete/' + encodeURIComponent(ath) + '/workouts';
-        const wkRes = await fetch(wkUrl, {method: 'GET', headers});
-        if(wkRes.ok){
-          const libWorkouts = await wkRes.json();
-          (Array.isArray(libWorkouts) ? libWorkouts : []).forEach(wk => {
-            if(!wk) return;
-            let steps = [];
-            if(wk.workout_doc && Array.isArray(wk.workout_doc.steps) && wk.workout_doc.steps.length){
-              steps = parseIntervalsWorkoutDoc(wk.workout_doc, refSpd);
-            }
-            if(!steps.length && wk.description){
-              steps = parseIntervalsText(wk.description, refSpd);
-            }
-            if(!steps.length) return;
-            fetched.push({
-              id: 'icu_lib_' + (wk.id || fetched.length),
-              cat: 'icu',
-              src: 'مكتبة ICU 📖',
-              name: (wk.name || 'تمرين مكتبة ICU').slice(0, 42),
-              steps
-            });
-          });
-        }
-      }catch(_){}
-
-      icuList = fetched;
-      saveIcu();
-      renderCards();
-
-      if(!fetched.length){
-        if(stEl) stEl.textContent = 'ℹ️ تم تنظيف التمارين التجريبية؛ تقويمك ومكتبتك في Intervals.icu فارغان حالياً (يمكنك استخدام برامج مستودع QDomyos-Zwift العالمي أعلاه فوراً).';
-        try{ toast('ℹ️ تم تنظيف التقويم؛ استخدم زر «🌍 جلب المستودع العالمي»'); }catch(_){}
-        return;
-      }
-
-      curCat = 'icu';
-      document.querySelectorAll('#extCatBar .ext-cat').forEach(b => b.classList.toggle('on', b.dataset.ecat === 'icu'));
-      renderCards();
-      pgSet('run');
-      previewItemInSchedule(fetched[0]);
-      if(stEl) stEl.textContent = '✅ تم جلب ' + fetched.length + ' تمرين من حسابك في Intervals.icu.';
-      try{ toast('✅ تم جلب ' + fetched.length + ' تمرين من Intervals.icu'); }catch(_){}
-    }catch(err){
-      if(stEl) stEl.textContent = '❌ تعذر الجلب من Intervals.icu: ' + (err && err.message ? err.message : err);
-      try{ toast('❌ خطأ في الاتصال بـ Intervals.icu'); }catch(_){}
+      if(stEl) stEl.textContent = '❌ تعذر الجلب من مستودعات GitHub: ' + (err && err.message ? err.message : err);
+      try{ toast('❌ خطأ أثناء الاتصال بمستودعات GitHub'); }catch(_){}
     }
   }
 
   function initExtHub(){
     loadState();
-    const rInp = $id('extRefSpd'), iInp = $id('extDefInc'), aInp = $id('icuAthId'), kInp = $id('icuApiKey'), dSel = $id('icuDays');
+    const rInp = $id('extRefSpd'), iInp = $id('extDefInc');
     if(rInp){
       rInp.value = cfg.refSpd || 10;
       rInp.addEventListener('input', () => {
@@ -11713,16 +11513,13 @@ window.copyRawData = copyRawData;
         renderCards();
       });
     }
-    if(aInp){ aInp.value = cfg.athId || '0'; aInp.addEventListener('change', () => { cfg.athId = aInp.value.trim() || '0'; saveCfg(); }); }
-    if(kInp){ kInp.value = cfg.apiKey || ''; kInp.addEventListener('change', () => { cfg.apiKey = kInp.value.trim(); saveCfg(); }); }
-    if(dSel){ dSel.value = String(cfg.days || 7); dSel.addEventListener('change', () => { cfg.days = parseInt(dSel.value, 10) || 7; saveCfg(); }); }
 
     updateRefPaceLabel();
     renderCards();
 
-    // إن لم تكن برامج المستودع العالمي محمّلة بعد وكان الإنترنت متصلاً، نسحبها تلقائياً من GitHub
-    if(!qdzList.length && navigator.onLine){
-      setTimeout(() => fetchGlobalQdomyosRepo(false), 600);
+    // السحب التلقائي من المستودعات العالمية الأربعة إن كان الكاش فارغاً أو أقل من 10 برامج
+    if(repoList.length < 10 && navigator.onLine){
+      setTimeout(() => fetchAllGlobalRepos(false), 500);
     }
 
     document.querySelectorAll('#extCatBar .ext-cat').forEach(btn => {
@@ -11741,33 +11538,10 @@ window.copyRawData = copyRawData;
     };
 
     const qQdzBtn = $id('extQuickQdzBtn');
-    if(qQdzBtn) qQdzBtn.onclick = () => fetchGlobalQdomyosRepo(true);
+    if(qQdzBtn) qQdzBtn.onclick = () => fetchAllGlobalRepos(true);
 
     const qdzBtn = $id('qdzFetchBtn');
-    if(qdzBtn) qdzBtn.onclick = () => fetchGlobalQdomyosRepo(true);
-
-    const syncBtn = $id('icuSyncBtn');
-    if(syncBtn) syncBtn.onclick = () => syncIntervalsIcu();
-
-    const parseBtn = $id('icuParseBtn');
-    if(parseBtn) parseBtn.onclick = () => {
-      const txt = ($id('icuRawText') ? $id('icuRawText').value : '').trim();
-      const nm = ($id('icuRawName') && $id('icuRawName').value.trim()) || ('تمرين ICU ' + (impList.length + 1));
-      const parsed = parseAnyWorkoutPayload(txt, nm);
-      if(!parsed.length){
-        if($id('icuStatusMsg')) $id('icuStatusMsg').textContent = '⚠️ لم يُعثر على مراحل صالحة في النص — تأكد من الصيغة مثل: - 5m 80% Pace';
-        try{ toast('⚠️ صيغة النص غير واضحة'); }catch(_){}
-        return;
-      }
-      parsed.forEach(p => { p.cat = 'icu'; icuList.unshift(p); });
-      saveIcu();
-      curCat = 'icu';
-      document.querySelectorAll('#extCatBar .ext-cat').forEach(b => b.classList.toggle('on', b.dataset.ecat === 'icu'));
-      renderCards();
-      pgSet('run');
-      previewItemInSchedule(parsed[0]);
-      try{ toast('✅ تم تحويل التمرين إلى الجدول'); }catch(_){}
-    };
+    if(qdzBtn) qdzBtn.onclick = () => fetchAllGlobalRepos(true);
 
     const urlBtn = $id('extFetchUrlBtn');
     if(urlBtn) urlBtn.onclick = async () => {
@@ -11831,13 +11605,12 @@ window.copyRawData = copyRawData;
 
     const clrBtn = $id('extClearImpBtn');
     if(clrBtn) clrBtn.onclick = () => {
-      qdzList = []; icuList = []; impList = [];
-      saveQdz(); saveIcu(); saveImp();
+      repoList = []; impList = [];
+      saveRepo(); saveImp();
       curCat = 'all';
       document.querySelectorAll('#extCatBar .ext-cat').forEach(b => b.classList.toggle('on', b.dataset.ecat === 'all'));
       renderCards();
-      if($id('extImpStatusMsg')) $id('extImpStatusMsg').textContent = '🗑️ تم مسح جميع البرامج المستوردة من الذاكرة المحلية.';
-      try{ toast('🗑️ تم مسح الكاش المستورد'); }catch(_){}
+      if(navigator.onLine) fetchAllGlobalRepos(false);
     };
 
     const svBtn = $id('extSaveToProgsBtn');
