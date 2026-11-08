@@ -2354,7 +2354,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 #chTip button{min-height:34px;padding:0 10px;font-size:12px}
 .seg.flash{box-shadow:0 0 0 2px #38bdf8}
 .seg .dup{color:#e2e8f0;background:#243142;border-color:var(--line-light)}
-/* ===== v114.1-EXT: ربط المواقع ومقترحات الجدول (Intervals.icu + ZWO/JSON/MRC) ===== */
+/* ===== v114.1-EXT: ربط المستودع العالمي QDomyos-Zwift + Intervals.icu (بدون أي برامج محلية مؤلفة) ===== */
 .ext-sug-box{margin-top:8px;padding:10px;border-radius:12px;background:rgba(15,23,42,.65);border:1px solid var(--line,#263248)}
 .ext-sug-hd{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;margin-bottom:8px}
 .ext-sug-ttl{font-size:13px;font-weight:800;color:#38bdf8;display:flex;align-items:center;gap:5px}
@@ -2364,12 +2364,12 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 .ext-cat{flex:0 0 auto;min-height:28px!important;padding:2px 10px!important;font-size:11.5px!important;font-weight:700;border-radius:999px;border:1px solid var(--line,#263248);background:var(--panel-card,#131c2a);color:var(--dim,#94a3b8)}
 .ext-cat.on{background:rgba(56,189,248,.18);color:#38bdf8;border-color:#38bdf8}
 .ext-cards{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
-.ext-card{flex:0 0 auto;min-width:148px;max-width:205px;min-height:68px!important;padding:8px 10px!important;text-align:right;border-radius:11px;border:1px solid var(--line,#263248);background:var(--panel-card,#131c2a);color:var(--text,#f1f5f9);scroll-snap-align:start;display:flex!important;flex-direction:column;justify-content:space-between}
+.ext-card{flex:0 0 auto;min-width:152px;max-width:215px;min-height:68px!important;padding:8px 10px!important;text-align:right;border-radius:11px;border:1px solid var(--line,#263248);background:var(--panel-card,#131c2a);color:var(--text,#f1f5f9);scroll-snap-align:start;display:flex!important;flex-direction:column;justify-content:space-between}
 .ext-card.on{border-color:#10b981;box-shadow:0 0 0 1px #10b981 inset;background:rgba(16,185,129,.11)}
 .ext-card-top{display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:10px;font-weight:800;color:#38bdf8;margin-bottom:2px}
 .ext-card-top .bdg-icu{color:#a78bfa}
 .ext-card-top .bdg-imp{color:#f59e0b}
-.ext-card b{display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff}
+.ext-card b{display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff;direction:ltr;text-align:right}
 .ext-card span{display:block;font-size:11px;color:var(--dim,#94a3b8);margin-top:3px;font-weight:600}
 .ext-prv-bar{display:none;margin-top:8px;padding:8px 10px;border-radius:10px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.35);align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .ext-prv-bar.show{display:flex}
@@ -2758,20 +2758,17 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
     <div id="pgLinkedVid"></div>
     <div class="ext-sug-box" id="extSugBox">
       <div class="ext-sug-hd">
-        <span class="ext-sug-ttl">🌐 مقترحات الجدول (Intervals.icu + قوالب عالمية)</span>
+        <span class="ext-sug-ttl">🌐 برامج المستودع العالمي (QDomyos-Zwift + Intervals.icu)</span>
         <div class="ext-sug-acts">
-          <button type="button" id="extQuickSyncBtn" title="جلب تمرين اليوم وجدول الأسبوع من Intervals.icu (أو تعبئة التقويم تلقائياً إن كان فارغاً)">🔄 مزامنة</button>
-          <button type="button" id="extOpenHubBtn" title="إعدادات الربط واستيراد القوالب">⚙️ المصدر</button>
+          <button type="button" id="extQuickQdzBtn" title="سحب البرامج الحقيقية مباشرة من مستودع QDomyos-Zwift العالمي على GitHub">🌍 جلب المستودع العالمي</button>
+          <button type="button" id="extOpenHubBtn" title="إعدادات المصدر والربط">⚙️ المصدر</button>
         </div>
       </div>
       <div class="ext-cats" id="extCatBar">
         <button type="button" class="ext-cat on" data-ecat="all">الكل</button>
-        <button type="button" class="ext-cat" data-ecat="icu">📅 Intervals.icu</button>
-        <button type="button" class="ext-cat" data-ecat="z2">🔥 حرق دهون Z2</button>
-        <button type="button" class="ext-cat" data-ecat="hiit">⚡ فترات HIIT</button>
-        <button type="button" class="ext-cat" data-ecat="tempo">🏃 تيمبو وعتبة</button>
-        <button type="button" class="ext-cat" data-ecat="hills">⛰️ تلال وميل</button>
-        <button type="button" class="ext-cat" data-ecat="imp">📂 مستوردة</button>
+        <button type="button" class="ext-cat" data-ecat="qdz">🌍 مستودع QDomyos-Zwift</button>
+        <button type="button" class="ext-cat" data-ecat="icu">📅 حساب Intervals.icu</button>
+        <button type="button" class="ext-cat" data-ecat="imp">📂 ملفات مستوردة</button>
       </div>
       <div class="ext-cards" id="extSugCards"></div>
       <div class="ext-prv-bar" id="extPreviewBar">
@@ -2797,50 +2794,53 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 
   <div data-pane="tools">
   <details id="extWorkoutHub">
-    <summary>🌐 ربط المواقع ومستورد القوالب (Intervals.icu + ZWO / JSON / ERG)</summary>
+    <summary>🌐 ربط المستودع العالمي QDomyos-Zwift + Intervals.icu + استيراد ZWO/XML</summary>
     <div class="ext-hub-sec">
-      <h4><span>🎯 السرعة المرجعية لحساب النسب المئوية (% Pace / ZWO)</span><small id="extRefPaceLbl" style="color:#10b981;font-weight:700" dir="ltr">6:00 /km</small></h4>
-      <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.6">تُستخدم لترجمة قوالب التمارين العالمية التي تُكتب كنسبة مئوية (مثل <code>80% Pace</code> أو ملفات Zwift <code>.zwo</code>) إلى سرعة حقيقية بالكيلومتر/ساعة في جدولك.</div>
+      <h4><span>🎯 السرعة المرجعية لحساب النسب المئوية (% Pace / ZWO / HR Zone)</span><small id="extRefPaceLbl" style="color:#10b981;font-weight:700" dir="ltr">6:00 /km</small></h4>
+      <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.6">البرامج التي تحتوي على سرعة صريحة (<code>speed="8.0"</code>) تُؤخذ سرعتها كما هي من الملف الأصلي، أما البرامج المكتوبة كنسبة مئوية أو منطقة نبض فتُحسب بناءً على سرعتك المرجعية هنا.</div>
       <div class="row r2" style="align-items:center">
         <label style="font-size:12px">السرعة المرجعية (100% = كم/س)<input id="extRefSpd" type="number" min="4" max="20" step="0.5" value="10" inputmode="decimal"></label>
-        <label style="font-size:12px">الميل الافتراضي للقوالب (%)<input id="extDefInc" type="number" min="0" max="15" step="1" value="0" inputmode="numeric"></label>
+        <label style="font-size:12px">الميل الافتراضي إن لم يُذكر (%)<input id="extDefInc" type="number" min="0" max="15" step="1" value="0" inputmode="numeric"></label>
       </div>
     </div>
 
     <div class="ext-hub-sec">
-      <h4><span>📅 الخيار 2: الربط المباشر مع تقويم Intervals.icu</span><a href="https://intervals.icu" target="_blank" rel="noopener" style="font-size:11px;color:#a78bfa;text-decoration:none">intervals.icu ↗</a></h4>
-      <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.6">أدخل مفتاح <b>API Key</b> من حسابك في <code>Intervals.icu → Settings → Developer Settings</code>. إن كان تقويمك في الموقع فارغاً، سيقوم التطبيق تلقائياً برفع خطة جري أسبوعية متكاملة (7 أيام) إلى حسابك في الموقع وسحبها إلى جدولك!</div>
+      <h4><span>🌍 1. المستودع العالمي المفتوح لبرامج المشايات (QDomyos-Zwift GitHub)</span><a href="https://github.com/cagnulein/qdomyos-zwift/tree/master/train-programs-examples" target="_blank" rel="noopener" style="font-size:11px;color:#38bdf8;text-decoration:none">فتح المستودع ↗</a></h4>
+      <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.6">يتصل مباشرة بخادم GitHub لسحب جميع ملفات التمارين الحقيقية (<code>.xml</code> و<code>.zwo</code>) المنشورة في مجلد <code>cagnulein/qdomyos-zwift/train-programs-examples</code> بدون أي برامج مؤلفة محلياً.</div>
+      <button type="button" class="primary" id="qdzFetchBtn" style="width:100%">🌍 سحب جميع البرامج الحقيقية من مستودع QDomyos-Zwift الآن</button>
+      <div id="qdzStatusMsg" class="ext-stat">اضغط الزر أعلاه لسحب أحدث ملفات البرامج مباشرة من المستودع العالمي على GitHub.</div>
+    </div>
+
+    <div class="ext-hub-sec">
+      <h4><span>📅 2. الربط المباشر مع حسابك في Intervals.icu (التقويم + المكتبة)</span><a href="https://intervals.icu" target="_blank" rel="noopener" style="font-size:11px;color:#a78bfa;text-decoration:none">intervals.icu ↗</a></h4>
+      <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.6">يسحب فقط التمارين الموجودة فعلياً في تقويمك أو مكتبتك الشخصية (<code>Library 📖</code>) على موقع Intervals.icu دون إضافة أي برامج من خارج حسابك.</div>
       <div class="row r2">
         <label style="font-size:12px">معرف الرياضي (Athlete ID)<input id="icuAthId" type="text" value="0" placeholder="0 أو i123456" dir="ltr" autocomplete="off"></label>
         <label style="font-size:12px">نطاق الجلب من التقويم<select id="icuDays"><option value="7" selected>أسبوع (7 أيام)</option><option value="14">أسبوعان (14 يوماً)</option><option value="30">شهر (30 يوماً)</option></select></label>
       </div>
       <label style="font-size:12px;display:block;margin-top:4px">مفتاح API Key (يُحفظ في متصفحك فقط)<input id="icuApiKey" type="password" placeholder="أدخل مفتاح API_KEY الخاص بـ Intervals.icu" dir="ltr" autocomplete="off"></label>
-      <div class="row r2" style="margin-top:6px">
-        <button type="button" class="primary" id="icuSyncBtn">🔄 جلب تمرين اليوم وجدول الأسبوع</button>
-        <button type="button" id="icuSeedPlanBtn" class="btn-save">📅 تعبئة تقويم الموقع بخطة أسبوعية</button>
-      </div>
-      <div id="icuStatusMsg" class="ext-stat">جاهز للربط — اضغط «جلب تمرين اليوم» أو «تعبئة تقويم الموقع بخطة أسبوعية» لرفع جدول 7 أيام إلى حسابك في Intervals.icu فوراً.</div>
+      <button type="button" id="icuSyncBtn" style="width:100%;margin-top:6px">🔄 جلب التمارين من تقويمي ومكتبتي في Intervals.icu</button>
+      <div id="icuStatusMsg" class="ext-stat">جاهز لجلب تمارينك ومكتبتك من Intervals.icu (ويحذف تلقائياً أي تمارين تجريبية سابقة).</div>
       <details id="icuTextDetails" style="margin-top:6px">
-        <summary style="font-size:12px;color:#cbd5e1">📝 لصق أو كتابة نص تمرين بصيغة باني التمارين (Intervals.icu Builder)</summary>
-        <input id="icuRawName" type="text" placeholder="اسم التمرين المقترح (اختياري)" style="margin-top:6px">
-        <textarea id="icuRawText" dir="ltr" style="height:96px;font-size:12px;margin-top:6px" placeholder="- 5m 60% Pace&#10;5x&#10;- 2m 95% Pace incline 2%&#10;- 1m 55% Pace&#10;- 5m 55% Pace"></textarea>
-        <button type="button" id="icuParseBtn" style="width:100%;margin-top:6px">⚡ تحويل النص واقتراحه في الجدول</button>
+        <summary style="font-size:12px;color:#cbd5e1">📝 لصق نص تمرين من باني التمارين (Intervals.icu Builder)</summary>
+        <input id="icuRawName" type="text" placeholder="اسم التمرين (اختياري)" style="margin-top:6px">
+        <textarea id="icuRawText" dir="ltr" style="height:86px;font-size:12px;margin-top:6px" placeholder="- 10m 70% Pace&#10;4x&#10;- 2m 95% Pace&#10;- 1m 55% Pace"></textarea>
+        <button type="button" id="icuParseBtn" style="width:100%;margin-top:6px">⚡ تحويل النص إلى الجدول</button>
       </details>
     </div>
 
     <div class="ext-hub-sec">
-      <h4><span>📂 الخيار 3: مستورد قوالب التمارين المفتوحة (ZWO / JSON / MRC / ERG / URL)</span></h4>
-      <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.6">يدعم ملفات <b>Zwift Workouts (<code>.zwo</code>)</b>، وملفات <b>Open-Workout / Kettler (<code>.json</code>)</b>، وملفات المدربات الذكية (<code>.mrc</code> / <code>.erg</code>) من هاتفك أو عبر رابط مباشر.</div>
+      <h4><span>📂 3. استيراد ملف أو رابط مباشر (.xml / .zwo / .json / .mrc / .erg)</span></h4>
       <div class="row r2" style="margin-bottom:6px">
-        <input id="extUrlInp" type="url" dir="ltr" placeholder="https://.../workout.zwo أو .json">
+        <input id="extUrlInp" type="url" dir="ltr" placeholder="https://.../workout.xml أو .zwo أو .json">
         <button type="button" id="extFetchUrlBtn">🌐 جلب من الرابط</button>
       </div>
       <div class="row r2">
-        <button type="button" id="extFilePickBtn">📂 اختيار ملف (.zwo / .json / .mrc / .erg)</button>
-        <button type="button" id="extClearImpBtn">🗑️ مسح البرامج المستوردة</button>
+        <button type="button" id="extFilePickBtn">📂 اختيار ملف (.xml / .zwo / .json / .mrc)</button>
+        <button type="button" id="extClearImpBtn">🗑️ مسح الكاش المستورد</button>
       </div>
-      <input type="file" id="extFileInp" accept=".zwo,.json,.mrc,.erg,.txt,.xml,application/json,text/xml,text/plain" multiple hidden>
-      <div id="extImpStatusMsg" class="ext-stat">تم تضمين 8 قوالب عالمية قياسية جاهزة في شريط المقترحات، ويمكنك استيراد أي عدد إضافي.</div>
+      <input type="file" id="extFileInp" accept=".xml,.zwo,.json,.mrc,.erg,.txt,application/json,text/xml,text/plain" multiple hidden>
+      <div id="extImpStatusMsg" class="ext-stat">يدعم ملفات QDomyos-Zwift (<code>.xml</code>) وZwift (<code>.zwo</code>) وJSON.</div>
     </div>
   </details>
   <details id="ytLib">
@@ -10981,150 +10981,41 @@ window.copyRawData = copyRawData;
   try{ if(localStorage.getItem(KEY) === '1'){ tg.checked = true; setTimeout(startCam, 1500); } }catch(_){}
 })();
 
-// ===== v114.1-EXT: نظام ربط المواقع ومستورد القوالب واقتراحها في الجدول (الخياران 2 و3 معاً — بدون تكييف مع حالة المحرك) =====
+// ===== v114.1-EXT: ربط المستودع العالمي QDomyos-Zwift + Intervals.icu (بدون أي برامج محلية مؤلفة) =====
 (function(){
-  const K_CFG = 'kettler_ext_wk_cfg_v1';
-  const K_ICU = 'kettler_ext_icu_list_v1';
-  const K_IMP = 'kettler_ext_imp_list_v1';
+  const K_CFG = 'kettler_ext_wk_cfg_v2';
+  const K_QDZ = 'kettler_ext_qdz_list_v2';
+  const K_ICU = 'kettler_ext_icu_list_v2';
+  const K_IMP = 'kettler_ext_imp_list_v2';
+  const QDZ_API_URL = 'https://api.github.com/repos/cagnulein/qdomyos-zwift/contents/train-programs-examples';
   const $id = id => document.getElementById(id);
 
-  // 8 قوالب عالمية قياسية مبنية وفق معايير Intervals.icu وZwift Running (تعتمد على نسب % من السرعة المرجعية أو سرعات قياسية)
-  const BUILTIN_TEMPLATES = [
-    {
-      id: 'tpl_z2_fatburn',
-      cat: 'z2',
-      src: 'قالب Z2',
-      name: 'حرق دهون مستقر (Zone 2 Base)',
-      steps: [
-        {m: 5, pct: 0.60, i: 0},
-        {m: 20, pct: 0.75, i: 1},
-        {m: 5, pct: 0.55, i: 0}
-      ]
-    },
-    {
-      id: 'tpl_hiit_billat',
-      cat: 'hiit',
-      src: 'قالب ZWO',
-      name: 'فترات بيلات 1/1 (VO2max HIIT)',
-      steps: [
-        {m: 5, pct: 0.60, i: 0},
-        {m: 1, pct: 1.05, i: 1}, {m: 1, pct: 0.55, i: 0},
-        {m: 1, pct: 1.05, i: 1}, {m: 1, pct: 0.55, i: 0},
-        {m: 1, pct: 1.05, i: 1}, {m: 1, pct: 0.55, i: 0},
-        {m: 1, pct: 1.05, i: 1}, {m: 1, pct: 0.55, i: 0},
-        {m: 1, pct: 1.05, i: 1}, {m: 1, pct: 0.55, i: 0},
-        {m: 1, pct: 1.05, i: 1}, {m: 1, pct: 0.55, i: 0},
-        {m: 4, pct: 0.55, i: 0}
-      ]
-    },
-    {
-      id: 'tpl_tempo_cruise',
-      cat: 'tempo',
-      src: 'قالب ICU',
-      name: 'تيمبو العتبة (3×6 د Threshold)',
-      steps: [
-        {m: 5, pct: 0.60, i: 0},
-        {m: 6, pct: 0.90, i: 1}, {m: 2, pct: 0.60, i: 0},
-        {m: 6, pct: 0.90, i: 1}, {m: 2, pct: 0.60, i: 0},
-        {m: 6, pct: 0.90, i: 1},
-        {m: 5, pct: 0.55, i: 0}
-      ]
-    },
-    {
-      id: 'tpl_hills_climb',
-      cat: 'hills',
-      src: 'قالب تلال',
-      name: 'تلال القوة المتدرجة (Hill Repeats)',
-      steps: [
-        {m: 4, pct: 0.60, i: 0},
-        {m: 2, pct: 0.80, i: 4}, {m: 1.5, pct: 0.58, i: 0},
-        {m: 2, pct: 0.80, i: 6}, {m: 1.5, pct: 0.58, i: 0},
-        {m: 2, pct: 0.80, i: 8}, {m: 1.5, pct: 0.58, i: 0},
-        {m: 2, pct: 0.82, i: 6}, {m: 1.5, pct: 0.58, i: 0},
-        {m: 4, pct: 0.55, i: 0}
-      ]
-    },
-    {
-      id: 'tpl_fartlek_swedish',
-      cat: 'hiit',
-      src: 'قالب ZWO',
-      name: 'فارتلك سويدي متغير (Speed Play)',
-      steps: [
-        {m: 4, pct: 0.60, i: 0},
-        {m: 3, pct: 0.85, i: 1}, {m: 2, pct: 0.65, i: 0},
-        {m: 2, pct: 0.95, i: 1}, {m: 1.5, pct: 0.60, i: 0},
-        {m: 1, pct: 1.05, i: 2}, {m: 1.5, pct: 0.60, i: 0},
-        {m: 3, pct: 0.88, i: 1},
-        {m: 4, pct: 0.55, i: 0}
-      ]
-    },
-    {
-      id: 'tpl_pyramid_5k',
-      cat: 'tempo',
-      src: 'قالب ICU',
-      name: 'هرم السرعة (1-2-3-2-1 د)',
-      steps: [
-        {m: 4, pct: 0.60, i: 0},
-        {m: 1, pct: 1.00, i: 1}, {m: 1, pct: 0.60, i: 0},
-        {m: 2, pct: 0.95, i: 1}, {m: 1, pct: 0.60, i: 0},
-        {m: 3, pct: 0.90, i: 1}, {m: 1.5, pct: 0.60, i: 0},
-        {m: 2, pct: 0.95, i: 1}, {m: 1, pct: 0.60, i: 0},
-        {m: 1, pct: 1.02, i: 1},
-        {m: 4, pct: 0.55, i: 0}
-      ]
-    },
-    {
-      id: 'tpl_z2_prog',
-      cat: 'z2',
-      src: 'قالب Z2',
-      name: 'بناء الهوائي التصاعدي (Progression)',
-      steps: [
-        {m: 5, pct: 0.60, i: 0},
-        {m: 8, pct: 0.70, i: 0},
-        {m: 8, pct: 0.78, i: 1},
-        {m: 6, pct: 0.86, i: 1},
-        {m: 3, pct: 0.55, i: 0}
-      ]
-    },
-    {
-      id: 'tpl_hills_walk',
-      cat: 'hills',
-      src: 'قالب مشي',
-      name: 'مشي جبلي لحرق الدهون (Incline Walk)',
-      steps: [
-        {m: 3, pct: 0.45, i: 2},
-        {m: 5, pct: 0.52, i: 6},
-        {m: 5, pct: 0.54, i: 9},
-        {m: 5, pct: 0.54, i: 11},
-        {m: 4, pct: 0.52, i: 6},
-        {m: 3, pct: 0.45, i: 1}
-      ]
-    }
-  ];
-
   let cfg = {refSpd: 10, defInc: 0, athId: '0', apiKey: '', days: 7};
+  let qdzList = [];
   let icuList = [];
   let impList = [];
   let curCat = 'all';
   let activeId = '';
 
   function loadState(){
+    // تنظيف مفاتيح النسخة التجريبية السابقة التي كانت تحتوي على البرامج المؤلفة محلياً
+    try{
+      localStorage.removeItem('kettler_ext_icu_list_v1');
+      const oldCfg = JSON.parse(localStorage.getItem('kettler_ext_wk_cfg_v1') || 'null');
+      if(oldCfg && typeof oldCfg === 'object') cfg = Object.assign(cfg, oldCfg);
+    }catch(_){}
     try{
       const c = JSON.parse(localStorage.getItem(K_CFG));
       if(c && typeof c === 'object') cfg = Object.assign(cfg, c);
     }catch(_){}
+    try{ qdzList = JSON.parse(localStorage.getItem(K_QDZ)) || []; }catch(_){ qdzList = []; }
     try{ icuList = JSON.parse(localStorage.getItem(K_ICU)) || []; }catch(_){ icuList = []; }
     try{ impList = JSON.parse(localStorage.getItem(K_IMP)) || []; }catch(_){ impList = []; }
   }
-  function saveCfg(){
-    try{ localStorage.setItem(K_CFG, JSON.stringify(cfg)); }catch(_){}
-  }
-  function saveIcu(){
-    try{ localStorage.setItem(K_ICU, JSON.stringify(icuList.slice(0, 40))); }catch(_){}
-  }
-  function saveImp(){
-    try{ localStorage.setItem(K_IMP, JSON.stringify(impList.slice(0, 50))); }catch(_){}
-  }
+  function saveCfg(){ try{ localStorage.setItem(K_CFG, JSON.stringify(cfg)); }catch(_){} }
+  function saveQdz(){ try{ localStorage.setItem(K_QDZ, JSON.stringify(qdzList.slice(0, 80))); }catch(_){} }
+  function saveIcu(){ try{ localStorage.setItem(K_ICU, JSON.stringify(icuList.slice(0, 50))); }catch(_){} }
+  function saveImp(){ try{ localStorage.setItem(K_IMP, JSON.stringify(impList.slice(0, 50))); }catch(_){} }
 
   function clampSpd(v){
     const mx = typeof MAX_SPEED === 'number' ? MAX_SPEED : 20;
@@ -11143,7 +11034,6 @@ window.copyRawData = copyRawData;
     return Math.max(0.5, Math.min(240, r));
   }
 
-  // تحويل خطوات القالب إلى مراحل [{m, s, i}] حسب السرعة المرجعية
   function materializeSegs(item){
     const ref = Math.max(4, Math.min(20, Number(cfg.refSpd) || 10));
     const dInc = clampInc(cfg.defInc || 0);
@@ -11158,7 +11048,6 @@ window.copyRawData = copyRawData;
       const m = clampMin(st.m != null ? st.m : 1);
       const i = clampInc(st.i != null ? st.i : dInc);
       const cs = clampSpd(s);
-      // دمج المراحل المتتالية المتطابقة في السرعة والميل لتبسيط الجدول
       if(out.length && out[out.length - 1].s === cs && out[out.length - 1].i === i && (out[out.length - 1].m + m) <= 240){
         out[out.length - 1].m = Math.round((out[out.length - 1].m + m) * 10) / 10;
       } else {
@@ -11179,9 +11068,9 @@ window.copyRawData = copyRawData;
 
   function allItems(){
     const list = [];
+    qdzList.forEach(x => list.push(Object.assign({}, x, {cat: 'qdz'})));
     icuList.forEach(x => list.push(Object.assign({}, x, {cat: 'icu'})));
-    impList.forEach(x => list.push(Object.assign({}, x, {cat: x.cat || 'imp'})));
-    BUILTIN_TEMPLATES.forEach(x => list.push(x));
+    impList.forEach(x => list.push(Object.assign({}, x, {cat: 'imp'})));
     return list;
   }
 
@@ -11191,7 +11080,7 @@ window.copyRawData = copyRawData;
     box.innerHTML = '';
     const items = allItems().filter(x => curCat === 'all' || x.cat === curCat);
     if(!items.length){
-      box.innerHTML = '<div style="font-size:12px;color:var(--dim);padding:8px 4px">لا توجد برامج في هذا التصنيف حالياً — اضغط «🔄 مزامنة» أو «⚙️ المصدر».</div>';
+      box.innerHTML = '<div style="font-size:12px;color:var(--dim);padding:8px 4px">لا توجد برامج محمّلة بعد — اضغط زر «🌍 جلب المستودع العالمي» في الأعلى لسحب البرامج الحقيقية مباشرة من GitHub.</div>';
       return;
     }
     items.forEach(it => {
@@ -11203,7 +11092,7 @@ window.copyRawData = copyRawData;
       btn.type = 'button';
       btn.className = 'ext-card' + (it.id === activeId ? ' on' : '');
       const topCls = it.cat === 'icu' ? 'bdg-icu' : (it.cat === 'imp' ? 'bdg-imp' : '');
-      const topBadge = it.dateStr ? ('📅 ' + it.dateStr) : (it.src || 'قالب');
+      const topBadge = it.dateStr ? ('📅 ' + it.dateStr) : (it.src || '🌍 QDomyos-Zwift');
       btn.innerHTML =
         '<div class="ext-card-top"><span class="'+topCls+'">' + esc(topBadge) + '</span><span>' + segs.length + ' مراحل</span></div>' +
         '<b>' + esc(it.name) + '</b>' +
@@ -11213,7 +11102,6 @@ window.copyRawData = copyRawData;
     });
   }
 
-  // اقتراح البرنامج مباشرة في الجدول (#segs + #chart + #pl) دون تكييف مع المحرك
   function previewItemInSchedule(it){
     if(typeof running !== 'undefined' && running){
       try{ info('أوقف البرنامج الجاري أولاً قبل معاينة برنامج مقترح'); }catch(_){}
@@ -11232,7 +11120,6 @@ window.copyRawData = copyRawData;
     try{ pgCards(); }catch(_){}
     renderCards();
 
-    // فتح جدول المراحل تلقائياً ليراه المستخدم فوراً
     try{
       const plEl = $id('pl');
       if(plEl && plEl.parentElement && plEl.parentElement.tagName === 'DETAILS'){
@@ -11244,14 +11131,101 @@ window.copyRawData = copyRawData;
     const bar = $id('extPreviewBar'), txt = $id('extPreviewTxt');
     if(bar && txt){
       bar.classList.add('show');
-      txt.textContent = '📋 مقترح الآن في الجدول: «' + it.name + '» (' + segs.length + ' مراحل • ' + totMin + ' دقيقة)';
+      txt.textContent = '📋 معروض الآن في الجدول: «' + it.name + '» (' + segs.length + ' مراحل • ' + totMin + ' دقيقة)';
     }
-    try{ info('تم اقتراح «' + it.name + '» في جدول المراحل — يمكنك البدء فوراً أو حفظه في برامجك'); }catch(_){}
+    try{ info('تم تحميل «' + it.name + '» في جدول المراحل'); }catch(_){}
   }
 
-  // ---------- المحلل الذكي لصيغة نصوص Intervals.icu Workout Builder ----------
+  // ---------- 1. محلل ملفات XML الخاصة بمستودع QDomyos-Zwift (<rows><row .../><repeat times="N">...</repeat></rows>) ----------
+  function parseQdomyosDurationToMin(durStr){
+    if(!durStr) return 1;
+    const s = String(durStr).trim();
+    const parts = s.split(':').map(Number);
+    if(parts.length === 3 && !parts.some(isNaN)){
+      return parts[0] * 60 + parts[1] + parts[2] / 60;
+    }
+    if(parts.length === 2 && !parts.some(isNaN)){
+      return parts[0] + parts[1] / 60;
+    }
+    const n = parseFloat(s);
+    if(!isNaN(n) && n > 0) return n > 15 ? n / 60 : n;
+    return 1;
+  }
+
+  function parseQdomyosXml(xmlText, fileName){
+    const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+    const rowsRoot = doc.querySelector('rows');
+    if(!rowsRoot) return null;
+    const baseName = String(fileName || 'QDomyos Workout').replace(/\.(xml|zwo)$/i, '');
+    const steps = [];
+
+    const getAttrNum = (el, names) => {
+      for(const k of names){
+        const v = el.getAttribute(k) ?? el.getAttribute(k.toLowerCase());
+        if(v !== null && v !== '' && !isNaN(parseFloat(v))) return parseFloat(v);
+      }
+      return null;
+    };
+
+    function parseRowEl(rowEl){
+      const durMin = clampMin(parseQdomyosDurationToMin(rowEl.getAttribute('duration') || rowEl.getAttribute('Duration') || '00:01:00'));
+      const incRaw = getAttrNum(rowEl, ['inclination', 'incline', 'grade', 'slope']);
+      const inc = incRaw !== null && incRaw >= 0 ? clampInc(incRaw) : null;
+
+      const spd = getAttrNum(rowEl, ['speed', 'forcespeed_val']);
+      const minSpd = getAttrNum(rowEl, ['minspeed']);
+      const maxSpd = getAttrNum(rowEl, ['maxspeed']);
+      const zoneHr = getAttrNum(rowEl, ['zonehr', 'hrzone']);
+      const power = getAttrNum(rowEl, ['power', 'watts']);
+      const res = getAttrNum(rowEl, ['resistance', 'peloton_resistance']);
+
+      if(spd !== null && spd > 0){
+        steps.push({m: durMin, s: clampSpd(spd), i: inc !== null ? inc : (cfg.defInc || 0)});
+      } else if(minSpd !== null && maxSpd !== null && maxSpd > 0){
+        steps.push({m: durMin, s: clampSpd((minSpd + maxSpd) / 2), i: inc !== null ? inc : (cfg.defInc || 0)});
+      } else if(maxSpd !== null && maxSpd > 0){
+        steps.push({m: durMin, s: clampSpd(maxSpd * 0.85), i: inc !== null ? inc : (cfg.defInc || 0)});
+      } else if(zoneHr !== null && zoneHr >= 1){
+        const zMap = {1: 0.60, 2: 0.74, 3: 0.85, 4: 0.95, 5: 1.06};
+        steps.push({m: durMin, pct: zMap[Math.min(5, Math.max(1, Math.round(zoneHr)))] || 0.78, i: inc !== null ? inc : (cfg.defInc || 0)});
+      } else if(power !== null && power > 0){
+        const pct = power > 3 ? Math.max(0.45, Math.min(1.35, power / 220)) : power;
+        steps.push({m: durMin, pct: Math.round(pct * 1000) / 1000, i: inc !== null ? inc : (cfg.defInc || 0)});
+      } else if(res !== null && res > 0){
+        const pct = Math.max(0.50, Math.min(1.25, 0.50 + (res / 100) * 0.75));
+        const resInc = inc !== null ? inc : clampInc(Math.round(res / 8));
+        steps.push({m: durMin, pct: Math.round(pct * 1000) / 1000, i: resInc});
+      } else if(inc !== null){
+        steps.push({m: durMin, pct: 0.75, i: inc});
+      }
+    }
+
+    function walkNodes(parent){
+      Array.from(parent.children || []).forEach(el => {
+        const tag = el.tagName.toLowerCase();
+        if(tag === 'row'){
+          parseRowEl(el);
+        } else if(tag === 'repeat' || tag === 'loop'){
+          const times = Math.max(1, Math.min(40, Math.round(getAttrNum(el, ['times', 'repeat', 'count']) || 2)));
+          for(let r = 0; r < times; r++) walkNodes(el);
+        }
+      });
+    }
+
+    walkNodes(rowsRoot);
+    if(!steps.length) return null;
+    const hasSpeed = xmlText.toLowerCase().includes('speed=');
+    return [{
+      id: 'qdz_' + baseName.replace(/[^A-Za-z0-9_-]/g, '_'),
+      cat: 'qdz',
+      src: hasSpeed ? '🌍 QZ المشاية' : '🌍 QZ XML',
+      name: baseName.slice(0, 42),
+      steps
+    }];
+  }
+
+  // ---------- 2. محلل ملفات Zwift (.zwo XML) و (.mrc/.erg) و (.json) ونصوص Intervals.icu ----------
   function parsePaceStrToKmh(str, refSpd){
-    // صيغة 4:30/km أو 5:00-5:30/km
     const mRange = str.match(/(\d+):(\d{2})\s*(?:-\s*(\d+):(\d{2}))?\s*\/km/i);
     if(mRange){
       const sec1 = parseInt(mRange[1], 10) * 60 + parseInt(mRange[2], 10);
@@ -11259,16 +11233,13 @@ window.copyRawData = copyRawData;
       const avgSec = (sec1 + sec2) / 2;
       if(avgSec > 60) return 3600 / avgSec;
     }
-    // صيغة سرعة مباشرة مثل 8.5km/h أو 10 kmh
     const mKmh = str.match(/(\d+(?:\.\d+)?)\s*(?:km\/h|kmh|kph|كم\/س)/i);
     if(mKmh) return parseFloat(mKmh[1]);
-    // صيغة نسبة مئوية مثل 80% أو 75-85%
     const mPct = str.match(/(\d+(?:\.\d+)?)\s*(?:-\s*(\d+(?:\.\d+)?))?\s*%/);
     if(mPct){
       const p1 = parseFloat(mPct[1]), p2 = mPct[2] ? parseFloat(mPct[2]) : p1;
       return refSpd * ((p1 + p2) / 200);
     }
-    // مناطق الجهد Z1..Z5
     const mZone = str.match(/\bZ([1-5])\b/i);
     if(mZone){
       const zMap = {1: 0.60, 2: 0.74, 3: 0.85, 4: 0.95, 5: 1.06};
@@ -11301,7 +11272,6 @@ window.copyRawData = copyRawData;
         if(!line && repBlock.length) flushBlock();
         continue;
       }
-      // التحقق من سطر التكرار مثل "6x" أو "Main set 5x"
       const repMatch = line.match(/^(?:[A-Za-z\u0600-\u06FF\s]+)?(\d+)\s*[xX×]\s*$/);
       if(repMatch){
         flushBlock();
@@ -11314,7 +11284,6 @@ window.copyRawData = copyRawData;
       const s = parsePaceStrToKmh(line, refSpd);
       const pct = Math.round((s / refSpd) * 1000) / 1000;
 
-      // استخراج المدة بالدقائق (أو المسافة وتحويلها إلى دقائق بناءً على السرعة)
       let durMin = 0;
       const mComb = line.match(/(\d+)\s*m(?:in)?\s*(\d+)\s*s/i);
       const mHr = line.match(/(\d+)\s*h\s*(?:(\d+)\s*m)?/i);
@@ -11332,7 +11301,6 @@ window.copyRawData = copyRawData;
 
       if(!(durMin > 0)) continue;
 
-      // استخراج الميل إن وجد مثل incline 3% أو slope 2% أو ميل 4%
       let inc = cfg.defInc || 0;
       const mInc = line.match(/(?:incline|grade|slope|hill|ميل)\s*[:=]?\s*(\d+(?:\.\d+)?)\s*%?/i);
       if(mInc) inc = parseFloat(mInc[1]);
@@ -11345,7 +11313,6 @@ window.copyRawData = copyRawData;
     return steps;
   }
 
-  // تحليل بنية workout_doc.steps الخاصة بواجهة Intervals.icu API
   function parseIntervalsWorkoutDoc(doc, refSpd){
     const out = [];
     function walk(arr){
@@ -11380,11 +11347,10 @@ window.copyRawData = copyRawData;
     return out;
   }
 
-  // ---------- محلل ملفات Zwift (.zwo XML) و (.mrc/.erg) و (.json) ----------
-  function parseZwoXml(xmlText){
+  function parseZwoXml(xmlText, fallbackName){
     const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
     const nameEl = doc.querySelector('workout_file > name, name');
-    const name = (nameEl && nameEl.textContent.trim()) || 'تمرين Zwift ZWO';
+    const name = (nameEl && nameEl.textContent.trim()) || (fallbackName ? fallbackName.replace(/\.zwo$/i, '') : 'تمرين ZWO');
     const wk = doc.querySelector('workout');
     if(!wk) return null;
     const steps = [];
@@ -11429,7 +11395,7 @@ window.copyRawData = copyRawData;
         }
       }
     });
-    return steps.length ? [{id: 'imp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), src: 'ملف ZWO', name: name.slice(0, 42), steps}] : null;
+    return steps.length ? [{id: 'zwo_' + name.replace(/[^A-Za-z0-9_-]/g, '_'), src: '🌍 ZWO', name: name.slice(0, 42), steps}] : null;
   }
 
   function parseMrcErg(text, fallbackName){
@@ -11465,14 +11431,22 @@ window.copyRawData = copyRawData;
     if(!txt) return [];
     const baseName = (fileName || 'تمرين مستورد').replace(/\.[^.]+$/, '').slice(0, 42);
 
+    // 1. فحص QDomyos-Zwift XML (<rows><row .../></rows>)
+    if(/<rows[\s>]/i.test(txt) && /<row[\s>]/i.test(txt)){
+      const q = parseQdomyosXml(txt, fileName);
+      if(q) return q;
+    }
+    // 2. فحص Zwift ZWO XML (<workout_file>...)
     if(txt.startsWith('<') || /<workout_file|<SteadyState|<IntervalsT/i.test(txt)){
-      const z = parseZwoXml(txt);
+      const z = parseZwoXml(txt, fileName);
       if(z) return z;
     }
+    // 3. فحص MRC / ERG
     if(/\[COURSE DATA\]/i.test(txt)){
       const m = parseMrcErg(txt, baseName);
       if(m) return m;
     }
+    // 4. فحص JSON
     if(txt.startsWith('{') || txt.startsWith('[')){
       try{
         const j = JSON.parse(txt);
@@ -11527,6 +11501,7 @@ window.copyRawData = copyRawData;
         if(out.length) return out;
       }catch(_){}
     }
+    // 5. فحص نص Intervals.icu Builder
     const st = parseIntervalsText(txt, cfg.refSpd || 10);
     if(st.length){
       return [{id: 'imp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), src: 'نص ICU', name: baseName, steps: st}];
@@ -11534,107 +11509,69 @@ window.copyRawData = copyRawData;
     return [];
   }
 
-  // ---------- الاتصال المباشر بواجهة Intervals.icu API + التعبئة التلقائية للخطة الأسبوعية (الطريقة 2) ----------
+  // ---------- 3. الجلب المباشر من المستودع العالمي cagnulein/qdomyos-zwift/train-programs-examples على GitHub ----------
+  async function fetchGlobalQdomyosRepo(autoPreviewFirst){
+    const stEl = $id('qdzStatusMsg');
+    if(stEl) stEl.textContent = '⏳ جارٍ الاتصال بمستودع cagnulein/qdomyos-zwift على GitHub وسحب ملفات البرامج الحقيقية...';
+    try{ toast('🌍 جارٍ سحب البرامج من المستودع العالمي...'); }catch(_){}
+    try{
+      const res = await fetch(QDZ_API_URL, {headers: {'Accept': 'application/vnd.github+json'}});
+      if(!res.ok) throw new Error('GitHub API HTTP ' + res.status);
+      const list = await res.json();
+      const workoutFiles = (Array.isArray(list) ? list : []).filter(f => f && f.type === 'file' && /\.(xml|zwo)$/i.test(f.name) && f.download_url);
+      if(!workoutFiles.length) throw new Error('لم يُعثر على ملفات XML/ZWO في المستودع');
+
+      const fetchedItems = [];
+      // جلب محتوى ملفات التمارين على دفعات متوازية من raw.githubusercontent.com
+      const batchSize = 8;
+      for(let i = 0; i < workoutFiles.length; i += batchSize){
+        const chunk = workoutFiles.slice(i, i + batchSize);
+        const results = await Promise.all(chunk.map(async f => {
+          try{
+            const r = await fetch(f.download_url);
+            if(!r.ok) return null;
+            const txt = await r.text();
+            const parsed = parseAnyWorkoutPayload(txt, f.name);
+            if(parsed && parsed.length){
+              const item = parsed[0];
+              item.id = 'qdz_' + f.name;
+              item.cat = 'qdz';
+              return item;
+            }
+          }catch(_){}
+          return null;
+        }));
+        results.forEach(it => { if(it) fetchedItems.push(it); });
+      }
+
+      if(!fetchedItems.length) throw new Error('تعذر تحليل ملفات المستودع');
+
+      // ترتيب البرامج بحيث تظهر برامج المشاية ذات السرعة الصريحة (🌍 QZ المشاية) في المقدمة
+      fetchedItems.sort((a, b) => (b.src.includes('المشاية') ? 1 : 0) - (a.src.includes('المشاية') ? 1 : 0));
+
+      qdzList = fetchedItems;
+      saveQdz();
+      curCat = 'qdz';
+      document.querySelectorAll('#extCatBar .ext-cat').forEach(b => b.classList.toggle('on', b.dataset.ecat === 'qdz'));
+      renderCards();
+      if(autoPreviewFirst && fetchedItems[0]){
+        previewItemInSchedule(fetchedItems[0]);
+      }
+      if(stEl) stEl.textContent = '✅ تم سحب ' + fetchedItems.length + ' برنامجاً حقيقياً مباشرة من مستودع QDomyos-Zwift العالمي على GitHub.';
+      try{ toast('✅ تم سحب ' + fetchedItems.length + ' برنامجاً من المستودع العالمي'); }catch(_){}
+    }catch(err){
+      if(stEl) stEl.textContent = '❌ تعذر الجلب من مستودع GitHub: ' + (err && err.message ? err.message : err);
+      try{ toast('❌ خطأ أثناء الاتصال بمستودع GitHub'); }catch(_){}
+    }
+  }
+
+  // ---------- 4. الجلب الصافي من حساب المستخدم في Intervals.icu (التقويم + المكتبة الشخصية، مع حذف التمارين التجريبية السابقة) ----------
   function fmtIsoDate(d){
     const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
     return y + '-' + m + '-' + day;
   }
 
-  // خطة أسبوعية متكاملة (7 أيام) تُرفع تلقائياً إلى تقويم المستخدم في Intervals.icu عبر POST /events/bulk?upsert=true
-  const WEEKLY_ICU_PLAN_SPEC = [
-    {
-      dayOffset: 0,
-      name: 'اليوم 1: حرق دهون مستقر (Zone 2 Base)',
-      desc: '- 5m 60% Pace\n- 20m 75% Pace incline 1%\n- 5m 55% Pace'
-    },
-    {
-      dayOffset: 1,
-      name: 'اليوم 2: فترات بيلات 6×1 د (VO2max HIIT)',
-      desc: '- 5m 60% Pace\n6x\n- 1m 105% Pace incline 1%\n- 1m 55% Pace\n- 4m 55% Pace'
-    },
-    {
-      dayOffset: 2,
-      name: 'اليوم 3: مشي جبلي لحرق الدهون (Incline Walk)',
-      desc: '- 3m 45% Pace incline 2%\n- 5m 52% Pace incline 6%\n- 5m 54% Pace incline 9%\n- 5m 54% Pace incline 11%\n- 4m 52% Pace incline 6%\n- 3m 45% Pace incline 1%'
-    },
-    {
-      dayOffset: 3,
-      name: 'اليوم 4: تيمبو العتبة 3×6 د (Threshold)',
-      desc: '- 5m 60% Pace\n3x\n- 6m 90% Pace incline 1%\n- 2m 60% Pace\n- 5m 55% Pace'
-    },
-    {
-      dayOffset: 4,
-      name: 'اليوم 5: فارتلك سويدي متغير (Speed Play)',
-      desc: '- 4m 60% Pace\n- 3m 85% Pace incline 1%\n- 2m 65% Pace\n- 2m 95% Pace incline 1%\n- 90s 60% Pace\n- 1m 105% Pace incline 2%\n- 90s 60% Pace\n- 3m 88% Pace incline 1%\n- 4m 55% Pace'
-    },
-    {
-      dayOffset: 5,
-      name: 'اليوم 6: تلال القوة المتدرجة (Hill Repeats)',
-      desc: '- 4m 60% Pace\n- 2m 80% Pace incline 4%\n- 90s 58% Pace\n- 2m 80% Pace incline 6%\n- 90s 58% Pace\n- 2m 80% Pace incline 8%\n- 90s 58% Pace\n- 2m 82% Pace incline 6%\n- 4m 55% Pace'
-    },
-    {
-      dayOffset: 6,
-      name: 'اليوم 7: هرم السرعة 5K (1-2-3-2-1 د)',
-      desc: '- 4m 60% Pace\n- 1m 100% Pace incline 1%\n- 1m 60% Pace\n- 2m 95% Pace incline 1%\n- 1m 60% Pace\n- 3m 90% Pace incline 1%\n- 90s 60% Pace\n- 2m 95% Pace incline 1%\n- 1m 60% Pace\n- 1m 102% Pace incline 1%\n- 4m 55% Pace'
-    }
-  ];
-
-  async function seedIntervalsWeeklyPlan(silentBeforeSync){
-    const stEl = $id('icuStatusMsg');
-    const ath = ($id('icuAthId') ? $id('icuAthId').value.trim() : cfg.athId) || '0';
-    const key = ($id('icuApiKey') ? $id('icuApiKey').value.trim() : cfg.apiKey) || '';
-    cfg.athId = ath; cfg.apiKey = key;
-    saveCfg();
-
-    if(!key){
-      if(stEl) stEl.innerHTML = '⚠️ أدخل مفتاح <b>API Key</b> الخاص بحسابك في Intervals.icu أولاً.';
-      try{ pgSet('tools'); const h = $id('extWorkoutHub'); if(h) h.open = true; }catch(_){}
-      try{ toast('🔑 أدخل مفتاح API Key أولاً'); }catch(_){}
-      return false;
-    }
-
-    const now = new Date();
-    const payload = WEEKLY_ICU_PLAN_SPEC.map(item => {
-      const d = new Date(now.getTime() + item.dayOffset * 86400000);
-      const dStr = fmtIsoDate(d);
-      return {
-        category: 'WORKOUT',
-        start_date_local: dStr + 'T00:00:00',
-        type: 'Run',
-        name: item.name,
-        description: item.desc,
-        external_id: 'kettler-s2-plan-' + dStr
-      };
-    });
-
-    if(stEl) stEl.textContent = '⏳ جارٍ رفع خطة الجري الأسبوعية (7 أيام) إلى تقويمك في موقع Intervals.icu...';
-    try{
-      const url = 'https://intervals.icu/api/v1/athlete/' + encodeURIComponent(ath) + '/events/bulk?upsert=true';
-      const auth = btoa('API_KEY:' + key);
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Basic ' + auth,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-      if(!res.ok){
-        throw new Error('HTTP ' + res.status);
-      }
-      if(!silentBeforeSync){
-        await syncIntervalsIcu(true);
-      }
-      return true;
-    }catch(err){
-      if(stEl) stEl.textContent = '❌ تعذر رفع الخطة إلى Intervals.icu: ' + (err && err.message ? err.message : err);
-      try{ toast('❌ تعذر رفع الخطة إلى Intervals.icu'); }catch(_){}
-      return false;
-    }
-  }
-
-  async function syncIntervalsIcu(skipAutoSeed){
+  async function syncIntervalsIcu(){
     const stEl = $id('icuStatusMsg');
     const ath = ($id('icuAthId') ? $id('icuAthId').value.trim() : cfg.athId) || '0';
     const key = ($id('icuApiKey') ? $id('icuApiKey').value.trim() : cfg.apiKey) || '';
@@ -11644,9 +11581,9 @@ window.copyRawData = copyRawData;
     saveCfg();
 
     if(!key){
-      if(stEl) stEl.innerHTML = '⚠️ أدخل مفتاح <b>API Key</b> الخاص بحسابك في Intervals.icu أولاً (من Settings → Developer Settings).';
+      if(stEl) stEl.innerHTML = '⚠️ أدخل مفتاح <b>API Key</b> الخاص بحسابك في Intervals.icu أولاً.';
       try{ pgSet('tools'); const h = $id('extWorkoutHub'); if(h) h.open = true; }catch(_){}
-      try{ toast('🔑 أدخل مفتاح API Key الخاص بـ Intervals.icu في قسم المصدر'); }catch(_){}
+      try{ toast('🔑 أدخل مفتاح API Key الخاص بـ Intervals.icu'); }catch(_){}
       return;
     }
 
@@ -11655,26 +11592,33 @@ window.copyRawData = copyRawData;
     const endD = new Date(now.getTime() + days * 86400000);
     const newest = fmtIsoDate(endD);
 
-    if(stEl) stEl.textContent = '⏳ جارٍ الاتصال بـ Intervals.icu وجلب تمارين الفترة (' + oldest + ' إلى ' + newest + ')...';
+    if(stEl) stEl.textContent = '⏳ جارٍ فحص تقويمك ومكتبتك الشخصية في Intervals.icu...';
     try{
-      const url = 'https://intervals.icu/api/v1/athlete/' + encodeURIComponent(ath) + '/events?oldest=' + oldest + '&newest=' + newest;
       const auth = btoa('API_KEY:' + key);
-      const res = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Basic ' + auth,
-          'Accept': 'application/json'
-        }
-      });
-      if(!res.ok){
-        throw new Error('HTTP ' + res.status + (res.status === 401 || res.status === 403 ? ' (تأكد من صحة مفتاح API Key ومعرف الرياضي)' : ''));
-      }
-      const events = await res.json();
+      const headers = {'Authorization': 'Basic ' + auth, 'Accept': 'application/json'};
+
+      // 1) جلب أحداث التقويم
+      const evUrl = 'https://intervals.icu/api/v1/athlete/' + encodeURIComponent(ath) + '/events?oldest=' + oldest + '&newest=' + newest;
+      const evRes = await fetch(evUrl, {method: 'GET', headers});
+      if(!evRes.ok) throw new Error('HTTP ' + evRes.status);
+      const events = await evRes.json();
+
       const refSpd = Math.max(4, Math.min(20, Number(cfg.refSpd) || 10));
       const fetched = [];
 
-      (Array.isArray(events) ? events : []).forEach(ev => {
-        if(!ev || (ev.category && ev.category !== 'WORKOUT')) return;
+      for(const ev of (Array.isArray(events) ? events : [])){
+        if(!ev) continue;
+        // حذف أي تمرين تجريبي سبق أن أنشأناه تلقائياً في الخطوة السابقة (kettler-s2-plan-*) حتى يبقى تقويمك نظيفاً تماماً
+        if(ev.external_id && String(ev.external_id).startsWith('kettler-s2-plan-') && ev.id){
+          try{
+            await fetch('https://intervals.icu/api/v1/athlete/' + encodeURIComponent(ath) + '/events/' + encodeURIComponent(ev.id), {
+              method: 'DELETE',
+              headers
+            });
+          }catch(_){}
+          continue;
+        }
+        if(ev.category && ev.category !== 'WORKOUT') continue;
         let steps = [];
         if(ev.workout_doc && Array.isArray(ev.workout_doc.steps) && ev.workout_doc.steps.length){
           steps = parseIntervalsWorkoutDoc(ev.workout_doc, refSpd);
@@ -11682,43 +11626,63 @@ window.copyRawData = copyRawData;
         if(!steps.length && ev.description){
           steps = parseIntervalsText(ev.description, refSpd);
         }
-        if(!steps.length) return;
+        if(!steps.length) continue;
         const dStr = String(ev.start_date_local || '').slice(0, 10);
         const isToday = dStr === oldest;
         fetched.push({
-          id: 'icu_' + (ev.id || dStr + '_' + fetched.length),
+          id: 'icu_ev_' + (ev.id || dStr + '_' + fetched.length),
           cat: 'icu',
-          src: isToday ? 'تمرين اليوم WOD' : 'Intervals.icu',
+          src: isToday ? 'تمرين اليوم WOD' : 'تقويم ICU',
           dateStr: isToday ? 'اليوم (WOD)' : dStr.slice(5),
           name: ((isToday ? '⭐ ' : '') + (ev.name || 'تمرين ' + dStr)).slice(0, 42),
           steps
         });
-      });
+      }
 
-      // إن كان تقويم المستخدم في الموقع فارغاً، نعبئه تلقائياً بخطة الـ 7 أيام ثم نعيد الجلب فوراً!
-      if(!fetched.length && !skipAutoSeed){
-        const seeded = await seedIntervalsWeeklyPlan(true);
-        if(seeded){
-          await syncIntervalsIcu(true);
-          return;
+      // 2) جلب مكتبة التمارين المحفوظة في حساب المستخدم (GET /api/v1/athlete/{id}/workouts)
+      try{
+        const wkUrl = 'https://intervals.icu/api/v1/athlete/' + encodeURIComponent(ath) + '/workouts';
+        const wkRes = await fetch(wkUrl, {method: 'GET', headers});
+        if(wkRes.ok){
+          const libWorkouts = await wkRes.json();
+          (Array.isArray(libWorkouts) ? libWorkouts : []).forEach(wk => {
+            if(!wk) return;
+            let steps = [];
+            if(wk.workout_doc && Array.isArray(wk.workout_doc.steps) && wk.workout_doc.steps.length){
+              steps = parseIntervalsWorkoutDoc(wk.workout_doc, refSpd);
+            }
+            if(!steps.length && wk.description){
+              steps = parseIntervalsText(wk.description, refSpd);
+            }
+            if(!steps.length) return;
+            fetched.push({
+              id: 'icu_lib_' + (wk.id || fetched.length),
+              cat: 'icu',
+              src: 'مكتبة ICU 📖',
+              name: (wk.name || 'تمرين مكتبة ICU').slice(0, 42),
+              steps
+            });
+          });
         }
-      }
-
-      if(!fetched.length){
-        if(stEl) stEl.textContent = 'ℹ️ لا توجد تمارين مجدولة حالياً — اضغط «📅 تعبئة تقويم الموقع بخطة أسبوعية» لإنشائها تلقائياً.';
-        try{ toast('📅 اضغط «تعبئة تقويم الموقع بخطة أسبوعية»'); }catch(_){}
-        return;
-      }
+      }catch(_){}
 
       icuList = fetched;
       saveIcu();
+      renderCards();
+
+      if(!fetched.length){
+        if(stEl) stEl.textContent = 'ℹ️ تم تنظيف التمارين التجريبية؛ تقويمك ومكتبتك في Intervals.icu فارغان حالياً (يمكنك استخدام برامج مستودع QDomyos-Zwift العالمي أعلاه فوراً).';
+        try{ toast('ℹ️ تم تنظيف التقويم؛ استخدم زر «🌍 جلب المستودع العالمي»'); }catch(_){}
+        return;
+      }
+
       curCat = 'icu';
       document.querySelectorAll('#extCatBar .ext-cat').forEach(b => b.classList.toggle('on', b.dataset.ecat === 'icu'));
       renderCards();
       pgSet('run');
       previewItemInSchedule(fetched[0]);
-      if(stEl) stEl.textContent = '✅ تم جلب ' + fetched.length + ' تمرين من تقويمك في Intervals.icu واقتراح «' + fetched[0].name + '» في الجدول.';
-      try{ toast('✅ تم جلب ' + fetched.length + ' تمرين من Intervals.icu إلى الجدول'); }catch(_){}
+      if(stEl) stEl.textContent = '✅ تم جلب ' + fetched.length + ' تمرين من حسابك في Intervals.icu.';
+      try{ toast('✅ تم جلب ' + fetched.length + ' تمرين من Intervals.icu'); }catch(_){}
     }catch(err){
       if(stEl) stEl.textContent = '❌ تعذر الجلب من Intervals.icu: ' + (err && err.message ? err.message : err);
       try{ toast('❌ خطأ في الاتصال بـ Intervals.icu'); }catch(_){}
@@ -11756,6 +11720,11 @@ window.copyRawData = copyRawData;
     updateRefPaceLabel();
     renderCards();
 
+    // إن لم تكن برامج المستودع العالمي محمّلة بعد وكان الإنترنت متصلاً، نسحبها تلقائياً من GitHub
+    if(!qdzList.length && navigator.onLine){
+      setTimeout(() => fetchGlobalQdomyosRepo(false), 600);
+    }
+
     document.querySelectorAll('#extCatBar .ext-cat').forEach(btn => {
       btn.addEventListener('click', () => {
         curCat = btn.dataset.ecat || 'all';
@@ -11771,14 +11740,14 @@ window.copyRawData = copyRawData;
       if(h){ h.open = true; setTimeout(() => { try{ h.scrollIntoView({behavior: 'smooth', block: 'start'}); }catch(_){} }, 60); }
     };
 
-    const qSyncBtn = $id('extQuickSyncBtn');
-    if(qSyncBtn) qSyncBtn.onclick = () => syncIntervalsIcu(false);
+    const qQdzBtn = $id('extQuickQdzBtn');
+    if(qQdzBtn) qQdzBtn.onclick = () => fetchGlobalQdomyosRepo(true);
+
+    const qdzBtn = $id('qdzFetchBtn');
+    if(qdzBtn) qdzBtn.onclick = () => fetchGlobalQdomyosRepo(true);
 
     const syncBtn = $id('icuSyncBtn');
-    if(syncBtn) syncBtn.onclick = () => syncIntervalsIcu(false);
-
-    const seedBtn = $id('icuSeedPlanBtn');
-    if(seedBtn) seedBtn.onclick = () => seedIntervalsWeeklyPlan(false);
+    if(syncBtn) syncBtn.onclick = () => syncIntervalsIcu();
 
     const parseBtn = $id('icuParseBtn');
     if(parseBtn) parseBtn.onclick = () => {
@@ -11797,14 +11766,14 @@ window.copyRawData = copyRawData;
       renderCards();
       pgSet('run');
       previewItemInSchedule(parsed[0]);
-      try{ toast('✅ تم تحويل التمرين واقتراحه في الجدول'); }catch(_){}
+      try{ toast('✅ تم تحويل التمرين إلى الجدول'); }catch(_){}
     };
 
     const urlBtn = $id('extFetchUrlBtn');
     if(urlBtn) urlBtn.onclick = async () => {
       const u = ($id('extUrlInp') ? $id('extUrlInp').value : '').trim();
       const stEl = $id('extImpStatusMsg');
-      if(!u){ if(stEl) stEl.textContent = '⚠️ الصق رابط ملف التمرين (.zwo أو .json أو .mrc) أولاً.'; return; }
+      if(!u){ if(stEl) stEl.textContent = '⚠️ الصق رابط ملف التمرين (.xml أو .zwo أو .json) أولاً.'; return; }
       if(stEl) stEl.textContent = '⏳ جارٍ جلب ملف التمرين من الرابط...';
       try{
         const r = await fetch(u);
@@ -11862,13 +11831,13 @@ window.copyRawData = copyRawData;
 
     const clrBtn = $id('extClearImpBtn');
     if(clrBtn) clrBtn.onclick = () => {
-      icuList = []; impList = [];
-      saveIcu(); saveImp();
+      qdzList = []; icuList = []; impList = [];
+      saveQdz(); saveIcu(); saveImp();
       curCat = 'all';
       document.querySelectorAll('#extCatBar .ext-cat').forEach(b => b.classList.toggle('on', b.dataset.ecat === 'all'));
       renderCards();
-      if($id('extImpStatusMsg')) $id('extImpStatusMsg').textContent = '🗑️ تم مسح البرامج المستوردة والإبقاء على القوالب العالمية الثمانية.';
-      try{ toast('🗑️ تم مسح البرامج المستوردة'); }catch(_){}
+      if($id('extImpStatusMsg')) $id('extImpStatusMsg').textContent = '🗑️ تم مسح جميع البرامج المستوردة من الذاكرة المحلية.';
+      try{ toast('🗑️ تم مسح الكاش المستورد'); }catch(_){}
     };
 
     const svBtn = $id('extSaveToProgsBtn');
