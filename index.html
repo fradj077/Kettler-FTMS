@@ -2354,7 +2354,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 #chTip button{min-height:34px;padding:0 10px;font-size:12px}
 .seg.flash{box-shadow:0 0 0 2px #38bdf8}
 .seg .dup{color:#e2e8f0;background:#243142;border-color:var(--line-light)}
-/* ===== v114.1-EXT: ربط المستودعات العالمية المفتوحة على GitHub (QDomyos-Zwift + Zwift ZWO) ===== */
+/* ===== v114.1-EXT: ربط المستودعات العالمية المفتوحة على GitHub مع شرح هدف وفائدة كل برنامج ===== */
 .ext-sug-box{margin-top:8px;padding:10px;border-radius:12px;background:rgba(15,23,42,.65);border:1px solid var(--line,#263248)}
 .ext-sug-hd{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;margin-bottom:8px}
 .ext-sug-ttl{font-size:13px;font-weight:800;color:#38bdf8;display:flex;align-items:center;gap:5px}
@@ -2364,17 +2364,21 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 .ext-cat{flex:0 0 auto;min-height:28px!important;padding:2px 10px!important;font-size:11.5px!important;font-weight:700;border-radius:999px;border:1px solid var(--line,#263248);background:var(--panel-card,#131c2a);color:var(--dim,#94a3b8)}
 .ext-cat.on{background:rgba(56,189,248,.18);color:#38bdf8;border-color:#38bdf8}
 .ext-cards{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
-.ext-card{flex:0 0 auto;min-width:155px;max-width:220px;min-height:68px!important;padding:8px 10px!important;text-align:right;border-radius:11px;border:1px solid var(--line,#263248);background:var(--panel-card,#131c2a);color:var(--text,#f1f5f9);scroll-snap-align:start;display:flex!important;flex-direction:column;justify-content:space-between}
+.ext-card{flex:0 0 auto;min-width:175px;max-width:235px;min-height:86px!important;padding:8px 10px!important;text-align:right;border-radius:11px;border:1px solid var(--line,#263248);background:var(--panel-card,#131c2a);color:var(--text,#f1f5f9);scroll-snap-align:start;display:flex!important;flex-direction:column;justify-content:space-between}
 .ext-card.on{border-color:#10b981;box-shadow:0 0 0 1px #10b981 inset;background:rgba(16,185,129,.11)}
 .ext-card-top{display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:10px;font-weight:800;color:#38bdf8;margin-bottom:2px}
 .ext-card-top .bdg-zw1{color:#a78bfa}
 .ext-card-top .bdg-zw2{color:#34d399}
 .ext-card-top .bdg-imp{color:#f59e0b}
-.ext-card b{display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff;direction:ltr;text-align:right}
-.ext-card span{display:block;font-size:11px;color:var(--dim,#94a3b8);margin-top:3px;font-weight:600}
-.ext-prv-bar{display:none;margin-top:8px;padding:8px 10px;border-radius:10px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.35);align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.ext-card b{display:block;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff;direction:ltr;text-align:right}
+.ext-card-goal{display:block;font-size:11px;color:#38bdf8;font-weight:700;margin-top:3px;line-height:1.35;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ext-card span.ext-meta{display:block;font-size:10.5px;color:var(--dim,#94a3b8);margin-top:4px;font-weight:600}
+.ext-prv-bar{display:none;margin-top:8px;padding:10px 12px;border-radius:10px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.35);flex-direction:column;gap:6px}
 .ext-prv-bar.show{display:flex}
-.ext-prv-txt{font-size:12px;font-weight:700;color:#6ee7b7;flex:1;min-width:160px}
+.ext-prv-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.ext-prv-txt{font-size:12.5px;font-weight:800;color:#6ee7b7;flex:1;min-width:160px}
+.ext-prv-goal{font-size:12px;color:#e2e8f0;line-height:1.65;background:rgba(15,23,42,.55);padding:7px 9px;border-radius:8px;border-right:3px solid #38bdf8}
+.ext-prv-desc{font-size:11px;color:var(--dim,#94a3b8);line-height:1.5;direction:ltr;text-align:left;margin-top:2px}
 .ext-prv-btns{display:flex;gap:6px}
 .ext-prv-btns button{min-height:34px!important;padding:4px 10px!important;font-size:12px!important;font-weight:800;border-radius:8px}
 .ext-hub-sec{background:rgba(15,23,42,.55);border:1px solid var(--line,#263248);border-radius:10px;padding:10px;margin-top:8px}
@@ -2774,11 +2778,15 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
       </div>
       <div class="ext-cards" id="extSugCards"></div>
       <div class="ext-prv-bar" id="extPreviewBar">
-        <div class="ext-prv-txt" id="extPreviewTxt"></div>
-        <div class="ext-prv-btns">
-          <button type="button" class="btn-save" id="extSaveToProgsBtn">💾 حفظ في برامجي</button>
-          <button type="button" id="extJumpEditBtn">✏️ تعديل المراحل</button>
+        <div class="ext-prv-top">
+          <div class="ext-prv-txt" id="extPreviewTxt"></div>
+          <div class="ext-prv-btns">
+            <button type="button" class="btn-save" id="extSaveToProgsBtn">💾 حفظ في برامجي</button>
+            <button type="button" id="extJumpEditBtn">✏️ تعديل المراحل</button>
+          </div>
         </div>
+        <div class="ext-prv-goal" id="extPreviewGoal"></div>
+        <div class="ext-prv-desc" id="extPreviewDesc"></div>
       </div>
     </div>
   </div>
@@ -2809,7 +2817,7 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
     <div class="ext-hub-sec">
       <h4><span>🌍 1. المستودعات العالمية المفتوحة على GitHub (60 برنامجاً حقيقياً)</span></h4>
       <div style="font-size:11.5px;color:var(--dim);margin-bottom:6px;line-height:1.7">
-        يسحب التطبيق آلياً جميع ملفات التمارين (<code>.xml</code> و<code>.zwo</code>) مباشرة من 4 مستودعات عالمية مفتوحة على GitHub:<br>
+        يسحب التطبيق آلياً جميع ملفات التمارين (<code>.xml</code> و<code>.zwo</code>) مباشرة من 4 مستودعات عالمية مفتوحة على GitHub مع استخراج هدف وفائدة كل تمرين:<br>
         • <a href="https://github.com/cagnulein/qdomyos-zwift/tree/master/train-programs-examples" target="_blank" rel="noopener" style="color:#38bdf8">cagnulein/qdomyos-zwift</a> (5 برامج XML)<br>
         • <a href="https://github.com/bdcheung/zwift_workouts" target="_blank" rel="noopener" style="color:#a78bfa">bdcheung/zwift_workouts</a> (39 برنامج ZWO)<br>
         • <a href="https://github.com/michaelahlers/michaelahlers-zwift-workouts" target="_blank" rel="noopener" style="color:#34d399">michaelahlers/zwift-workouts</a> (12 برنامج ZWO)<br>
@@ -10971,14 +10979,13 @@ window.copyRawData = copyRawData;
   try{ if(localStorage.getItem(KEY) === '1'){ tg.checked = true; setTimeout(startCam, 1500); } }catch(_){}
 })();
 
-// ===== v114.1-EXT: ربط المستودعات العالمية المفتوحة على GitHub (QDomyos-Zwift + Zwift ZWO — 60 برنامجاً حقيقياً بدون Intervals.icu) =====
+// ===== v114.1-EXT: ربط المستودعات العالمية المفتوحة على GitHub مع شرح الهدف والفائدة لكل برنامج =====
 (function(){
-  const K_CFG = 'kettler_ext_wk_cfg_v3';
-  const K_REPO = 'kettler_ext_repo_list_v3';
-  const K_IMP = 'kettler_ext_imp_list_v3';
+  const K_CFG = 'kettler_ext_wk_cfg_v4';
+  const K_REPO = 'kettler_ext_repo_list_v4';
+  const K_IMP = 'kettler_ext_imp_list_v4';
   const $id = id => document.getElementById(id);
 
-  // المستودعات العالمية الأربعة على GitHub
   const GLOBAL_REPOS = [
     {
       cat: 'qdz',
@@ -11009,12 +11016,11 @@ window.copyRawData = copyRawData;
   let activeId = '';
 
   function loadState(){
-    // تنظيف مفاتيح النسخ السابقة (بما فيها Intervals.icu)
-    ['kettler_ext_icu_list_v1', 'kettler_ext_icu_list_v2', 'kettler_ext_qdz_list_v2'].forEach(k => {
+    ['kettler_ext_icu_list_v1', 'kettler_ext_icu_list_v2', 'kettler_ext_qdz_list_v2', 'kettler_ext_repo_list_v3'].forEach(k => {
       try{ localStorage.removeItem(k); }catch(_){}
     });
     try{
-      const c = JSON.parse(localStorage.getItem(K_CFG) || localStorage.getItem('kettler_ext_wk_cfg_v2') || 'null');
+      const c = JSON.parse(localStorage.getItem(K_CFG) || localStorage.getItem('kettler_ext_wk_cfg_v3') || 'null');
       if(c && typeof c === 'object'){
         if(c.refSpd) cfg.refSpd = c.refSpd;
         if(c.defInc != null) cfg.defInc = c.defInc;
@@ -11067,6 +11073,101 @@ window.copyRawData = copyRawData;
     return out.length ? out : [{m: 5, s: clampSpd(ref * 0.7), i: dInc}];
   }
 
+  // ---------- استنتاج الهدف والفائدة البدنية لكل برنامج باللغة العربية بناءً على مراحله ووصفه ----------
+  function computeWorkoutGoal(item, segs){
+    const nm = String(item.name || '').toLowerCase();
+    const totMin = Math.round(segs.reduce((a, g) => a + g.m, 0) * 10) / 10;
+    const ref = Math.max(4, Math.min(20, Number(cfg.refSpd) || 10));
+    const maxS = Math.max(...segs.map(g => g.s));
+    const avgS = segs.reduce((a, g) => a + g.s * g.m, 0) / Math.max(1, totMin);
+    const maxI = Math.max(...segs.map(g => g.i));
+    const maxPct = maxS / ref;
+    const avgPct = avgS / ref;
+
+    // حساب عدد فترات السرعة العالية (القفزات التناوبية)
+    let bursts = 0;
+    for(let k = 1; k < segs.length; k++){
+      if(segs[k].s - segs[k - 1].s >= 1.2) bursts++;
+    }
+
+    if(/calorie-barbara|fatboy/i.test(nm)){
+      return {
+        short: '🎯 حرق سعرات مكثف وتنشيط الأيض',
+        detail: '🎯 الهدف والفائدة: برنامج مخصص لتعظيم حرق السعرات الحرارية والدهون عبر التبديل المدروس بين سرعات الجري المتوسط والمشي السريع، مما يرفع استهلاك الأكسجين دون إنهاك المفاصل.'
+      };
+    }
+    if(/fogliano/i.test(nm)){
+      return {
+        short: '🎯 محاكاة طريق طبيعي وتقوية الساقين',
+        detail: '🎯 الهدف والفائدة: يحاكي تضاريس مسار طريق خارجي حقيقي بتغييرات مستمرة في السرعة والميل؛ يفيد في تقوية عضلات الساقين والأوتار وكسر رتابة الجري الثابت.'
+      };
+    }
+    if(/hrzones_1h/i.test(nm)){
+      return {
+        short: '🎯 بناء التحمّل الهوائي وتدريب نبض القلب',
+        detail: '🎯 الهدف والفائدة: جلسة تحمّل متكاملة (طويلة المدة) تتنقل بين مناطق نبض القلب (Z2 إلى Z4) لتقوية عضلة القلب وزيادة كفاءة الرئتين في التمارين الطويلة.'
+      };
+    }
+    if(/hrzones_example|warmup/i.test(nm)){
+      return {
+        short: '🎯 إحماء متدرج وتهيئة القلب والعضلات',
+        detail: '🎯 الهدف والفائدة: تمرين قصير متدرج لرفع حرارة العضلات ومعدل النبض بأمان قبل الجري السريع، أو كجلسة تنشيطية سريعة.'
+      };
+    }
+    if(/echelon/i.test(nm)){
+      return {
+        short: '🎯 تدرج تصاعدي لرفع قوة التحمّل',
+        detail: '🎯 الهدف والفائدة: يعتمد على زيادة الجهد والميل تدريجياً في مراحل قصيرة متتالية لاختبار وتطوير قدرة العضلات على الصمود تحت الجهد المتزايد.'
+      };
+    }
+    if(/active_recovery|recovery/i.test(nm) || maxPct <= 0.68){
+      return {
+        short: '🎯 استشفاء نشط وتخفيف تيبّس العضلات',
+        detail: '🎯 الهدف والفائدة: جري/مشي خفيف بشدة منخفضة لتنشيط الدورة الدموية في الساقين وتسريع التخلص من حمض اللاكتيك بعد أيام التدريب الشاقة.'
+      };
+    }
+    if(/ftp test|step_test/i.test(nm)){
+      return {
+        short: '🎯 اختبار قياس مستوى اللياقة والسرعة المرجعية',
+        detail: '🎯 الهدف والفائدة: تقييم علمي لتحديد أقصى سرعة يمكنك الحفاظ عليها (عتبة اللاكتات)، لضبط خانة «السرعة المرجعية 100%» بدقة لبقية برامجك.'
+      };
+    }
+    if(/pyramid/i.test(nm)){
+      return {
+        short: '🎯 تمرين هرمي لرفع السرعة والتحمّل معاً',
+        detail: '🎯 الهدف والفائدة: يتدرج في طول وشدة الفترات صعوداً ثم نزولاً، مما يجمع بين فائدة السرعة العالية والقدرة على التحكم في النَفَس تحت الإجهاد.'
+      };
+    }
+    if(/revolver|15x1|nine hammers|violator|hell hath|very dark|blender|fight club|hunted|elements of style|extra shot/i.test(nm) || (bursts >= 5 && maxPct >= 1.04)){
+      return {
+        short: '🎯 فترات قصوى (HIIT / VO2max) لرفع السرعة والنَفَس',
+        detail: '🎯 الهدف والفائدة: تدريب فترات متقطعة عالي الشدة (' + bursts + ' دفعات سرعة) يرفع الحد الأقصى لاستهلاك الأكسجين (VO2max) ويزيد سرعة الجري وحرق السعرات بعد التمرين.'
+      };
+    }
+    if(/3x10|2 x 20|2 x 30|1 x 60|1 x 30|sst|rookie|angels|wretched|long scream|half is easy|tempo/i.test(nm) || (avgPct >= 0.82 && bursts <= 4)){
+      return {
+        short: '🎯 تطوير عتبة اللاكتات (Threshold) وطول النَفَس',
+        detail: '🎯 الهدف والفائدة: يركز على الجري بـ«وتيرة العتبة» (قريباً من 85%–100% من سرعتك المرجعية) لفترات ممتدة، وهو أفضل تمرين لزيادة قدرتك على الجري السريع لفترة أطول دون تعب مبكر.'
+      };
+    }
+    if(/z5|110%|120%/i.test(nm)){
+      return {
+        short: '🎯 تطوير القوة الهوائية القصوى (Zone 5)',
+        detail: '🎯 الهدف والفائدة: فترات قوية في المنطقة الخامسة (أعلى من سرعتك المرجعية بـ 10%–20%) لتوسيع السعة الهوائية ورفع سقف سرعتك القصوى.'
+      };
+    }
+    if(maxI >= 4){
+      return {
+        short: '🎯 تقوية الساقين وحرق الدهون بالميل (' + maxI + '٪)',
+        detail: '🎯 الهدف والفائدة: يوظف ارتفاع المشاية لتشغيل عضلات الفخذ والسمانة الخلفية بقوة مضاعفة مع رفع معدل الحرق دون الحاجة لسرعات عالية.'
+      };
+    }
+    return {
+      short: '🎯 بناء اللياقة الهوائية والسرعة المتوازنة',
+      detail: '🎯 الهدف والفائدة: تمرين متنوع يجمع بين التحمّل الهوائي وتغييرات السرعة (' + segs.length + ' مراحل خلال ' + totMin + ' دقيقة) لتحسين كفاءة القلب وحرق الدهون.'
+    };
+  }
+
   function updateRefPaceLabel(){
     const el = $id('extRefPaceLbl');
     if(!el) return;
@@ -11100,6 +11201,7 @@ window.copyRawData = copyRawData;
       const totMin = Math.round(segs.reduce((a, g) => a + g.m, 0) * 10) / 10;
       const maxS = Math.max(...segs.map(g => g.s));
       const maxI = Math.max(...segs.map(g => g.i));
+      const goal = computeWorkoutGoal(it, segs);
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'ext-card' + (it.id === activeId ? ' on' : '');
@@ -11108,7 +11210,8 @@ window.copyRawData = copyRawData;
       btn.innerHTML =
         '<div class="ext-card-top"><span class="'+topCls+'">' + esc(topBadge) + '</span><span>' + segs.length + ' مراحل</span></div>' +
         '<b>' + esc(it.name) + '</b>' +
-        '<span>⏱ ' + totMin + ' د • ⚡ ' + maxS + ' كم/س' + (maxI > 0 ? ' • ⛰️ ' + maxI + '٪' : '') + '</span>';
+        '<div class="ext-card-goal">' + esc(goal.short) + '</div>' +
+        '<span class="ext-meta">⏱ ' + totMin + ' د • ⚡ ' + maxS + ' كم/س' + (maxI > 0 ? ' • ⛰️ ' + maxI + '٪' : '') + '</span>';
       btn.onclick = () => previewItemInSchedule(it);
       box.appendChild(btn);
     });
@@ -11121,6 +11224,7 @@ window.copyRawData = copyRawData;
     }
     activeId = it.id;
     const segs = materializeSegs(it);
+    const goal = computeWorkoutGoal(it, segs);
     const pn = $id('progName'), ps = $id('progSel'), sg = $id('segs');
     if(pn) pn.value = it.name;
     if(ps) ps.value = (typeof progs !== 'undefined' && progs[it.name]) ? it.name : '';
@@ -11140,15 +11244,25 @@ window.copyRawData = copyRawData;
     }catch(_){}
 
     const totMin = Math.round(segs.reduce((a, g) => a + g.m, 0) * 10) / 10;
-    const bar = $id('extPreviewBar'), txt = $id('extPreviewTxt');
+    const bar = $id('extPreviewBar'), txt = $id('extPreviewTxt'), gEl = $id('extPreviewGoal'), dEl = $id('extPreviewDesc');
     if(bar && txt){
       bar.classList.add('show');
-      txt.textContent = '📋 معروض الآن في الجدول: «' + it.name + '» (' + segs.length + ' مراحل • ' + totMin + ' دقيقة)';
+      txt.textContent = '📋 «' + it.name + '» (' + segs.length + ' مراحل • ' + totMin + ' دقيقة)';
     }
-    try{ info('تم تحميل «' + it.name + '» في جدول المراحل'); }catch(_){}
+    if(gEl) gEl.textContent = goal.detail;
+    if(dEl){
+      if(it.desc && it.desc.trim()){
+        dEl.style.display = 'block';
+        dEl.textContent = '📖 وصف الملف الأصلي: ' + it.desc.trim();
+      } else {
+        dEl.style.display = 'none';
+        dEl.textContent = '';
+      }
+    }
+    try{ info('تم تحميل «' + it.name + '» في الجدول — ' + goal.short); }catch(_){}
   }
 
-  // ---------- 1. محلل ملفات XML الخاصة بمستودع QDomyos-Zwift (<rows><row .../><repeat times="N">...</repeat></rows>) ----------
+  // ---------- 1. محلل ملفات XML الخاصة بمستودع QDomyos-Zwift ----------
   function parseQdomyosDurationToMin(durStr){
     if(!durStr) return 1;
     const s = String(durStr).trim();
@@ -11170,6 +11284,8 @@ window.copyRawData = copyRawData;
     const rowsRoot = doc.querySelector('rows');
     if(!rowsRoot) return null;
     const baseName = String(fileName || 'QDomyos Workout').replace(/\.(xml|zwo)$/i, '');
+    const descEl = doc.querySelector('description');
+    const desc = (descEl && descEl.textContent.trim()) || '';
     const steps = [];
 
     const getAttrNum = (el, names) => {
@@ -11232,17 +11348,17 @@ window.copyRawData = copyRawData;
       cat: 'qdz',
       src: '🏃 QDomyos-Zwift',
       name: baseName.slice(0, 44),
+      desc: desc.slice(0, 260),
       steps
     }];
   }
 
-  // ---------- 2. محلل ملفات Zwift (.zwo XML) مع دعم احتياطي للملفات التي تحتوي على رموز خاصة في الوصف ----------
+  // ---------- 2. محلل ملفات Zwift (.zwo XML) مع استخراج <description> ----------
   function parseZwoXml(xmlText, fallbackName){
     const clean = String(xmlText || '').replace(/^\uFEFF/, '').trim();
     const baseFallback = fallbackName ? fallbackName.replace(/\.zwo$/i, '') : 'تمرين ZWO';
     const steps = [];
 
-    // قراءة خصائص الوسم سواء عبر DOMParser أو Regex
     const extractAttr = (attrObj, keys, defVal) => {
       for(const k of keys){
         const v = attrObj[k.toLowerCase()];
@@ -11284,12 +11400,13 @@ window.copyRawData = copyRawData;
       }
     };
 
-    // استخراج الاسم من <name>...</name> أو اسم الملف
     const nameMatch = clean.match(/<name>([\s\S]*?)<\/name>/i);
     let name = (nameMatch && nameMatch[1].replace(/<!\[CDATA\[|\]\]>/g, '').trim()) || baseFallback;
     if(baseFallback && (name.length < 3 || /^workout$/i.test(name))) name = baseFallback;
 
-    // استخراج قسم <workout>...</workout> وتحليل الوسوم داخله (يعمل حتى لو كان في <description> رمز & غير مهرب)
+    const descMatch = clean.match(/<description>([\s\S]*?)<\/description>/i);
+    const desc = (descMatch && descMatch[1].replace(/<!\[CDATA\[|\]\]>/g, '').replace(/\s+/g, ' ').trim()) || '';
+
     const wkMatch = clean.match(/<workout\b[^>]*>([\s\S]*?)<\/workout>/i);
     const bodyStr = wkMatch ? wkMatch[1] : clean;
     const tagRe = /<(SteadyState|Warmup|Cooldown|Ramp|IntervalsT|FreeRide|MaxEffort)\b([^>]*?)\/?>/gi;
@@ -11310,18 +11427,19 @@ window.copyRawData = copyRawData;
       id: 'zwo_' + (fallbackName || name).replace(/[^A-Za-z0-9_-]/g, '_'),
       src: '⚡ Zwift ZWO',
       name: name.slice(0, 44),
+      desc: desc.slice(0, 260),
       steps
     }] : null;
   }
 
   function parseMrcErg(text, fallbackName){
     const lines = String(text || '').split(/\r?\n/);
-    let inData = false, name = fallbackName || 'تمرين MRC/ERG', ftp = 250;
+    let inData = false, name = fallbackName || 'تمرين MRC/ERG', desc = '', ftp = 250;
     const pts = [];
     for(const raw of lines){
       const l = raw.trim();
       if(!l) continue;
-      if(/^DESCRIPTION\s*=/i.test(l)) name = l.split('=')[1].trim() || name;
+      if(/^DESCRIPTION\s*=/i.test(l)){ desc = l.split('=')[1].trim() || ''; if(!fallbackName) name = desc || name; }
       if(/^FILE NAME\s*=/i.test(l) && !fallbackName) name = l.split('=')[1].trim() || name;
       if(/^FTP\s*=/i.test(l)) ftp = parseFloat(l.split('=')[1]) || 250;
       if(/^\[COURSE DATA\]/i.test(l)){ inData = true; continue; }
@@ -11339,7 +11457,7 @@ window.copyRawData = copyRawData;
       const pct = avgV > 140 ? (avgV / ftp) : (avgV / 100);
       steps.push({m: clampMin(dt), pct: Math.max(0.4, Math.min(1.4, pct)), i: clampInc(cfg.defInc || 0)});
     }
-    return steps.length ? [{id: 'imp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), src: 'MRC/ERG', name: name.slice(0, 44), steps}] : null;
+    return steps.length ? [{id: 'imp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), src: 'MRC/ERG', name: name.slice(0, 44), desc: desc.slice(0, 260), steps}] : null;
   }
 
   function parseAnyWorkoutPayload(rawText, fileName){
@@ -11363,7 +11481,7 @@ window.copyRawData = copyRawData;
       try{
         const j = JSON.parse(txt);
         const out = [];
-        const addOne = (nm, arr, srcTag) => {
+        const addOne = (nm, arr, srcTag, dsc) => {
           const steps = [];
           (arr || []).forEach(g => {
             if(!g) return;
@@ -11379,6 +11497,7 @@ window.copyRawData = copyRawData;
               id: 'imp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
               src: srcTag || 'JSON',
               name: String(nm || baseName).slice(0, 44),
+              desc: String(dsc || '').slice(0, 260),
               steps
             });
           }
@@ -11386,23 +11505,23 @@ window.copyRawData = copyRawData;
 
         if(Array.isArray(j)){
           if(j.length && (j[0].m != null || j[0].duration != null || j[0].s != null)){
-            addOne(baseName, j, 'JSON');
+            addOne(baseName, j, 'JSON', '');
           } else {
             j.forEach((item, idx) => {
               if(item && Array.isArray(item.steps || item.segs || item.segments)){
-                addOne(item.name || item.title || (baseName + ' ' + (idx + 1)), item.steps || item.segs || item.segments, 'JSON');
+                addOne(item.name || item.title || (baseName + ' ' + (idx + 1)), item.steps || item.segs || item.segments, 'JSON', item.description || '');
               }
             });
           }
         } else if(j && typeof j === 'object'){
           if(j.workout && Array.isArray(j.workout.exercises || j.workout.steps)){
-            addOne(j.workout.name || baseName, j.workout.exercises || j.workout.steps, 'Open-Workout');
+            addOne(j.workout.name || baseName, j.workout.exercises || j.workout.steps, 'Open-Workout', j.workout.description || '');
           } else if(Array.isArray(j.steps || j.segs || j.segments)){
-            addOne(j.name || j.title || baseName, j.steps || j.segs || j.segments, 'JSON');
+            addOne(j.name || j.title || baseName, j.steps || j.segs || j.segments, 'JSON', j.description || '');
           } else {
             Object.keys(j).forEach(k => {
               if(Array.isArray(j[k]) && j[k].length && j[k][0].m != null){
-                addOne(k, j[k], 'JSON');
+                addOne(k, j[k], 'JSON', '');
               }
             });
           }
@@ -11419,7 +11538,6 @@ window.copyRawData = copyRawData;
     if(stEl) stEl.textContent = '⏳ جارٍ الاتصال بالمستودعات العالمية الأربعة على GitHub وسحب ملفات البرامج (XML + ZWO)...';
     try{ toast('🌍 جارٍ سحب البرامج من المستودعات العالمية...'); }catch(_){}
     try{
-      // 1. جلب قوائم الملفات من المستودعات الأربعة بالتوازي
       const repoLists = await Promise.all(GLOBAL_REPOS.map(async rp => {
         try{
           const res = await fetch(rp.apiUrl, {headers: {'Accept': 'application/vnd.github+json'}});
@@ -11457,7 +11575,6 @@ window.copyRawData = copyRawData;
               item.id = f.cat + '_' + f.name;
               item.cat = f.cat;
               item.src = f.badge;
-              // استخدام اسم الملف الواضح إذا كان الاسم الداخلي عاماً
               const cleanFn = f.name.replace(/\.(xml|zwo)$/i, '');
               if(!item.name || item.name.length < 3 || /^workout$/i.test(item.name)){
                 item.name = cleanFn.slice(0, 44);
@@ -11468,7 +11585,6 @@ window.copyRawData = copyRawData;
           return null;
         }));
         results.forEach(it => { if(it) fetchedItems.push(it); });
-        // تحديث البطاقات تدريجياً أثناء التحميل ليرى المستخدم البرامج فوراً
         repoList = fetchedItems.slice();
         renderCards();
       }
@@ -11481,7 +11597,7 @@ window.copyRawData = copyRawData;
       if(autoPreviewFirst && fetchedItems[0]){
         previewItemInSchedule(fetchedItems[0]);
       }
-      if(stEl) stEl.textContent = '✅ تم سحب ' + fetchedItems.length + ' برنامجاً حقيقياً مباشرة من المستودعات العالمية الأربعة على GitHub.';
+      if(stEl) stEl.textContent = '✅ تم سحب ' + fetchedItems.length + ' برنامجاً حقيقياً مع أهدافها وفوائدها من المستودعات العالمية الأربعة على GitHub.';
       try{ toast('✅ تم سحب ' + fetchedItems.length + ' برنامجاً من المستودعات العالمية'); }catch(_){}
     }catch(err){
       if(stEl) stEl.textContent = '❌ تعذر الجلب من مستودعات GitHub: ' + (err && err.message ? err.message : err);
@@ -11517,7 +11633,6 @@ window.copyRawData = copyRawData;
     updateRefPaceLabel();
     renderCards();
 
-    // السحب التلقائي من المستودعات العالمية الأربعة إن كان الكاش فارغاً أو أقل من 10 برامج
     if(repoList.length < 10 && navigator.onLine){
       setTimeout(() => fetchAllGlobalRepos(false), 500);
     }
