@@ -2354,8 +2354,8 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
 #chTip button{min-height:34px;padding:0 10px;font-size:12px}
 .seg.flash{box-shadow:0 0 0 2px #38bdf8}
 .seg .dup{color:#e2e8f0;background:#243142;border-color:var(--line-light)}
-/* ===== v114.1-EXT: ربط المستودعات العالمية المفتوحة على GitHub مع شرح هدف وفائدة كل برنامج ===== */
-.ext-sug-box{margin-top:8px;padding:10px;border-radius:12px;background:rgba(15,23,42,.65);border:1px solid var(--line,#263248)}
+/* ===== v114.1-EXT: ربط المستودعات العالمية المفتوحة على GitHub في أسفل لوحة التشغيل ===== */
+.ext-sug-box{margin-top:10px;padding:10px;border-radius:12px;background:rgba(15,23,42,.65);border:1px solid var(--line,#263248)}
 .ext-sug-hd{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;margin-bottom:8px}
 .ext-sug-ttl{font-size:13px;font-weight:800;color:#38bdf8;display:flex;align-items:center;gap:5px}
 .ext-sug-acts{display:flex;gap:5px}
@@ -2761,34 +2761,6 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
       <button id="stopProg" disabled>إيقاف</button>
     </div>
     <div id="pgLinkedVid"></div>
-    <div class="ext-sug-box" id="extSugBox">
-      <div class="ext-sug-hd">
-        <span class="ext-sug-ttl">🌍 برامج المستودعات العالمية (<span id="extTotalCount">0</span> برنامج)</span>
-        <div class="ext-sug-acts">
-          <button type="button" id="extQuickQdzBtn" title="تحديث وسحب جميع البرامج الحقيقية من مستودعات GitHub العالمية">🔄 تحديث المستودعات</button>
-          <button type="button" id="extOpenHubBtn" title="إعدادات المستودعات والسرعة المرجعية والاستيراد">⚙️ المصدر</button>
-        </div>
-      </div>
-      <div class="ext-cats" id="extCatBar">
-        <button type="button" class="ext-cat on" data-ecat="all">الكل</button>
-        <button type="button" class="ext-cat" data-ecat="qdz">🏃 QDomyos-Zwift</button>
-        <button type="button" class="ext-cat" data-ecat="zwift1">⚡ Zwift Workouts</button>
-        <button type="button" class="ext-cat" data-ecat="zwift2">🔥 Zones & Intervals</button>
-        <button type="button" class="ext-cat" data-ecat="imp">📂 ملفات مستوردة</button>
-      </div>
-      <div class="ext-cards" id="extSugCards"></div>
-      <div class="ext-prv-bar" id="extPreviewBar">
-        <div class="ext-prv-top">
-          <div class="ext-prv-txt" id="extPreviewTxt"></div>
-          <div class="ext-prv-btns">
-            <button type="button" class="btn-save" id="extSaveToProgsBtn">💾 حفظ في برامجي</button>
-            <button type="button" id="extJumpEditBtn">✏️ تعديل المراحل</button>
-          </div>
-        </div>
-        <div class="ext-prv-goal" id="extPreviewGoal"></div>
-        <div class="ext-prv-desc" id="extPreviewDesc"></div>
-      </div>
-    </div>
   </div>
 
   <div data-pane="edit" class="pg-edit">
@@ -2926,21 +2898,42 @@ html body #tempSubTabs button.on,html body #tempSubTabs button.active{background
     <button type="button" id="cpQSkip" onclick="cpQuickMod('skip')">⏭ تخطِّ المرحلة</button>
   </div>
 
-  <details>
-    <summary>📋 جدول المراحل</summary>
+  <div style="display:none!important">
     <div class="pl" id="pl"></div>
-  </details>
-  <details>
-    <summary>👟 صوت الخطوات</summary>
-  <div class="cp-cadence-bar">
     <button type="button" class="cp-cad-toggle" id="cpCadBtn" onclick="toggleCadenceBeat()">👟 صوت الخطوات: إيقاف</button>
-    <div class="cp-cad-feet">
-      <span>يمين</span><i class="cp-foot-dot" id="cpFootR"></i>
-      <i class="cp-foot-dot" id="cpFootL"></i><span>يسار</span>
-      <b id="cpCadSpm" style="color:var(--amber);margin-right:6px;direction:ltr">160 خطوة/د</b>
+    <i class="cp-foot-dot" id="cpFootR"></i>
+    <i class="cp-foot-dot" id="cpFootL"></i>
+    <b id="cpCadSpm">160 خطوة/د</b>
+  </div>
+
+  <div class="ext-sug-box" id="extSugBox">
+    <div class="ext-sug-hd">
+      <span class="ext-sug-ttl">🌍 برامج المستودعات العالمية (<span id="extTotalCount">0</span> برنامج)</span>
+      <div class="ext-sug-acts">
+        <button type="button" id="extQuickQdzBtn" title="تحديث وسحب جميع البرامج الحقيقية من مستودعات GitHub العالمية">🔄 تحديث المستودعات</button>
+        <button type="button" id="extOpenHubBtn" title="إعدادات المستودعات والسرعة المرجعية والاستيراد">⚙️ المصدر</button>
+      </div>
+    </div>
+    <div class="ext-cats" id="extCatBar">
+      <button type="button" class="ext-cat on" data-ecat="all">الكل</button>
+      <button type="button" class="ext-cat" data-ecat="qdz">🏃 QDomyos-Zwift</button>
+      <button type="button" class="ext-cat" data-ecat="zwift1">⚡ Zwift Workouts</button>
+      <button type="button" class="ext-cat" data-ecat="zwift2">🔥 Zones & Intervals</button>
+      <button type="button" class="ext-cat" data-ecat="imp">📂 ملفات مستوردة</button>
+    </div>
+    <div class="ext-cards" id="extSugCards"></div>
+    <div class="ext-prv-bar" id="extPreviewBar">
+      <div class="ext-prv-top">
+        <div class="ext-prv-txt" id="extPreviewTxt"></div>
+        <div class="ext-prv-btns">
+          <button type="button" class="btn-save" id="extSaveToProgsBtn">💾 حفظ في برامجي</button>
+          <button type="button" id="extJumpEditBtn">✏️ تعديل المراحل</button>
+        </div>
+      </div>
+      <div class="ext-prv-goal" id="extPreviewGoal"></div>
+      <div class="ext-prv-desc" id="extPreviewDesc"></div>
     </div>
   </div>
-  </details>
 </div>
 
 <div class="panel" style="display:none!important">
@@ -10979,7 +10972,7 @@ window.copyRawData = copyRawData;
   try{ if(localStorage.getItem(KEY) === '1'){ tg.checked = true; setTimeout(startCam, 1500); } }catch(_){}
 })();
 
-// ===== v114.1-EXT: ربط المستودعات العالمية المفتوحة على GitHub مع شرح الهدف والفائدة لكل برنامج =====
+// ===== v114.1-EXT: ربط المستودعات العالمية المفتوحة على GitHub في أسفل لوحة التشغيل =====
 (function(){
   const K_CFG = 'kettler_ext_wk_cfg_v4';
   const K_REPO = 'kettler_ext_repo_list_v4';
@@ -11084,7 +11077,6 @@ window.copyRawData = copyRawData;
     const maxPct = maxS / ref;
     const avgPct = avgS / ref;
 
-    // حساب عدد فترات السرعة العالية (القفزات التناوبية)
     let bursts = 0;
     for(let k = 1; k < segs.length; k++){
       if(segs[k].s - segs[k - 1].s >= 1.2) bursts++;
@@ -11126,10 +11118,10 @@ window.copyRawData = copyRawData;
         detail: '🎯 الهدف والفائدة: جري/مشي خفيف بشدة منخفضة لتنشيط الدورة الدموية في الساقين وتسريع التخلص من حمض اللاكتيك بعد أيام التدريب الشاقة.'
       };
     }
-    if(/ftp test|step_test/i.test(nm)){
+    if(/ftp\s*test|step[\s_]*test/i.test(nm)){
       return {
         short: '🎯 اختبار قياس مستوى اللياقة والسرعة المرجعية',
-        detail: '🎯 الهدف والفائدة: تقييم علمي لتحديد أقصى سرعة يمكنك الحفاظ عليها (عتبة اللاكتات)، لضبط خانة «السرعة المرجعية 100%» بدقة لبقية برامجك.'
+        detail: '🎯 الهدف والفائدة: تقييم علمي متدرج لتحديد أقصى سرعة يمكنك الحفاظ عليها (عتبة اللاكتات)، لضبط خانة «السرعة المرجعية 100%» بدقة لبقية برامجك.'
       };
     }
     if(/pyramid/i.test(nm)){
@@ -11236,13 +11228,6 @@ window.copyRawData = copyRawData;
     try{ pgCards(); }catch(_){}
     renderCards();
 
-    try{
-      const plEl = $id('pl');
-      if(plEl && plEl.parentElement && plEl.parentElement.tagName === 'DETAILS'){
-        plEl.parentElement.open = true;
-      }
-    }catch(_){}
-
     const totMin = Math.round(segs.reduce((a, g) => a + g.m, 0) * 10) / 10;
     const bar = $id('extPreviewBar'), txt = $id('extPreviewTxt'), gEl = $id('extPreviewGoal'), dEl = $id('extPreviewDesc');
     if(bar && txt){
@@ -11259,7 +11244,7 @@ window.copyRawData = copyRawData;
         dEl.textContent = '';
       }
     }
-    try{ info('تم تحميل «' + it.name + '» في الجدول — ' + goal.short); }catch(_){}
+    try{ info('تم تحميل «' + it.name + '» في المخطط — ' + goal.short); }catch(_){}
   }
 
   // ---------- 1. محلل ملفات XML الخاصة بمستودع QDomyos-Zwift ----------
